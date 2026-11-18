@@ -1,0 +1,8 @@
+{
+  "name": "PanelTranslate AI",
+  "description": "منصة متكاملة لترجمة المانغا والمانهوا والكوميكس بالذكاء الاصطناعي ومعالجة الفقاعات غير التدميرية",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

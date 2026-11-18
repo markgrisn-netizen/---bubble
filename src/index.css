@@ -1,0 +1,135 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    font-family: "Cairo", "IBM Plex Sans Arabic", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  }
+
+  .font-display-comic {
+    font-family: "Cairo", "Tajawal", "Plus Jakarta Sans", sans-serif;
+  }
+
+  .font-mono-tabular {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Faqqa Comic Pop-Art Surfaces & Halftones */
+.faqqa-halftone-bg {
+  background-color: #FAF5E8;
+  background-image: radial-gradient(rgba(17, 17, 17, 0.085) 1.25px, transparent 1.25px);
+  background-size: 16px 16px;
+}
+
+.dark .faqqa-halftone-bg {
+  background-color: #111216;
+  background-image: radial-gradient(rgba(255, 224, 27, 0.09) 1.25px, transparent 1.25px);
+  background-size: 16px 16px;
+}
+
+.faqqa-halftone-yellow {
+  background-color: #FFE01B;
+  background-image: radial-gradient(rgba(166, 114, 0, 0.25) 2.2px, transparent 2.2px);
+  background-size: 13px 13px;
+}
+
+.faqqa-card {
+  background-color: #FFFDF9;
+  border: 2.5px solid #111111;
+  box-shadow: 4px 4px 0px #111111;
+}
+
+.dark .faqqa-card {
+  background-color: #1A1B21;
+  border: 2px solid rgba(255, 253, 249, 0.22);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.faqqa-card-interactive {
+  background-color: #FFFDF9;
+  border: 2.5px solid #111111;
+  box-shadow: 4px 4px 0px #111111;
+  transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.faqqa-card-interactive:hover {
+  transform: translate(-1px, -2px);
+  box-shadow: 6px 6px 0px #111111;
+}
+
+.faqqa-card-interactive:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #111111;
+}
+
+.dark .faqqa-card-interactive {
+  background-color: #1A1B21;
+  border: 2px solid rgba(255, 253, 249, 0.28);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.dark .faqqa-card-interactive:hover {
+  border-color: #FFE01B;
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.faqqa-btn-yellow {
+  background-color: #FFE01B;
+  color: #111111;
+  border: 2.5px solid #111111;
+  box-shadow: 3px 3px 0px #111111;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.faqqa-btn-yellow:hover {
+  background-color: #FFD200;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #111111;
+}
+
+.faqqa-btn-yellow:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1.5px 1.5px 0px #111111;
+}
+
+.faqqa-btn-black {
+  background-color: #14171F;
+  color: #FFFFFF;
+  border: 2.5px solid #111111;
+  box-shadow: 4px 4px 0px rgba(17, 17, 17, 0.35);
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.faqqa-btn-black:hover {
+  background-color: #090B10;
+  transform: translate(-1px, -1px);
+}
+
+.faqqa-btn-black:active {
+  transform: translate(1px, 1px);
+}
+
+/* Custom crisp scrollbars for studio panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.25);
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 253, 249, 0.22);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(17, 17, 17, 0.45);
+}

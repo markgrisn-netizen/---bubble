@@ -1,0 +1,818 @@
+[
+  {
+    "id": "bsess-88268b18c7",
+    "tokenHash": "a4f2729b4703e089b3626de95be0a2a1a0c52b22ec513e6a94eb5ad5ebe7db9a",
+    "projectId": "proj-063147e8",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-e61385c4",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-88268b18c7_p1_1794929448442_d109fb3f.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:30:48.442Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-ef7c5da9",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-88268b18c7_p2_1794929448442_f14a1489.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:30:48.442Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T15:30:48.434Z",
+    "updatedAt": "2026-11-17T15:30:48.444Z",
+    "expiresAt": "2026-11-17T17:30:48.434Z",
+    "chapterId": "ch-5ef2ee3c"
+  },
+  {
+    "id": "bsess-fe91496f0f",
+    "tokenHash": "807c1ac0ae82ea0f30278fdbfc6428d0de2031b2d1a2fe54a7207f29ff22a2c1",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-fef5bfcf",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-fe91496f0f_p1_1794929318438_be182c7d.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:28:38.438Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-d1631dc5",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-fe91496f0f_p2_1794929318438_a964a66f.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:28:38.438Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T15:28:38.435Z",
+    "updatedAt": "2026-11-17T15:28:38.440Z",
+    "expiresAt": "2026-11-17T17:28:38.435Z",
+    "chapterId": "ch-0e82a2c7"
+  },
+  {
+    "id": "bsess-d3d18472a0",
+    "tokenHash": "8d6745ec33abec18879d0acdb4ba5ca1a7f5a6e4d6699f06a516c3d92e37e60c",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-f9bea822",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-d3d18472a0_p1_1794929285212_4ac28d67.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:28:05.212Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-a61bc5e9",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-d3d18472a0_p2_1794929285212_9931c0ba.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:28:05.213Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T15:28:05.210Z",
+    "updatedAt": "2026-11-17T15:28:05.213Z",
+    "expiresAt": "2026-11-17T17:28:05.210Z",
+    "chapterId": "ch-5009e9f2"
+  },
+  {
+    "id": "bsess-e3f4a8fcb6",
+    "tokenHash": "3d6ad1102ea6434f4aef51b80b5a2e99f57f717a2d43385aca9f7c0f139c8d94",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-d4462540",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-e3f4a8fcb6_p1_1794927950407_37c06f40.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:05:50.408Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-6bc99d54",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-e3f4a8fcb6_p2_1794927950408_eaeff6d2.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:05:50.408Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T15:05:50.404Z",
+    "updatedAt": "2026-11-17T15:05:50.410Z",
+    "expiresAt": "2026-11-17T17:05:50.404Z",
+    "chapterId": "ch-6232edce"
+  },
+  {
+    "id": "bsess-233d1a5f6d",
+    "tokenHash": "9e5a305c157819878c2ae24137df4ee566ed2b6e840a8925546f22da4b57eb1f",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-422e377d",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-233d1a5f6d_p1_1794927900108_78d6d8ea.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:05:00.109Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-7d179693",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-233d1a5f6d_p2_1794927900109_66f827fc.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:05:00.109Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T15:05:00.106Z",
+    "updatedAt": "2026-11-17T15:05:00.110Z",
+    "expiresAt": "2026-11-17T17:05:00.106Z",
+    "chapterId": "ch-4c55c388"
+  },
+  {
+    "id": "bsess-4967a600ca",
+    "tokenHash": "c5e67039989f2086f812cf3e12a649651e3845f7ffd5721ba70e92e51c639dcf",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-48173892",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-4967a600ca_p1_1794927833020_ad635410.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:03:53.020Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-041faaa9",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-4967a600ca_p2_1794927833020_816121bc.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T15:03:53.021Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T15:03:53.017Z",
+    "updatedAt": "2026-11-17T15:03:53.021Z",
+    "expiresAt": "2026-11-17T17:03:53.017Z",
+    "chapterId": "ch-1a24796d"
+  },
+  {
+    "id": "bsess-0111fe61a9",
+    "tokenHash": "80ee4ebbe8c05acb077763c466c99e166b92a69f4ab0b576a2a63734b29d8bec",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-51533398",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-0111fe61a9_p1_1794926643859_ee8fbf1d.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:44:03.859Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-8978b04a",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-0111fe61a9_p2_1794926643859_08bee08f.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:44:03.860Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T14:44:03.856Z",
+    "updatedAt": "2026-11-17T14:44:03.861Z",
+    "expiresAt": "2026-11-17T16:44:03.856Z",
+    "chapterId": "ch-d0368f16"
+  },
+  {
+    "id": "bsess-b362028419",
+    "tokenHash": "787c96f7b991a9950379e43b7de0a3bfd6659a827de318e8c697c31dbb08e7a4",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-4b1415bf",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-b362028419_p1_1794926417559_62cf4a43.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:40:17.559Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-51c64793",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-b362028419_p2_1794926417560_3ef6c770.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:40:17.560Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T14:40:17.557Z",
+    "updatedAt": "2026-11-17T14:40:17.561Z",
+    "expiresAt": "2026-11-17T16:40:17.557Z",
+    "chapterId": "ch-2ab1c80e"
+  },
+  {
+    "id": "bsess-e081663de9",
+    "tokenHash": "4d0cf00037c6a9b7d31f689f322babde63a80bb4bda30c82e544c89d02c810af",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-698aa689",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-e081663de9_p1_1794926382270_6de2c4c1.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:39:42.271Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-8ff310f2",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-e081663de9_p2_1794926382271_413c80b0.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:39:42.271Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T14:39:42.268Z",
+    "updatedAt": "2026-11-17T14:39:42.272Z",
+    "expiresAt": "2026-11-17T16:39:42.268Z",
+    "chapterId": "ch-ee24f726"
+  },
+  {
+    "id": "bsess-a0889fd535",
+    "tokenHash": "7692a3e574184e59a50b13fb851e54216f24c515c4e8a346321c35d1e0117d3e",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-cb5b27a0",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-a0889fd535_p1_1794925038128_17dda422.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:17:18.129Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-02cb301d",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-a0889fd535_p2_1794925038129_184451b1.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T14:17:18.129Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T14:17:18.126Z",
+    "updatedAt": "2026-11-17T14:17:18.130Z",
+    "expiresAt": "2026-11-17T16:17:18.126Z",
+    "chapterId": "ch-a80ea2a4"
+  },
+  {
+    "id": "bsess-e73694a563",
+    "tokenHash": "dcd79bb1197ea1f1e41730c87fdd0f13a46dda4df9b2efe2d5f7328801497b9f",
+    "projectId": "proj-cd7f2b1d",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-7536ede4",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-e73694a563_p1_1794921137599_0d543436.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:12:17.599Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-c103cba3",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-e73694a563_p2_1794921137599_b3ea44b2.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:12:17.600Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T13:12:17.596Z",
+    "updatedAt": "2026-11-17T13:12:17.601Z",
+    "expiresAt": "2026-11-17T15:12:17.596Z",
+    "chapterId": "ch-8cd86f3b"
+  },
+  {
+    "id": "bsess-e68a74ce64",
+    "tokenHash": "d61d89cde5fe76f59d407afa2fe498df582958bdf1991fb97663ebf4b16e8f14",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-4410d96b",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-e68a74ce64_p1_1794920646290_11064100.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:04:06.290Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-53d80080",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-e68a74ce64_p2_1794920646290_1a9fce5e.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:04:06.291Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T13:04:06.287Z",
+    "updatedAt": "2026-11-17T13:04:06.291Z",
+    "expiresAt": "2026-11-17T15:04:06.287Z",
+    "chapterId": "ch-105fc87c"
+  },
+  {
+    "id": "bsess-b337ba78f2",
+    "tokenHash": "d08a6a446e5ff072e3178087bcbe81bcec87667f3d348b05fcc444a60a7f8387",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-5859f7bf",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-b337ba78f2_p1_1794920586814_363be737.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:03:06.815Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-e3277c4f",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-b337ba78f2_p2_1794920586815_5d082a8a.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:03:06.815Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T13:03:06.812Z",
+    "updatedAt": "2026-11-17T13:03:06.816Z",
+    "expiresAt": "2026-11-17T15:03:06.812Z",
+    "chapterId": "ch-e54e120f"
+  },
+  {
+    "id": "bsess-a67e17501f",
+    "tokenHash": "e930bb08bcd204380e4c030cf939f071676da5009270f96cc7eca0c28248067c",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-b7716213",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-a67e17501f_p1_1794920403857_c29cd069.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:00:03.858Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-f8a4e782",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-a67e17501f_p2_1794920403858_2971f13d.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-17T13:00:03.859Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-17T13:00:03.854Z",
+    "updatedAt": "2026-11-17T13:00:03.861Z",
+    "expiresAt": "2026-11-17T15:00:03.854Z",
+    "chapterId": "ch-4712b3a5"
+  },
+  {
+    "id": "bsess-eea0376c7f",
+    "tokenHash": "50ff5cad0f446537c1ee5727bba57a219fe098b99b869e52943086079d6bbcd9",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-c779aa25",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-eea0376c7f_p1_1794855082421_0ed8e3b7.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:51:22.421Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-39c85e43",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-eea0376c7f_p2_1794855082421_dccd9f1b.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:51:22.422Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-16T18:51:22.419Z",
+    "updatedAt": "2026-11-16T18:51:22.423Z",
+    "expiresAt": "2026-11-16T20:51:22.419Z",
+    "chapterId": "ch-c923b1b3"
+  },
+  {
+    "id": "bsess-d0e5144f7e",
+    "tokenHash": "a38a936d099ec83e0eaba6c20ab9a8c4d215976205fdecbff9714afe3fef46b8",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-fd995bd3",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-d0e5144f7e_p1_1794855050610_3544d027.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:50:50.611Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-c74a7cf5",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-d0e5144f7e_p2_1794855050611_0ad692e8.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:50:50.611Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-16T18:50:50.607Z",
+    "updatedAt": "2026-11-16T18:50:50.612Z",
+    "expiresAt": "2026-11-16T20:50:50.607Z",
+    "chapterId": "ch-8ec3e2b9"
+  },
+  {
+    "id": "bsess-0144fb7928",
+    "tokenHash": "2e1cfd90229f5cab368c2bbf63b24de2dbdeff9dc5dd7aff4b899b1f1444164f",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-b9bb6a57",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-0144fb7928_p1_1794852758851_031a5621.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:12:38.851Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-51990fe6",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-0144fb7928_p2_1794852758852_14210b3d.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:12:38.852Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-16T18:12:38.844Z",
+    "updatedAt": "2026-11-16T18:12:38.871Z",
+    "expiresAt": "2026-11-16T20:12:38.844Z",
+    "chapterId": "ch-d8558513"
+  },
+  {
+    "id": "bsess-de968ccd21",
+    "tokenHash": "77050ed3e633a1d9a7a94dad1382adec111a2ef32d5461147c62bfd5ffebb567",
+    "newProjectConfig": {
+      "title": "Test Companion Series",
+      "comicFormat": "superhero",
+      "sourceLanguage": "ar",
+      "targetLanguage": "en",
+      "readingDirection": "ltr",
+      "translationStyle": "cinematic"
+    },
+    "chapterTitle": "العدد #01",
+    "status": "waiting",
+    "pages": [],
+    "createdAt": "2026-11-16T18:12:13.015Z",
+    "updatedAt": "2026-11-16T18:12:13.015Z",
+    "expiresAt": "2026-11-16T20:12:13.015Z"
+  },
+  {
+    "id": "bsess-a69d98eb74",
+    "tokenHash": "47b322b4db18618fe878d00d55e99a9e66c00cb0cb12fdf6bf383d028c8d0ba1",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-fc3e3c20",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-a69d98eb74_p1_1794852705373_ce30cfe7.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:11:45.374Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-1600ac94",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-a69d98eb74_p2_1794852705374_5c98e0a1.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:11:45.374Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-16T18:11:45.371Z",
+    "updatedAt": "2026-11-16T18:11:45.375Z",
+    "expiresAt": "2026-11-16T20:11:45.371Z",
+    "chapterId": "ch-6c117ca5"
+  },
+  {
+    "id": "bsess-9d3a1cb599",
+    "tokenHash": "504dcc186b0affbc8c79beab95d4aae3abd430b10cc26f65300fd4a466c0e2c3",
+    "projectId": "proj-apex-vanguard",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-a809aa29",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-9d3a1cb599_p1_1794852596712_1bfd8230.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:09:56.712Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-373df773",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-9d3a1cb599_p2_1794852596713_75f6f381.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T18:09:56.713Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-16T18:09:56.710Z",
+    "updatedAt": "2026-11-16T18:09:56.714Z",
+    "expiresAt": "2026-11-16T20:09:56.710Z",
+    "chapterId": "ch-98648f7d"
+  },
+  {
+    "id": "bsess-e70b101ec5",
+    "tokenHash": "b37696fca008c07287042d8625616f2dac15cfd8095aecd21fa5ca012f0a8583",
+    "projectId": "proj-silent-dawn",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-2a4075f7",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-e70b101ec5_p1_1794850761130_6d371497.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T17:39:21.130Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-17763efa",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-e70b101ec5_p2_1794850761131_eee1760a.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T17:39:21.131Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-16T17:39:21.127Z",
+    "updatedAt": "2026-11-16T17:39:21.132Z",
+    "expiresAt": "2026-11-16T19:39:21.127Z",
+    "chapterId": "ch-55627714"
+  },
+  {
+    "id": "bsess-4c1ffa02dd",
+    "tokenHash": "2cf181d7bfb5239c313a5cf53d00e483616e1d3834e4b5ed08d4c1b27aeb03fb",
+    "projectId": "proj-silent-dawn",
+    "chapterTitle": "Browser Captured Test Chapter",
+    "targetUrl": "https://protected-site.example/manga/ch-5",
+    "status": "completed",
+    "pages": [
+      {
+        "id": "bpg-68321552",
+        "pageNumber": 1,
+        "imageUrl": "/uploads/browser_bsess-4c1ffa02dd_p1_1794850688136_d894603f.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T17:38:08.137Z",
+        "captureMethod": "canvas_capture",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      },
+      {
+        "id": "bpg-6c4de53a",
+        "pageNumber": 2,
+        "imageUrl": "/uploads/browser_bsess-4c1ffa02dd_p2_1794850688137_8e590710.png",
+        "sourceUrl": "https://protected-site.example/manga/ch-5",
+        "width": 850,
+        "height": 1200,
+        "capturedAt": "2026-11-16T17:38:08.137Z",
+        "captureMethod": "visible_tab_crop",
+        "sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+        "byteSize": 70
+      }
+    ],
+    "createdAt": "2026-11-16T17:38:08.134Z",
+    "updatedAt": "2026-11-16T17:38:08.138Z",
+    "expiresAt": "2026-11-16T19:38:08.134Z",
+    "chapterId": "ch-23e8702c"
+  }
+]

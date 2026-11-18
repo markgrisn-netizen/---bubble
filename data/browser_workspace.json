@@ -1,0 +1,25 @@
+{
+  "privacyMode": "standard",
+  "homeUrl": "pt://home",
+  "bookmarks": [
+    {
+      "id": "bm-comic-plus",
+      "title": "GlobalComix — Western Comics",
+      "url": "https://globalcomix.com",
+      "createdAt": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "bm-webtoons",
+      "title": "WEBTOON — English",
+      "url": "https://www.webtoons.com/en/",
+      "createdAt": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "bm-mangadex",
+      "title": "MangaDex",
+      "url": "https://mangadex.org",
+      "createdAt": "1970-01-01T00:00:00.000Z"
+    }
+  ],
+  "history": []
+}
