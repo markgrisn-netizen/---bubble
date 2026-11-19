@@ -1,105 +1,100 @@
 import type { ManualStroke, Page, Point, TextRegion } from '../types/domain';
 import { fitTextInRegion } from './bubbleLayout';
 import {
+  auditCleanedAndRenderedRegion,
+  cleanRoiBufferInPlace,
+  computeRegionRoiBounds,
+  estimateInteriorFillColor,
+  getSafeWidthAtBandY,
+  segmentBubbleInterior,
+  type BubbleSegmentationResult,
+  type CoreBackgroundEstimate,
+  type RegionQualityAudit,
+} from './bubbleSegmentation';
+import {
   computeAlignedAnchorOffsetX,
   computeOpticalCenterOffsetX,
   computeRegionCenterNormalized,
   normalizedBoxToImagePx,
 } from './coordinateTransform';
 
-function pointInPolygon(x: number, y: number, poly: Point[]): boolean {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i].x;
-    const yi = poly[i].y;
-    const xj = poly[j].x;
-    const yj = poly[j].y;
-    const intersect =
-      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi + 1e-6) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
-}
-
-export interface RegionBackgroundStats {
-  r: number;
-  g: number;
-  b: number;
-  luma: number;
-  isUniform: boolean;
-  isDark: boolean;
-}
-
-/**
- * Estimates dominant interior background color (RGB) along an inset region inside a bubble
- * or narration caption box so dark/noir bubbles (dark fill + white text), colored Western
- * caption boxes (yellow/blue/tan), and white balloons are cleaned cleanly without touching borders.
- */
 export function sampleInteriorBackground(
   data: Uint8ClampedArray,
-  imgW: number,
-  imgH: number,
-  pxPoly: Point[],
+  bufW: number,
+  bufH: number,
+  _poly: Point[],
   minX: number,
   minY: number,
   maxX: number,
   maxY: number
-): RegionBackgroundStats {
-  const cx = (minX + maxX) / 2;
-  const cy = (minY + maxY) / 2;
+): CoreBackgroundEstimate {
+  return estimateInteriorFillColor(data, bufW, bufH, {
+    x: minX,
+    y: minY,
+    width: Math.max(1, maxX - minX + 1),
+    height: Math.max(1, maxY - minY + 1),
+  });
+}
 
-  const insetPoly = pxPoly.map((p) => ({
-    x: cx + (p.x - cx) * 0.84,
-    y: cy + (p.y - cy) * 0.84,
-  }));
+export interface RegionCleanOutcome {
+  seg: BubbleSegmentationResult;
+  beforeRoiData: Uint8ClampedArray;
+  afterRoiData: Uint8ClampedArray;
+}
 
-  const bins = new Map<string, { count: number; rSum: number; gSum: number; bSum: number }>();
-  const stepX = Math.max(1, Math.floor((maxX - minX) / 48));
-  const stepY = Math.max(1, Math.floor((maxY - minY) / 48));
-  let totalSamples = 0;
-
-  for (let y = minY; y <= maxY; y += stepY) {
-    for (let x = minX; x <= maxX; x += stepX) {
-      if (!pointInPolygon(x, y, insetPoly)) continue;
-      const idx = (y * imgW + x) * 4;
-      const r = data[idx];
-      const g = data[idx + 1];
-      const b = data[idx + 2];
-      const key = `${r >> 4}-${g >> 4}-${b >> 4}`;
-      const existing = bins.get(key);
-      if (existing) {
-        existing.count++;
-        existing.rSum += r;
-        existing.gSum += g;
-        existing.bSum += b;
-      } else {
-        bins.set(key, { count: 1, rSum: r, gSum: g, bSum: b });
-      }
-      totalSamples++;
-    }
-  }
-
-  let best = { count: 0, rSum: 255, gSum: 255, bSum: 255 };
-  for (const bin of bins.values()) {
-    if (bin.count > best.count) best = bin;
-  }
-
-  if (best.count === 0) {
-    return { r: 255, g: 255, b: 255, luma: 255, isUniform: true, isDark: false };
-  }
-
-  const r = Math.round(best.rSum / best.count);
-  const g = Math.round(best.gSum / best.count);
-  const b = Math.round(best.bSum / best.count);
-  const luma = 0.299 * r + 0.587 * g + 0.114 * b;
-  const isUniform = totalSamples > 0 && best.count / totalSamples >= 0.42;
-  return { r, g, b, luma, isUniform, isDark: luma < 95 };
+export interface RenderedRegionMetrics {
+  textCenterPx: Point;
+  textLines: Array<{ y: number; width: number; height: number }>;
+  overflowed: boolean;
 }
 
 /**
- * Generates an automatic pixel-exact mask of text strokes inside a region polygon
- * and inpaints ONLY those masked text pixels via multi-pass neighbor diffusion,
- * preserving bubble outlines, narration frames, colored art, and dark comic backgrounds.
+ * Segments the true speech-bubble / caption-box interior in pixel space and removes
+ * 100% of original letters, halos, and drop-shadows strictly within the interior mask
+ * while leaving black outlines, balloon tails, and exterior artwork untouched.
+ */
+export function cleanAndSegmentRegionInPlace(
+  ctx: CanvasRenderingContext2D,
+  imgW: number,
+  imgH: number,
+  region: TextRegion,
+  engine: 'telea_biharmonic' | 'solid_interior' | 'manual_only' = 'telea_biharmonic'
+): RegionCleanOutcome | null {
+  const { localBoxPx, pxPoly, roiX, roiY, roiW, roiH } = computeRegionRoiBounds(
+    region,
+    imgW,
+    imgH
+  );
+  if (roiW <= 4 || roiH <= 4) return null;
+
+  const imgData = ctx.getImageData(roiX, roiY, roiW, roiH);
+  const beforeRoiData = new Uint8ClampedArray(imgData.data);
+
+  const seg = segmentBubbleInterior(
+    imgData.data,
+    roiW,
+    roiH,
+    roiX,
+    roiY,
+    region.regionType,
+    localBoxPx,
+    pxPoly
+  );
+
+  if (region.cleanMode === 'auto' && engine !== 'manual_only') {
+    cleanRoiBufferInPlace(imgData.data, seg, engine, pxPoly);
+    ctx.putImageData(imgData, roiX, roiY);
+  }
+
+  return {
+    seg,
+    beforeRoiData,
+    afterRoiData: new Uint8ClampedArray(imgData.data),
+  };
+}
+
+/**
+ * Backwards-compatible wrapper that performs true CV segmentation + interior cleaning in place.
  */
 export function cleanRegionInPlace(
   ctx: CanvasRenderingContext2D,
@@ -109,212 +104,7 @@ export function cleanRegionInPlace(
   engine: 'telea_biharmonic' | 'solid_interior' | 'manual_only' = 'telea_biharmonic'
 ): void {
   if (region.cleanMode !== 'auto' || engine === 'manual_only') return;
-
-  const poly =
-    region.boundingPolygon.length >= 3
-      ? region.boundingPolygon
-      : [
-          { x: region.boundingBox.x, y: region.boundingBox.y },
-          { x: region.boundingBox.x + region.boundingBox.width, y: region.boundingBox.y },
-          {
-            x: region.boundingBox.x + region.boundingBox.width,
-            y: region.boundingBox.y + region.boundingBox.height,
-          },
-          { x: region.boundingBox.x, y: region.boundingBox.y + region.boundingBox.height },
-        ];
-
-  const pxPoly = poly.map((p) => ({
-    x: (p.x / 1000) * imgW,
-    y: (p.y / 1000) * imgH,
-  }));
-
-  const minX = Math.max(0, Math.floor(Math.min(...pxPoly.map((p) => p.x))));
-  const minY = Math.max(0, Math.floor(Math.min(...pxPoly.map((p) => p.y))));
-  const maxX = Math.min(imgW - 1, Math.ceil(Math.max(...pxPoly.map((p) => p.x))));
-  const maxY = Math.min(imgH - 1, Math.ceil(Math.max(...pxPoly.map((p) => p.y))));
-
-  const roiW = maxX - minX + 1;
-  const roiH = maxY - minY + 1;
-  if (roiW <= 4 || roiH <= 4) return;
-
-  const imgData = ctx.getImageData(minX, minY, roiW, roiH);
-  const data = imgData.data;
-
-  const localPoly = pxPoly.map((p) => ({ x: p.x - minX, y: p.y - minY }));
-  const lcx = roiW / 2;
-  const lcy = roiH / 2;
-  const useEllipseMask = region.regionType === 'dialogue' && localPoly.length === 4;
-  // Narration boxes in Western comics have crisp dark borders — inset slightly inside to keep borders intact
-  const safeFactorX = region.regionType === 'narration' ? 0.98 : 0.96;
-  const safeFactorY = region.regionType === 'narration' ? 0.96 : 0.96;
-  const safePoly = localPoly.map((p) => ({
-    x: lcx + (p.x - lcx) * safeFactorX,
-    y: lcy + (p.y - lcy) * safeFactorY,
-  }));
-
-  const isInsideSafeArea = (x: number, y: number): boolean => {
-    if (useEllipseMask) {
-      const rx = Math.max(4, roiW * 0.485);
-      const ry = Math.max(4, roiH * 0.485);
-      const nx = Math.abs(x - lcx) / rx;
-      const ny = Math.abs(y - lcy) / ry;
-      return Math.pow(nx, 2.8) + Math.pow(ny, 2.8) <= 1.0;
-    }
-    return pointInPolygon(x, y, safePoly);
-  };
-
-  const bg = sampleInteriorBackground(
-    data,
-    roiW,
-    roiH,
-    localPoly,
-    0,
-    0,
-    roiW - 1,
-    roiH - 1
-  );
-
-  // Build binary mask (1 = text stroke to remove, 0 = background/border/artwork to keep)
-  const mask = new Uint8Array(roiW * roiH);
-  const rgbThreshold = bg.isUniform ? (bg.isDark ? 34 : 38) : 50;
-  const lumaThreshold = bg.isUniform ? 34 : 46;
-
-  for (let y = 0; y < roiH; y++) {
-    for (let x = 0; x < roiW; x++) {
-      if (!isInsideSafeArea(x, y)) continue;
-      const idx = (y * roiW + x) * 4;
-      const r = data[idx];
-      const g = data[idx + 1];
-      const b = data[idx + 2];
-      const dr = Math.abs(r - bg.r);
-      const dg = Math.abs(g - bg.g);
-      const db = Math.abs(b - bg.b);
-      const rgbDiff = (dr + dg + db) / 3;
-      const pLuma = 0.299 * r + 0.587 * g + 0.114 * b;
-      const lumaDiff = Math.abs(pLuma - bg.luma);
-
-      if (rgbDiff > rgbThreshold || lumaDiff > lumaThreshold) {
-        mask[y * roiW + x] = 1;
-      }
-    }
-  }
-
-  // Dilate text mask by 2 pixels to cleanly remove anti-aliased glyph edges & drop-shadows
-  const dilated = new Uint8Array(roiW * roiH);
-  const dilateRadius = 2;
-  for (let y = 0; y < roiH; y++) {
-    for (let x = 0; x < roiW; x++) {
-      if (mask[y * roiW + x] === 1) {
-        for (let dy = -dilateRadius; dy <= dilateRadius; dy++) {
-          const ny = y + dy;
-          if (ny < 0 || ny >= roiH) continue;
-          for (let dx = -dilateRadius; dx <= dilateRadius; dx++) {
-            const nx = x + dx;
-            if (nx < 0 || nx >= roiW) continue;
-            if (isInsideSafeArea(nx, ny)) {
-              dilated[ny * roiW + nx] = 1;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  if (engine === 'solid_interior' && bg.isUniform) {
-    for (let y = 0; y < roiH; y++) {
-      for (let x = 0; x < roiW; x++) {
-        if (dilated[y * roiW + x] === 1) {
-          const idx = (y * roiW + x) * 4;
-          data[idx] = bg.r;
-          data[idx + 1] = bg.g;
-          data[idx + 2] = bg.b;
-          data[idx + 3] = 255;
-        }
-      }
-    }
-    ctx.putImageData(imgData, minX, minY);
-    return;
-  }
-
-  // Multi-pass boundary-inward Telea-style harmonic diffusion inpainting
-  const known = new Uint8Array(roiW * roiH);
-  for (let i = 0; i < known.length; i++) {
-    known[i] = dilated[i] === 0 ? 1 : 0;
-  }
-
-  const maxPasses = Math.min(34, Math.max(12, Math.ceil(Math.min(roiW, roiH) * 0.28)));
-  const neighbors = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-    [-1, -1],
-    [1, -1],
-    [-1, 1],
-    [1, 1],
-  ];
-
-  for (let pass = 0; pass < maxPasses; pass++) {
-    const newlyFilled: Array<{ x: number; y: number; r: number; g: number; b: number }> = [];
-    for (let y = 1; y < roiH - 1; y++) {
-      for (let x = 1; x < roiW - 1; x++) {
-        const pos = y * roiW + x;
-        if (known[pos] === 1) continue;
-
-        let rSum = 0;
-        let gSum = 0;
-        let bSum = 0;
-        let wSum = 0;
-
-        for (let k = 0; k < neighbors.length; k++) {
-          const nx = x + neighbors[k][0];
-          const ny = y + neighbors[k][1];
-          const npos = ny * roiW + nx;
-          if (known[npos] === 1) {
-            const weight = k < 4 ? 1.0 : 0.707;
-            const idx = npos * 4;
-            rSum += data[idx] * weight;
-            gSum += data[idx + 1] * weight;
-            bSum += data[idx + 2] * weight;
-            wSum += weight;
-          }
-        }
-
-        if (wSum > 0) {
-          newlyFilled.push({
-            x,
-            y,
-            r: Math.round(rSum / wSum),
-            g: Math.round(gSum / wSum),
-            b: Math.round(bSum / wSum),
-          });
-        }
-      }
-    }
-
-    if (newlyFilled.length === 0) break;
-    for (const item of newlyFilled) {
-      const pos = item.y * roiW + item.x;
-      const idx = pos * 4;
-      data[idx] = item.r;
-      data[idx + 1] = item.g;
-      data[idx + 2] = item.b;
-      data[idx + 3] = 255;
-      known[pos] = 1;
-    }
-  }
-
-  for (let i = 0; i < known.length; i++) {
-    if (known[i] === 0) {
-      const idx = i * 4;
-      data[idx] = bg.r;
-      data[idx + 1] = bg.g;
-      data[idx + 2] = bg.b;
-      data[idx + 3] = 255;
-    }
-  }
-
-  ctx.putImageData(imgData, minX, minY);
+  cleanAndSegmentRegionInPlace(ctx, imgW, imgH, region, engine);
 }
 
 /**
@@ -368,28 +158,32 @@ export function applyManualStrokes(
 
 /**
  * Renders translated text inside a region with full Arabic RTL shaping & connected ligatures,
- * authentic English Comic Lettering (Comic Neue / Bangers / Architects Daughter),
- * balanced line-wrapping inside oval balloons, and SFX/caption styling.
+ * contour-aligned width wrapping, visual centroid placement, and safe canvas clamping.
  */
 export function renderRegionText(
   ctx: CanvasRenderingContext2D,
   imgW: number,
   imgH: number,
-  region: TextRegion
-): void {
+  region: TextRegion,
+  seg?: BubbleSegmentationResult
+): RenderedRegionMetrics | null {
   if (region.regionType === 'sfx' && (region.sfxMode === 'keep' || region.sfxMode === 'ignore')) {
-    return;
+    return null;
   }
   const rawText = (region.translatedText || '').trim();
-  if (!rawText) return;
+  if (!rawText) return null;
 
   const fs = region.fontSettings;
   const isRtl = fs.direction === 'rtl';
   const text = !isRtl && fs.letterCase === 'uppercase' ? rawText.toUpperCase() : rawText;
 
-  const pxBox = normalizedBoxToImagePx(region.boundingBox, imgW, imgH);
-  const boxW = pxBox.width;
-  const boxH = pxBox.height;
+  const useSegmentedBounds = Boolean(seg && seg.hasClosedBubble && seg.rowSpans.length > 0);
+  const pxBox =
+    useSegmentedBounds && seg
+      ? seg.textSafeBoxPx || seg.safeBoxPx
+      : normalizedBoxToImagePx(region.boundingBox, imgW, imgH);
+  const boxW = Math.max(16, pxBox.width);
+  const boxH = Math.max(16, pxBox.height);
 
   const scaleFactor = imgW / 1000;
   const baseFontSizePx = Math.max(10, fs.fontSize * scaleFactor);
@@ -406,9 +200,24 @@ export function renderRegionText(
     (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '0px';
   }
 
-  const normCenter = computeRegionCenterNormalized(region.boundingBox, region.boundingPolygon);
-  const centerX = (normCenter.x / 1000) * imgW + (fs.offsetX / 1000) * imgW;
-  const centerY = (normCenter.y / 1000) * imgH + (fs.offsetY / 1000) * imgH;
+  const baseCenterPx =
+    useSegmentedBounds && seg
+      ? seg.centroidPx
+      : (() => {
+          const normCenter = computeRegionCenterNormalized(
+            region.boundingBox,
+            region.boundingPolygon
+          );
+          return {
+            x: (normCenter.x / 1000) * imgW,
+            y: (normCenter.y / 1000) * imgH,
+          };
+        })();
+
+  const rawCenterX = baseCenterPx.x + (fs.offsetX / 1000) * imgW;
+  const rawCenterY = baseCenterPx.y + (fs.offsetY / 1000) * imgH;
+  const centerX = Math.max(12, Math.min(imgW - 12, rawCenterX));
+  const centerY = Math.max(12, Math.min(imgH - 12, rawCenterY));
 
   const needsBackingPill =
     region.cleanMode === 'keep' || (region.regionType === 'sfx' && region.sfxMode === 'side');
@@ -436,7 +245,11 @@ export function renderRegionText(
       ctx.fillText(chars[i], 0, startY + i * stepSize);
     }
     ctx.restore();
-    return;
+    return {
+      textCenterPx: { x: centerX, y: centerY },
+      textLines: [],
+      overflowed: false,
+    };
   }
 
   const measureFn = (str: string, fontSizePx: number): number => {
@@ -444,6 +257,26 @@ export function renderRegionText(
     ctx.font = `${fs.fontWeight} ${fontSizePx}px ${fontStack}`;
     return ctx.measureText(str).width;
   };
+
+  const sfxSideShiftY = region.regionType === 'sfx' && region.sfxMode === 'side' ? boxH * 0.55 : 0;
+  const effectiveCenterY = Math.max(12, Math.min(imgH - 12, centerY + sfxSideShiftY));
+
+  // Query true inscribed contour width at each line's Y slice when segmented
+  const getBandMaxWidthPx =
+    useSegmentedBounds && seg
+      ? (lineIdx: number, totalExpectedLines: number, lineHeightPx: number): number => {
+          const totalH = totalExpectedLines * lineHeightPx;
+          const lineY =
+            effectiveCenterY - totalH / 2 + lineHeightPx / 2 + lineIdx * lineHeightPx;
+          const span = getSafeWidthAtBandY(
+            seg,
+            lineY,
+            lineHeightPx,
+            Math.max(0.06, Math.min(0.2, fs.padding / 100))
+          );
+          return span.width;
+        }
+      : undefined;
 
   const fitted = fitTextInRegion(
     text,
@@ -456,7 +289,8 @@ export function renderRegionText(
       autoFit: fs.autoFit,
       align: fs.align,
     },
-    measureFn
+    measureFn,
+    getBandMaxWidthPx
   );
 
   ctx.font = `${fs.fontWeight} ${fitted.fontSize}px ${fontStack}`;
@@ -472,9 +306,7 @@ export function renderRegionText(
     ctx.textAlign = 'left';
   }
 
-  const sfxSideShiftY = region.regionType === 'sfx' && region.sfxMode === 'side' ? boxH * 0.55 : 0;
-
-  ctx.translate(centerX, centerY + sfxSideShiftY);
+  ctx.translate(centerX, effectiveCenterY);
   if (fs.rotation) {
     ctx.rotate((fs.rotation * Math.PI) / 180);
   }
@@ -499,19 +331,43 @@ export function renderRegionText(
   }
 
   const startY = -totalTextHeight / 2 + fitted.lineHeightPx / 2;
+  const renderedLines: Array<{ y: number; width: number; height: number }> = [];
 
   for (let i = 0; i < fitted.lines.length; i++) {
     const line = fitted.lines[i];
     const lineY = startY + i * fitted.lineHeightPx;
+    const absLineY = effectiveCenterY + lineY;
+
     let drawX = anchorX;
+    const m = ctx.measureText(line);
+    const lineWidthPx = m.width;
+
     if (fs.align === 'center') {
-      const m = ctx.measureText(line);
+      // Shift slightly toward the scanline band center if contour is asymmetric and user hasn't manually offset X
+      if (useSegmentedBounds && seg && fs.offsetX === 0 && !fs.rotation) {
+        const span = getSafeWidthAtBandY(seg, absLineY, fitted.lineHeightPx, 0.04);
+        const spanMidX = (span.leftX + span.rightX) / 2;
+        const maxShift = Math.max(0, (span.width - lineWidthPx) * 0.45);
+        const deltaToSpanMid = Math.max(-maxShift, Math.min(maxShift, spanMidX - centerX));
+        drawX += deltaToSpanMid * 0.55;
+      }
       drawX += computeOpticalCenterOffsetX(
         m.actualBoundingBoxLeft,
         m.actualBoundingBoxRight,
         fitted.fontSize
       );
     }
+
+    // Clamp line horizontally inside canvas bounds when unrotated
+    if (!fs.rotation && fs.align === 'center') {
+      const halfW = lineWidthPx / 2 + 4;
+      const minLocalX = halfW - centerX;
+      const maxLocalX = imgW - halfW - centerX;
+      if (minLocalX <= maxLocalX) {
+        drawX = Math.max(minLocalX, Math.min(maxLocalX, drawX));
+      }
+    }
+
     if (
       (fs.strokeWidth && fs.strokeColor) ||
       (region.regionType === 'sfx' && region.sfxMode === 'artistic')
@@ -523,14 +379,25 @@ export function renderRegionText(
     }
     ctx.fillStyle = fs.color || '#0F172A';
     ctx.fillText(line, drawX, lineY);
+
+    renderedLines.push({
+      y: absLineY,
+      width: lineWidthPx,
+      height: fitted.lineHeightPx,
+    });
   }
 
   ctx.restore();
+  return {
+    textCenterPx: { x: centerX, y: effectiveCenterY },
+    textLines: renderedLines,
+    overflowed: fitted.overflowed,
+  };
 }
 
 /**
  * Renders the complete non-destructive composite (Original + Cleaning + Manual Strokes + Translated Text)
- * onto an HTMLCanvasElement at the exact target dimensions.
+ * onto an HTMLCanvasElement at the exact target dimensions and audits per-region CV & layout quality.
  */
 export async function renderCompositePageToCanvas(
   canvas: HTMLCanvasElement,
@@ -541,6 +408,7 @@ export async function renderCompositePageToCanvas(
     inpaintingEngine?: 'telea_biharmonic' | 'solid_interior' | 'manual_only';
     targetWidth?: number;
     targetHeight?: number;
+    onRegionAudits?: (audits: Record<string, RegionQualityAudit>) => void;
   } = {}
 ): Promise<HTMLImageElement> {
   const img = await loadImage(page.originalImage);
@@ -572,6 +440,9 @@ export async function renderCompositePageToCanvas(
     return img;
   }
 
+  const engine = options.inpaintingEngine || 'telea_biharmonic';
+  const cleanOutcomes = new Map<string, RegionCleanOutcome>();
+
   for (const region of page.regions) {
     if (
       region.regionType === 'sfx' &&
@@ -580,22 +451,44 @@ export async function renderCompositePageToCanvas(
     ) {
       continue;
     }
-    cleanRegionInPlace(
+    const outcome = cleanAndSegmentRegionInPlace(
       ctx,
       canvas.width,
       canvas.height,
       region,
-      options.inpaintingEngine || 'telea_biharmonic'
+      engine
     );
+    if (outcome) {
+      cleanOutcomes.set(region.id, outcome);
+    }
   }
 
   applyManualStrokes(ctx, img, canvas.width, canvas.height, page.manualStrokes || []);
 
+  const audits: Record<string, RegionQualityAudit> = {};
+
   if (options.showText !== false) {
     for (const region of page.regions) {
       if (region.approvalStatus === 'rejected') continue;
-      renderRegionText(ctx, canvas.width, canvas.height, region);
+      const outcome = cleanOutcomes.get(region.id);
+      const metrics = renderRegionText(ctx, canvas.width, canvas.height, region, outcome?.seg);
+      if (outcome && options.onRegionAudits) {
+        audits[region.id] = auditCleanedAndRenderedRegion({
+          beforeRoiData: outcome.beforeRoiData,
+          afterRoiData: outcome.afterRoiData,
+          seg: outcome.seg,
+          imgW: canvas.width,
+          imgH: canvas.height,
+          textCenterPx: metrics?.textCenterPx,
+          textLines: metrics?.textLines,
+          overflowed: metrics?.overflowed,
+        });
+      }
     }
+  }
+
+  if (options.onRegionAudits) {
+    options.onRegionAudits(audits);
   }
 
   return img;
@@ -605,6 +498,9 @@ const imageCache = new Map<string, HTMLImageElement>();
 const MAX_IMAGE_CACHE = 24;
 
 export function loadImage(src: string): Promise<HTMLImageElement> {
+  if (!src) {
+    return Promise.reject(new Error('Image source URL is empty'));
+  }
   if (imageCache.has(src)) {
     const cached = imageCache.get(src)!;
     if (cached.complete && cached.naturalWidth > 0) {
@@ -625,7 +521,7 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
       imageCache.set(src, img);
       resolve(img);
     };
-    img.onerror = (err) => reject(err);
+    img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
     img.src = src;
   });
 }

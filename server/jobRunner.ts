@@ -12,6 +12,10 @@ import {
   selectBatchJobPageStates,
   type StoryMemoryDeltaInput,
 } from './batchTranslation.ts';
+import {
+  collectPendingGlossarySuggestions,
+  resolveEffectiveGlossary,
+} from '../src/utils/glossaryMatcher.ts';
 
 const activeRunners = new Set<string>();
 
@@ -232,7 +236,7 @@ function scheduleJobExecution(jobId: string): void {
 
           const currentDb = getDb();
           const settings = currentDb.user.settings;
-          const glossary = currentDb.glossary.filter((g) => g.projectId === project.id);
+          const glossary = resolveEffectiveGlossary(currentDb.glossary, project.id).effective;
           const page = currentDb.pages.find((p) => p.id === pageId);
           if (!page) continue;
 
@@ -385,11 +389,18 @@ function scheduleJobExecution(jobId: string): void {
           saveDb();
         }
 
-        // Persist updated Story Memory after completing this 2-page batch before starting the next batch
+        // Persist updated Story Memory & collect pending AI glossary suggestions without touching approved glossary
         if (batchDeltas.length > 0 || batchSummaries.length > 0) {
           let updatedMem = project.storyMemory;
+          const latestDb = getDb();
           for (const d of batchDeltas) {
             updatedMem = mergeStoryMemoryUpdate(updatedMem, d, []);
+            latestDb.glossarySuggestions = collectPendingGlossarySuggestions({
+              projectId: project.id,
+              existingGlossary: latestDb.glossary,
+              existingSuggestions: latestDb.glossarySuggestions || [],
+              memoryDelta: d,
+            });
           }
           if (batchSummaries.length > 0) {
             updatedMem = mergeStoryMemoryUpdate(updatedMem, undefined, batchSummaries);

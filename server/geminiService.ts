@@ -210,7 +210,7 @@ export function buildComicAnalysisPrompt(
   const formatName = FORMAT_LABELS[comicFormat] || 'Western Comics';
   return `You are an elite Computer Vision & OCR engine specialized first in Western Comics (${formatName}), with secondary support for Manga/Manhwa.
 Inspect the provided comic page image with extreme precision.
-1. Detect ALL comic panels with canonical TOP-LEFT normalized [0..1000] bounding boxes {x, y, width, height} relative to the full original image width and height (x=0 is left edge, y=0 is top edge; NEVER return center coordinates or [ymin, xmin, ymax, xmax] order, and NEVER return 0..1 floats).
+1. Detect ALL comic panels (including multi-tier Western comic grids, inset panels, and splashes) with canonical TOP-LEFT normalized [0..1000] bounding boxes {x, y, width, height} relative to the full original image width and height (x=0 is left edge, y=0 is top edge; NEVER return center coordinates or [ymin, xmin, ymax, xmax] order, and NEVER return 0..1 floats).
 2. Detect EVERY speech balloon, narration caption box, floating text over artwork, and stylized sound effect (SFX) with tight, centered canonical TOP-LEFT normalized [0..1000] bounding boxes {x, y, width, height}:
    - CRITICAL GEOMETRY: Frame the interior text block of each balloon/box symmetrically so (x + width/2, y + height/2) sits directly at the visual center of the printed lettering inside that balloon. Do NOT include blank balloon tails or neighboring balloons in the width/height.
    - CRITICAL SEPARATION: Separate overlapping or stacked speech balloons into distinct bounding boxes — NEVER merge two overlapping balloons!

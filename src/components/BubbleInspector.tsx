@@ -18,12 +18,14 @@ import type {
   TextRegion,
   TranslationStyle,
 } from '../types/domain';
+import type { RegionQualityAudit } from '../utils/bubbleSegmentation';
 import { tFor } from '../i18n/translations';
 
 interface BubbleInspectorProps {
   lang: LanguageCode;
   project: Project;
   region: TextRegion | null;
+  regionAudit?: RegionQualityAudit;
   availableFonts: string[];
   busyRegionAction: boolean;
   onUpdateRegion: (regionId: string, patch: Partial<TextRegion>) => void;
@@ -41,6 +43,7 @@ export const BubbleInspector: React.FC<BubbleInspectorProps> = ({
   lang,
   project,
   region,
+  regionAudit,
   availableFonts,
   busyRegionAction,
   onUpdateRegion,
@@ -238,6 +241,47 @@ export const BubbleInspector: React.FC<BubbleInspectorProps> = ({
                 {t.studio.inspector.confidence}: {Math.round(region.confidence * 100)}%
               </span>
             </div>
+
+            {regionAudit && !regionAudit.passed && (
+              <div
+                data-testid="region-quality-warning"
+                className="p-2.5 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/40 text-[11px] text-amber-900 dark:text-amber-200 space-y-1"
+              >
+                <div className="font-bold">
+                  {lang === 'ar'
+                    ? 'تنبيه جودة الفقاعة (يُنصح بالمراجعة):'
+                    : 'Bubble QA notice (review advised):'}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {regionAudit.issues.map((issue) => (
+                    <span
+                      key={issue}
+                      className="px-1.5 py-0.5 rounded bg-amber-200/70 dark:bg-amber-900/60 font-medium"
+                    >
+                      {issue === 'low_segmentation_confidence'
+                        ? lang === 'ar'
+                          ? 'حدود الفقاعة غير مغلقة بوضوح'
+                          : 'Unclear bubble outline'
+                        : issue === 'residual_source_ink'
+                        ? lang === 'ar'
+                          ? 'احتمال بقاء آثار نص أصلي'
+                          : 'Possible residual ink'
+                        : issue === 'exterior_leakage'
+                        ? lang === 'ar'
+                          ? 'تأثير خارج الحدود'
+                          : 'Border leakage'
+                        : issue === 'text_overflow'
+                        ? lang === 'ar'
+                          ? 'النص مضغوط داخل الفقاعة'
+                          : 'Tight text overflow'
+                        : lang === 'ar'
+                        ? 'النص قريب من الحافة'
+                        : 'Text near edge'}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Region Type & Speaker */}
             <div className="grid grid-cols-2 gap-2.5">

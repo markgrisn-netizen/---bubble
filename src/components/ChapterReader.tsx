@@ -38,9 +38,16 @@ import { renderCompositePageToCanvas } from '../utils/inpainting';
 import { computeContainRect } from '../utils/coordinateTransform';
 import {
   getOfflineChapter,
+  listOfflineChapters,
   removeOfflineChapter,
-  saveChapterOffline,
+  updateOfflineChapterLastReadPage,
 } from '../utils/offlineDb';
+import {
+  getOfflineDownloadTasks,
+  startChapterOfflineDownload,
+  subscribeOfflineDownloads,
+  type OfflineDownloadTask,
+} from '../utils/offlineDownloadManager';
 import {
   computeCurrentPageFromScroll,
   computeReaderPageFrameSize,
@@ -123,6 +130,7 @@ interface ReaderPageSlotProps {
   isLightBg: boolean;
   registerSlotRef: (streamIndex: number, el: HTMLDivElement | null) => void;
   onSelectBubble: (region: TextRegion | null) => void;
+  onShowTranslated?: () => void;
   t: ReturnType<typeof tFor>;
 }
 
@@ -138,6 +146,7 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
     isLightBg,
     registerSlotRef,
     onSelectBubble,
+    onShowTranslated,
     t,
   }) => {
     const { page, streamIndex } = item;
@@ -152,8 +161,12 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
     const [thumbUrl, setThumbUrl] = useState<string | null>(null);
     const thumbCapturedRef = useRef(false);
 
+    const hasBakedComposite =
+      !showOriginal && Boolean(page.processedImage && page.processedImage.startsWith('data:'));
+    const missingOriginalOffline = showOriginal && !page.originalImage;
     const needsCompositeCanvas =
       !showOriginal &&
+      !hasBakedComposite &&
       (page.regions.length > 0 ||
         (page.manualStrokes?.length || 0) > 0 ||
         (page.rotation || 0) !== 0);
@@ -221,9 +234,13 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
       };
     }, [inRenderWindow, needsCompositeCanvas, page, showOriginal, inpaintingEngine, retryNonce]);
 
-    // Original/unmodified image cached check on remount
+    // Original/unmodified or pre-rendered offline composite image check on remount
     useLayoutEffect(() => {
       if (!inRenderWindow || needsCompositeCanvas) return;
+      if (missingOriginalOffline) {
+        setStatus('loaded');
+        return;
+      }
       const imgEl = imgRef.current;
       if (!imgEl) {
         setStatus('loading');
@@ -239,7 +256,15 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
       } else {
         setStatus('loading');
       }
-    }, [inRenderWindow, needsCompositeCanvas, page.originalImage, retryNonce]);
+    }, [
+      inRenderWindow,
+      needsCompositeCanvas,
+      missingOriginalOffline,
+      hasBakedComposite,
+      page.processedImage,
+      page.originalImage,
+      retryNonce,
+    ]);
 
     const frame = computeReaderPageFrameSize({
       naturalWidth: naturalSize.w,
@@ -341,7 +366,29 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
           </div>
         ) : (
           <>
-            {needsCompositeCanvas ? (
+            {missingOriginalOffline ? (
+              <div
+                className={`w-full h-full flex flex-col items-center justify-center gap-3 p-6 text-center border ${
+                  isLightBg
+                    ? 'bg-amber-50 border-amber-200 text-amber-950'
+                    : 'bg-slate-900/90 border-slate-700 text-slate-200'
+                }`}
+              >
+                <CloudOff className="w-7 h-7 text-amber-400" />
+                <p className="text-xs sm:text-sm font-semibold max-w-xs">
+                  {t.reader.missingOriginalsOfflineNote}
+                </p>
+                {onShowTranslated && (
+                  <button
+                    type="button"
+                    onClick={onShowTranslated}
+                    className="px-3.5 py-2 rounded-lg bg-[#FFE01B] text-[#111216] text-xs font-black cursor-pointer"
+                  >
+                    {t.reader.returnToTranslated}
+                  </button>
+                )}
+              </div>
+            ) : needsCompositeCanvas ? (
               <canvas
                 ref={canvasRef}
                 data-testid={`page-canvas-${page.pageNumber}`}
@@ -352,8 +399,8 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
             ) : (
               <img
                 ref={imgRef}
-                key={`${page.id}-${retryNonce}-${showOriginal ? 'orig' : 'tr'}`}
-                src={page.originalImage}
+                key={`${page.id}-${retryNonce}-${showOriginal ? 'orig' : hasBakedComposite ? 'baked' : 'tr'}`}
+                src={hasBakedComposite ? page.processedImage! : page.originalImage}
                 alt={`Page ${page.pageNumber}`}
                 decoding="async"
                 onLoad={(e) => {
@@ -371,7 +418,7 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
             )}
 
             {/* Loading shimmer & subtle spinner overlay */}
-            {(status === 'loading' || status === 'idle') && (
+            {(status === 'loading' || status === 'idle') && !missingOriginalOffline && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
                 <Loader2
                   className={`w-6 h-6 animate-spin ${
@@ -438,6 +485,7 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const patchTimerRef = useRef<number | null>(null);
   const initialRestoredForChapterRef = useRef<string | null>(null);
+  const programmaticJumpUntilRef = useRef<number>(0);
 
   const [viewportSize, setViewportSize] = useState({ w: 960, h: 720 });
   const [activeChapterId, setActiveChapterId] = useState(chapterId);
@@ -468,7 +516,8 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
 
   const [isOfflineSaved, setIsOfflineSaved] = useState(false);
   const [loadedFromOffline, setLoadedFromOffline] = useState(false);
-  const [savingOffline, setSavingOffline] = useState(false);
+  const [confirmRemoveOfflineOpen, setConfirmRemoveOfflineOpen] = useState(false);
+  const [activeOfflineTask, setActiveOfflineTask] = useState<OfflineDownloadTask | null>(null);
   const [inspectedRegion, setInspectedRegion] = useState<TextRegion | null>(null);
 
   // Sync external chapterId prop
@@ -506,7 +555,21 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
     };
   }, [toolbarHidden]);
 
-  // Load chapter + sibling chapters
+  // Subscribe to download manager task for active chapter
+  useEffect(() => {
+    const syncTask = () => {
+      const task =
+        getOfflineDownloadTasks().find((dt) => dt.taskId === `ch:${activeChapterId}`) || null;
+      setActiveOfflineTask(task);
+      if (task?.status === 'completed') {
+        setIsOfflineSaved(true);
+      }
+    };
+    syncTask();
+    return subscribeOfflineDownloads(syncTask);
+  }, [activeChapterId]);
+
+  // Load chapter + sibling chapters (with full offline IndexedDB fallback)
   useEffect(() => {
     let cancelled = false;
     initialRestoredForChapterRef.current = null;
@@ -514,6 +577,18 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
     setInfiniteVisibleCount(8);
     visibleIndicesRef.current = new Set([0, 1, 2]);
     setRenderWindow({ start: 0, end: 7 });
+
+    const loadOfflineSiblings = async (projId: string) => {
+      const allOff = await listOfflineChapters();
+      if (cancelled) return;
+      const siblings = allOff
+        .filter((b) => (b.projectId || b.project.id) === projId)
+        .map((b) => b.chapter)
+        .sort((a, b) => a.chapterNumber - b.chapterNumber);
+      if (siblings.length > 0) {
+        setProjectChapters(siblings);
+      }
+    };
 
     async function load() {
       const offline = await getOfflineChapter(activeChapterId).catch(() => null);
@@ -536,7 +611,9 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
           0,
           Math.min(
             Math.max(0, res.pages.length - 1),
-            localIdx !== null ? localIdx : (res.chapter.lastReadPage || 1) - 1
+            localIdx !== null
+              ? localIdx
+              : ((offline?.lastReadPage ?? res.chapter.lastReadPage ?? 1) - 1)
           )
         );
         setCurrentPageIdx(startIdx);
@@ -556,7 +633,9 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
               setProjectChapters(sorted);
             }
           })
-          .catch(() => {});
+          .catch(() => {
+            void loadOfflineSiblings(res.project.id);
+          });
       } catch {
         if (offline && !cancelled) {
           setProject(offline.project);
@@ -564,15 +643,20 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
           setPages(offline.pages);
           setLoadedFromOffline(true);
           const localIdx = loadSavedChapterPosition(activeChapterId);
+          const offlineSavedPage = offline.lastReadPage ?? offline.chapter.lastReadPage ?? 1;
           const startIdx = Math.max(
             0,
             Math.min(
               Math.max(0, offline.pages.length - 1),
-              localIdx !== null ? localIdx : (offline.chapter.lastReadPage || 1) - 1
+              localIdx !== null ? localIdx : offlineSavedPage - 1
             )
           );
           setCurrentPageIdx(startIdx);
           setJumpInput(String(startIdx + 1));
+          if (startIdx >= 6) {
+            setInfiniteVisibleCount(startIdx + 6);
+          }
+          await loadOfflineSiblings(offline.project.id);
         }
       }
     }
@@ -642,7 +726,13 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
         return [...prev, { chapter: res.chapter, pages: res.pages }];
       });
     } catch {
-      // Ignore fetch errors cleanly
+      const offlineNext = await getOfflineChapter(nextAvailableChapter.id).catch(() => null);
+      if (offlineNext) {
+        setExtraChapters((prev) => {
+          if (prev.some((x) => x.chapter.id === offlineNext.chapter.id)) return prev;
+          return [...prev, { chapter: offlineNext.chapter, pages: offlineNext.pages }];
+        });
+      }
     } finally {
       setLoadingExtraChapter(false);
     }
@@ -745,16 +835,22 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
     fetchNextChapterIfNeeded,
   ]);
 
-  // Schedule debounced backend persistence for lastReadPage
+  // Schedule debounced local IndexedDB + backend persistence for lastReadPage
   const schedulePositionSave = useCallback(
-    (chapId: string, pageIdx: number) => {
+    (chapId: string, pageIdx: number, immediateOffline = false) => {
       persistChapterPosition(chapId, pageIdx);
+      if (immediateOffline) {
+        void updateOfflineChapterLastReadPage(chapId, pageIdx + 1);
+      }
       if (patchTimerRef.current !== null) {
         window.clearTimeout(patchTimerRef.current);
       }
       patchTimerRef.current = window.setTimeout(() => {
-        void api.updateChapter(chapId, { lastReadPage: pageIdx + 1 }).catch(() => {});
-      }, 450);
+        void updateOfflineChapterLastReadPage(chapId, pageIdx + 1);
+        if (typeof navigator === 'undefined' || navigator.onLine !== false) {
+          void api.updateChapter(chapId, { lastReadPage: pageIdx + 1 }).catch(() => {});
+        }
+      }, immediateOffline ? 80 : 300);
     },
     []
   );
@@ -771,13 +867,23 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
   const scrollToStreamPage = useCallback(
     (targetIdx: number, behavior: ScrollBehavior = 'smooth') => {
       const clamped = Math.max(0, Math.min(Math.max(0, pages.length - 1), targetIdx));
+      setCurrentPageIdx(clamped);
+      setJumpInput(String(clamped + 1));
+      setProgressPct(
+        computeReadingProgressPercent(
+          0,
+          0,
+          0,
+          clamped,
+          pages.length,
+          prefs.mode === 'paginated' ? 'paginated' : 'web'
+        )
+      );
+      if (chapter) {
+        schedulePositionSave(chapter.id, clamped, true);
+      }
+
       if (prefs.mode === 'paginated') {
-        setCurrentPageIdx(clamped);
-        setProgressPct(
-          computeReadingProgressPercent(0, 0, 0, clamped, pages.length, 'paginated')
-        );
-        setJumpInput(String(clamped + 1));
-        if (chapter) schedulePositionSave(chapter.id, clamped);
         return;
       }
 
@@ -785,6 +891,7 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
         setInfiniteVisibleCount(clamped + 6);
       }
 
+      programmaticJumpUntilRef.current = Date.now() + (behavior === 'smooth' ? 850 : 250);
       requestAnimationFrame(() => {
         const vp = viewportRef.current;
         const targetEl = slotRefs.current.get(clamped);
@@ -815,6 +922,7 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
     );
 
     if (targetIdx > 0 && prefs.mode !== 'paginated') {
+      programmaticJumpUntilRef.current = Date.now() + 300;
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const vp = viewportRef.current;
@@ -843,6 +951,8 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
     setShowBackToTop(vp.scrollTop > 320);
 
     if (prefs.mode === 'paginated') return;
+    if (Date.now() < programmaticJumpUntilRef.current) return;
+
     const vpRect = vp.getBoundingClientRect();
     const spans: PageViewportSpan[] = [];
 
@@ -914,20 +1024,21 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
     }
   };
 
-  const handleSaveOffline = async () => {
+  const handleSaveOffline = () => {
     if (!project || !chapter) return;
-    setSavingOffline(true);
-    try {
-      await saveChapterOffline(project, chapter, pages);
-      setIsOfflineSaved(true);
-    } finally {
-      setSavingOffline(false);
-    }
+    startChapterOfflineDownload({
+      projectId: project.id,
+      chapterId: chapter.id,
+      title: chapter.title,
+      includeOriginals: true,
+      inpaintingEngine,
+    });
   };
 
   const handleRemoveOffline = async () => {
     await removeOfflineChapter(activeChapterId);
     setIsOfflineSaved(false);
+    setConfirmRemoveOfflineOpen(false);
   };
 
   const scrollToTop = () => {
@@ -1049,7 +1160,7 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
                     e.preventDefault();
                     const parsed = Number(jumpInput);
                     if (Number.isFinite(parsed) && parsed >= 1) {
-                      scrollToStreamPage(parsed - 1);
+                      scrollToStreamPage(parsed - 1, 'auto');
                       setJumpOpen(false);
                     }
                   }}
@@ -1118,7 +1229,8 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
             {isOfflineSaved ? (
               <button
                 type="button"
-                onClick={() => void handleRemoveOffline()}
+                data-testid="reader-remove-offline-btn"
+                onClick={() => setConfirmRemoveOfflineOpen(true)}
                 title={t.reader.removeOffline}
                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-emerald-700 bg-emerald-950/60 text-emerald-300 text-xs font-medium cursor-pointer"
               >
@@ -1128,13 +1240,23 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
             ) : (
               <button
                 type="button"
-                disabled={savingOffline || pages.length === 0}
-                onClick={() => void handleSaveOffline()}
+                data-testid="reader-save-offline-btn"
+                disabled={activeOfflineTask?.status === 'downloading' || pages.length === 0}
+                onClick={handleSaveOffline}
                 title={t.reader.saveOffline}
                 className="faqqa-btn-yellow inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-black cursor-pointer disabled:opacity-40"
               >
-                <DownloadCloud className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">{t.reader.saveOffline}</span>
+                {activeOfflineTask?.status === 'downloading' ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span className="font-mono-tabular">{activeOfflineTask.progress}%</span>
+                  </>
+                ) : (
+                  <>
+                    <DownloadCloud className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">{t.reader.saveOffline}</span>
+                  </>
+                )}
               </button>
             )}
 
@@ -1468,6 +1590,7 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
                   isLightBg={isLightBg}
                   registerSlotRef={registerSlotRef}
                   onSelectBubble={setInspectedRegion}
+                  onShowTranslated={() => setShowOriginal(false)}
                   t={t}
                 />
               </div>
@@ -1557,6 +1680,7 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
                     isLightBg={isLightBg}
                     registerSlotRef={registerSlotRef}
                     onSelectBubble={setInspectedRegion}
+                    onShowTranslated={() => setShowOriginal(false)}
                     t={t}
                   />
                 </React.Fragment>
@@ -1648,6 +1772,52 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
           </div>
           <div className="text-xs font-bold text-[#FFE01B]">
             {inspectedRegion.translatedText}
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal before removing local offline chapter */}
+      {confirmRemoveOfflineOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={t.home.confirmDeleteLocalTitle}
+          data-testid="reader-confirm-delete-local-modal"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+        >
+          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-[#141822] text-slate-100 p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-black text-white">
+                {t.home.confirmDeleteLocalTitle}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setConfirmRemoveOfflineOpen(false)}
+                className="text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {t.home.confirmDeleteLocalBody}
+            </p>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmRemoveOfflineOpen(false)}
+                className="px-3.5 py-2 rounded-xl border border-slate-700 text-xs font-bold text-slate-200 hover:bg-slate-800 cursor-pointer"
+              >
+                {t.home.cancel}
+              </button>
+              <button
+                type="button"
+                data-testid="reader-confirm-delete-local-btn"
+                onClick={() => void handleRemoveOffline()}
+                className="px-3.5 py-2 rounded-xl bg-[#EA3829] text-white text-xs font-black hover:brightness-110 cursor-pointer"
+              >
+                {t.home.confirmDeleteLocalBtn}
+              </button>
+            </div>
           </div>
         </div>
       )}

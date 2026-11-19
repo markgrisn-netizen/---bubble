@@ -1,4 +1,5 @@
 import fs from 'fs';
+import http from 'http';
 import path from 'path';
 import crypto from 'crypto';
 import express from 'express';
@@ -6,6 +7,11 @@ import dotenv from 'dotenv';
 import JSZip from 'jszip';
 import { createServer as createViteServer } from 'vite';
 import { appendLog, getDb, getUploadsDir, saveBase64Asset, saveDb } from './server/store.ts';
+import {
+  collectPendingGlossarySuggestions,
+  GLOBAL_GLOSSARY_PROJECT_ID,
+  resolveEffectiveGlossary,
+} from './src/utils/glossaryMatcher.ts';
 import {
   analyzeComicPageWithProvider,
   fetchDynamicProviderModels,
@@ -71,6 +77,7 @@ const PORT = Number(process.env.PORT || 3000);
 
 async function startServer() {
   const app = express();
+  const httpServer = http.createServer(app);
   app.use(express.json({ limit: '60mb' }));
   app.use(express.urlencoded({ extended: true, limit: '60mb' }));
 
@@ -1193,7 +1200,7 @@ async function startServer() {
             .join('\n')
         : undefined;
 
-      const glossary = db.glossary.filter((g) => g.projectId === project.id);
+      const glossary = resolveEffectiveGlossary(db.glossary, project.id).effective;
       const tr = await translateRegionsWithProvider(
         page.regions,
         project,
@@ -1221,6 +1228,14 @@ async function startServer() {
           tr.memoryUpdate,
           tr.summaryAddition ? [tr.summaryAddition] : []
         );
+        if (tr.memoryUpdate) {
+          db.glossarySuggestions = collectPendingGlossarySuggestions({
+            projectId: project.id,
+            existingGlossary: db.glossary,
+            existingSuggestions: db.glossarySuggestions || [],
+            memoryDelta: tr.memoryUpdate,
+          });
+        }
       }
 
       page.status = 'completed';
@@ -1420,7 +1435,7 @@ async function startServer() {
         return;
       }
 
-      const glossary = db.glossary.filter((g) => g.projectId === project.id);
+      const glossary = resolveEffectiveGlossary(db.glossary, project.id).effective;
       const result = await retranslateSingleBubbleWithProvider(
         targetRegion,
         parentPage.regions,
@@ -1518,23 +1533,68 @@ async function startServer() {
     res.json({ ok: true });
   });
 
-  // Glossary API
+  // Personal Glossary API (Global + Project Scopes, Edit, Import, and AI Suggestions Queue)
+  app.get('/api/glossary', (req, res) => {
+    const db = getDb();
+    const projectId = typeof req.query.projectId === 'string' ? req.query.projectId : undefined;
+    const scope = typeof req.query.scope === 'string' ? req.query.scope : 'all';
+    const resolved = resolveEffectiveGlossary(db.glossary, projectId);
+    const entries =
+      scope === 'global'
+        ? resolved.globalEntries
+        : scope === 'project'
+        ? resolved.projectEntries
+        : resolved.effective;
+    res.json({
+      entries,
+      globalEntries: resolved.globalEntries,
+      projectEntries: resolved.projectEntries,
+      overriddenGlobalIds: resolved.overriddenGlobalIds,
+      overridingProjectIds: resolved.overridingProjectIds,
+    });
+  });
+
   app.get('/api/glossary/:projectId', (req, res) => {
     const db = getDb();
-    const entries = db.glossary.filter((g) => g.projectId === req.params.projectId);
-    res.json({ entries });
+    const pid = req.params.projectId;
+    const includeGlobal = req.query.includeGlobal === '1' || req.query.includeGlobal === 'true';
+    if (pid === GLOBAL_GLOSSARY_PROJECT_ID) {
+      const resolved = resolveEffectiveGlossary(db.glossary);
+      res.json({
+        entries: resolved.globalEntries,
+        globalEntries: resolved.globalEntries,
+        projectEntries: [],
+        overriddenGlobalIds: [],
+        overridingProjectIds: [],
+      });
+      return;
+    }
+    const resolved = resolveEffectiveGlossary(db.glossary, pid);
+    res.json({
+      entries: includeGlobal ? resolved.effective : resolved.projectEntries,
+      globalEntries: resolved.globalEntries,
+      projectEntries: resolved.projectEntries,
+      overriddenGlobalIds: resolved.overriddenGlobalIds,
+      overridingProjectIds: resolved.overridingProjectIds,
+    });
   });
 
   app.post('/api/glossary', (req, res) => {
-    const { projectId, originalTerm, translatedTerm, category, notes } = req.body || {};
-    if (!projectId || !originalTerm?.trim() || !translatedTerm?.trim()) {
-      res.status(400).json({ error: 'projectId, originalTerm, and translatedTerm are required' });
+    const { projectId, scope, originalTerm, translatedTerm, category, notes } = req.body || {};
+    const resolvedScope: 'global' | 'project' =
+      scope === 'global' || projectId === GLOBAL_GLOSSARY_PROJECT_ID ? 'global' : 'project';
+    const targetProjectId =
+      resolvedScope === 'global' ? GLOBAL_GLOSSARY_PROJECT_ID : String(projectId || '').trim();
+
+    if (!targetProjectId || !originalTerm?.trim() || !translatedTerm?.trim()) {
+      res.status(400).json({ error: 'projectId/scope, originalTerm, and translatedTerm are required' });
       return;
     }
     const db = getDb();
     const entry: GlossaryEntry = {
       id: `gloss-${crypto.randomBytes(4).toString('hex')}`,
-      projectId,
+      projectId: targetProjectId,
+      scope: resolvedScope,
       originalTerm: originalTerm.trim(),
       translatedTerm: translatedTerm.trim(),
       category: normalizeGlossaryCategory(category),
@@ -1545,19 +1605,54 @@ async function startServer() {
     res.status(201).json({ entry });
   });
 
+  app.patch('/api/glossary/:id', (req, res) => {
+    const db = getDb();
+    const entry = db.glossary.find((g) => g.id === req.params.id);
+    if (!entry) {
+      res.status(404).json({ error: 'Glossary entry not found' });
+      return;
+    }
+    const { originalTerm, translatedTerm, category, notes, scope, projectId } = req.body || {};
+    if (typeof originalTerm === 'string' && originalTerm.trim()) {
+      entry.originalTerm = originalTerm.trim();
+    }
+    if (typeof translatedTerm === 'string' && translatedTerm.trim()) {
+      entry.translatedTerm = translatedTerm.trim();
+    }
+    if (category !== undefined) {
+      entry.category = normalizeGlossaryCategory(category);
+    }
+    if (typeof notes === 'string') {
+      entry.notes = notes.trim();
+    }
+    if (scope === 'global') {
+      entry.scope = 'global';
+      entry.projectId = GLOBAL_GLOSSARY_PROJECT_ID;
+    } else if (scope === 'project' && typeof projectId === 'string' && projectId.trim()) {
+      entry.scope = 'project';
+      entry.projectId = projectId.trim();
+    }
+    saveDb();
+    res.json({ entry });
+  });
+
   app.post('/api/glossary/:projectId/import', (req, res) => {
     const { entries } = req.body || {};
     if (!Array.isArray(entries)) {
       res.status(400).json({ error: 'entries array is required' });
       return;
     }
+    const pid = req.params.projectId;
+    const resolvedScope: 'global' | 'project' =
+      pid === GLOBAL_GLOSSARY_PROJECT_ID ? 'global' : 'project';
     const db = getDb();
     const added: GlossaryEntry[] = [];
     for (const item of entries) {
       if (!item.originalTerm || !item.translatedTerm) continue;
       const entry: GlossaryEntry = {
         id: `gloss-${crypto.randomBytes(4).toString('hex')}`,
-        projectId: req.params.projectId,
+        projectId: pid,
+        scope: resolvedScope,
         originalTerm: String(item.originalTerm).trim(),
         translatedTerm: String(item.translatedTerm).trim(),
         category: normalizeGlossaryCategory(item.category),
@@ -1580,6 +1675,58 @@ async function startServer() {
     db.glossary.splice(idx, 1);
     saveDb();
     res.json({ ok: true });
+  });
+
+  app.get('/api/glossary-suggestions', (req, res) => {
+    const db = getDb();
+    const projectId = typeof req.query.projectId === 'string' ? req.query.projectId : '';
+    const statusFilter = typeof req.query.status === 'string' ? req.query.status : 'pending';
+    const list = (db.glossarySuggestions || []).filter((s) => {
+      if (projectId && s.projectId !== projectId) return false;
+      if (statusFilter !== 'all' && s.status !== statusFilter) return false;
+      return true;
+    });
+    res.json({ suggestions: list });
+  });
+
+  app.post('/api/glossary-suggestions/:id/approve', (req, res) => {
+    const db = getDb();
+    const sugg = (db.glossarySuggestions || []).find((s) => s.id === req.params.id);
+    if (!sugg) {
+      res.status(404).json({ error: 'Suggestion not found' });
+      return;
+    }
+    const { scope, projectId, translatedTerm, category, notes } = req.body || {};
+    const targetScope: 'global' | 'project' = scope === 'global' ? 'global' : 'project';
+    const targetProjectId =
+      targetScope === 'global' ? GLOBAL_GLOSSARY_PROJECT_ID : projectId || sugg.projectId;
+    const entry: GlossaryEntry = {
+      id: `gloss-${crypto.randomBytes(4).toString('hex')}`,
+      projectId: targetProjectId,
+      scope: targetScope,
+      originalTerm: sugg.originalTerm.trim(),
+      translatedTerm: (translatedTerm || sugg.suggestedTranslation).trim(),
+      category: normalizeGlossaryCategory(category || sugg.category),
+      notes: (notes !== undefined ? String(notes) : sugg.notes).trim(),
+    };
+    db.glossary.unshift(entry);
+    sugg.status = 'approved';
+    sugg.updatedAt = new Date().toISOString();
+    saveDb();
+    res.status(201).json({ entry, suggestion: sugg });
+  });
+
+  app.post('/api/glossary-suggestions/:id/dismiss', (req, res) => {
+    const db = getDb();
+    const sugg = (db.glossarySuggestions || []).find((s) => s.id === req.params.id);
+    if (!sugg) {
+      res.status(404).json({ error: 'Suggestion not found' });
+      return;
+    }
+    sugg.status = 'dismissed';
+    sugg.updatedAt = new Date().toISOString();
+    saveDb();
+    res.json({ suggestion: sugg });
   });
 
   // Server-side Export endpoint (builds ZIP/CBZ from rendered or original pages + editable JSON layers)
@@ -1847,7 +1994,11 @@ async function startServer() {
   const isProd = process.env.NODE_ENV === 'production';
   if (!isProd) {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+        ws: { server: httpServer },
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -1859,8 +2010,8 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`PanelTranslate AI server listening on http://localhost:${PORT}`);
+  httpServer.listen(PORT, '0.0.0.0', () => {
+    console.log(`Faqqa server listening on http://localhost:${PORT}`);
   });
 }
 

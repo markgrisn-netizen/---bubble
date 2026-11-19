@@ -5,6 +5,7 @@ import type {
   AiSettings,
   Chapter,
   GlossaryEntry,
+  GlossarySuggestion,
   OperationLog,
   Page,
   Project,
@@ -22,6 +23,7 @@ export interface DatabaseState {
   chapters: Chapter[];
   pages: Page[];
   glossary: GlossaryEntry[];
+  glossarySuggestions: GlossarySuggestion[];
   jobs: TranslationJob[];
   logs: OperationLog[];
 }
@@ -678,6 +680,7 @@ function buildSeedState(): DatabaseState {
         notes: 'المسار الروحي والقتالي للساموراي',
       },
     ],
+    glossarySuggestions: [],
     jobs: [],
     logs: [
       {
@@ -746,6 +749,9 @@ export function getDb(): DatabaseState {
       cachedDb = JSON.parse(raw) as DatabaseState;
       if (cachedDb?.user) {
         cachedDb.user.settings = normalizeAiSettings(cachedDb.user.settings);
+      }
+      if (cachedDb && !Array.isArray(cachedDb.glossarySuggestions)) {
+        cachedDb.glossarySuggestions = [];
       }
       if (cachedDb && syncUntouchedSeedRegions(cachedDb)) {
         saveDb();

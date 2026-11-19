@@ -84,6 +84,11 @@ export interface TextRegion {
   sfxMode: SfxMode;
   approvalStatus: ApprovalStatus;
   translationStatus: 'untranslated' | 'translated' | 'edited' | 'error';
+  qualityAudit?: {
+    passed: boolean;
+    confidence: number;
+    issues: string[];
+  };
 }
 
 export interface DetectedPanel {
@@ -166,13 +171,29 @@ export type GlossaryCategory =
   | 'sfx'
   | 'term';
 
+export type GlossaryScope = 'global' | 'project';
+
 export interface GlossaryEntry {
   id: string;
   projectId: string;
+  scope?: GlossaryScope;
   originalTerm: string;
   translatedTerm: string;
   category: GlossaryCategory;
   notes: string;
+}
+
+export interface GlossarySuggestion {
+  id: string;
+  projectId: string;
+  originalTerm: string;
+  suggestedTranslation: string;
+  category: GlossaryCategory;
+  notes: string;
+  occurrences: number;
+  status: 'pending' | 'approved' | 'dismissed';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Chapter {

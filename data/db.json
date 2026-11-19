@@ -93,7 +93,7 @@
         ]
       },
       "createdAt": "2026-11-18T08:43:52.185Z",
-      "updatedAt": "2026-11-18T08:46:46.134Z",
+      "updatedAt": "2026-11-19T08:57:22.585Z",
       "coverImage": "/uploads/ch_ch-23767060_p1_1794991458667_bf5dde02.webp"
     },
     {
@@ -4342,6 +4342,15 @@
   ],
   "glossary": [
     {
+      "id": "gloss-10461936",
+      "projectId": "proj-445c6862",
+      "scope": "project",
+      "originalTerm": "Metropolis",
+      "translatedTerm": "متروبوليس العظمى",
+      "category": "character",
+      "notes": ""
+    },
+    {
       "id": "gloss-av-1",
       "projectId": "proj-apex-vanguard",
       "originalTerm": "Sentinel",
@@ -4451,6 +4460,201 @@
     }
   ],
   "logs": [
+    {
+      "id": "log-1795079159293-eqp9",
+      "timestamp": "2026-11-19T09:05:59.293Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline R2 Comic\""
+    },
+    {
+      "id": "log-1795079151040-iqzi",
+      "timestamp": "2026-11-19T09:05:51.040Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 20 pages to \"Ch 1 Offline Test\"",
+      "projectId": "proj-1d066d59",
+      "chapterId": "ch-3ace8da6"
+    },
+    {
+      "id": "log-1795079150881-0v75",
+      "timestamp": "2026-11-19T09:05:50.881Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline R2 Comic\"",
+      "projectId": "proj-1d066d59"
+    },
+    {
+      "id": "log-1795079145207-f5sm",
+      "timestamp": "2026-11-19T09:05:45.207Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline R2 Comic\""
+    },
+    {
+      "id": "log-1795079089872-si1y",
+      "timestamp": "2026-11-19T09:04:49.872Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 20 pages to \"Ch 1 Offline Test\"",
+      "projectId": "proj-33d84025",
+      "chapterId": "ch-29ff9cc8"
+    },
+    {
+      "id": "log-1795079088966-4qdd",
+      "timestamp": "2026-11-19T09:04:48.966Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline R2 Comic\"",
+      "projectId": "proj-33d84025"
+    },
+    {
+      "id": "log-1795079011786-h45x",
+      "timestamp": "2026-11-19T09:03:31.786Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline 20-Page Comic\""
+    },
+    {
+      "id": "log-1795078967585-7tpn",
+      "timestamp": "2026-11-19T09:02:47.585Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-81829cf3",
+      "chapterId": "ch-763211f8"
+    },
+    {
+      "id": "log-1795078960982-i1d5",
+      "timestamp": "2026-11-19T09:02:40.983Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-81829cf3",
+      "chapterId": "ch-3aefe927"
+    },
+    {
+      "id": "log-1795078956520-zkd8",
+      "timestamp": "2026-11-19T09:02:36.520Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-81829cf3",
+      "chapterId": "ch-c82a323a"
+    },
+    {
+      "id": "log-1795078803824-y66p",
+      "timestamp": "2026-11-19T09:00:03.824Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline 20-Page Comic\""
+    },
+    {
+      "id": "log-1795078793793-u63g",
+      "timestamp": "2026-11-19T08:59:53.793Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 20 pages to \"Issue #20 Offline Test\"",
+      "projectId": "proj-26f29f4b",
+      "chapterId": "ch-11175a21"
+    },
+    {
+      "id": "log-1795078792253-9enp",
+      "timestamp": "2026-11-19T08:59:52.253Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline 20-Page Comic\"",
+      "projectId": "proj-26f29f4b"
+    },
+    {
+      "id": "log-1795078750540-6lc1",
+      "timestamp": "2026-11-19T08:59:10.540Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline 20-Page Comic\"",
+      "projectId": "proj-81829cf3"
+    },
+    {
+      "id": "log-1795078642589-woge",
+      "timestamp": "2026-11-19T08:57:22.589Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-ffb7bb13"
+    },
+    {
+      "id": "log-1795078635937-rk5h",
+      "timestamp": "2026-11-19T08:57:15.937Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-33dfeab2"
+    },
+    {
+      "id": "log-1795078630193-5s65",
+      "timestamp": "2026-11-19T08:57:10.193Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-3ff9056b"
+    },
+    {
+      "id": "log-1795078603492-tf8o",
+      "timestamp": "2026-11-19T08:56:43.492Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-376b15b8"
+    },
+    {
+      "id": "log-1795078596831-dor5",
+      "timestamp": "2026-11-19T08:56:36.831Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-19593d63"
+    },
+    {
+      "id": "log-1795078590904-1de3",
+      "timestamp": "2026-11-19T08:56:30.904Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-a439a1e3"
+    },
+    {
+      "id": "log-1795078553312-6f0c",
+      "timestamp": "2026-11-19T08:55:53.312Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-8d67b4e8"
+    },
+    {
+      "id": "log-1795078546578-yyqb",
+      "timestamp": "2026-11-19T08:55:46.578Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-156826b3"
+    },
+    {
+      "id": "log-1795078540302-oksm",
+      "timestamp": "2026-11-19T08:55:40.302Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-f51b8485"
+    },
     {
       "id": "log-1794994257170-fvqd",
       "timestamp": "2026-11-18T09:30:57.170Z",
@@ -5055,5 +5259,6 @@
       "projectId": "proj-cd7f2b1d",
       "chapterId": "ch-b566165e"
     }
-  ]
+  ],
+  "glossarySuggestions": []
 }

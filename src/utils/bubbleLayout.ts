@@ -8,6 +8,7 @@ import type {
   ReadingDirection,
   TextRegion,
 } from '../types/domain';
+import { findMatchingGlossaryTerms as boundarySafeGlossaryMatch } from './glossaryMatcher';
 
 export function boxToPolygon(box: BoundingBox): Point[] {
   return [
@@ -205,8 +206,9 @@ function balanceComicLines(
 }
 
 /**
- * Deterministic word-wrapper and auto-fit sizer for Western & Arabic comic speech bubbles.
- * Handles Arabic RTL shaping safety, English Comic Lettering, and diamond/oval balancing.
+ * Deterministic contour-aware word-wrapper and gradual auto-fit sizer for Western & Arabic comic speech bubbles:
+ * 1. Wraps against optional per-band contour widths (so wide center lines fill oval/cloud width while narrow top/bottom lines stay inset from curved walls).
+ * 2. Gradually steps down font size to readable floor (11px), slightly tightens line-height if needed, and falls back to 9.5px only when strictly necessary while flagging `overflowed`.
  */
 export function fitTextInRegion(
   text: string,
@@ -215,7 +217,8 @@ export function fitTextInRegion(
   settings: Pick<FontSettings, 'fontSize' | 'lineHeight' | 'padding' | 'autoFit'> & {
     align?: FontSettings['align'];
   },
-  measureWidth: (str: string, fontSizePx: number) => number
+  measureWidth: (str: string, fontSizePx: number) => number,
+  getBandMaxWidthPx?: (lineIndex: number, totalExpectedLines: number, lineHeightPx: number) => number
 ): FittedTextResult {
   const cleanText = (text || '').trim();
   if (!cleanText) {
@@ -232,52 +235,74 @@ export function fitTextInRegion(
   const availHeight = Math.max(20, boxHeightPx * (1 - padRatio * 2));
   const shouldBalance = settings.align !== 'left' && settings.align !== 'right';
 
-  const wrapAtSize = (fontSizePx: number): string[] => {
+  const getLineLimit = (lineIdx: number, estTotal: number, lhPx: number): number => {
+    if (!getBandMaxWidthPx) return availWidth;
+    const contourW = getBandMaxWidthPx(lineIdx, estTotal, lhPx);
+    return Math.max(20, Math.min(availWidth, contourW));
+  };
+
+  const wrapAtSize = (fontSizePx: number, lineHeightMult: number): string[] => {
     const paragraphs = cleanText.split(/\r?\n/);
-    const lines: string[] = [];
+    const lhPx = fontSizePx * lineHeightMult;
+    const estMaxLines = Math.max(1, Math.floor(availHeight / Math.max(8, lhPx)));
 
-    for (const para of paragraphs) {
-      const words = para.trim().split(/\s+/).filter(Boolean);
-      if (words.length === 0) {
-        lines.push('');
-        continue;
-      }
+    const runWrap = (expectedLines: number): string[] => {
+      const lines: string[] = [];
+      for (const para of paragraphs) {
+        const words = para.trim().split(/\s+/).filter(Boolean);
+        if (words.length === 0) {
+          lines.push('');
+          continue;
+        }
 
-      const paraLines: string[] = [];
-      let currentLine = words[0];
-      if (measureWidth(currentLine, fontSizePx) > availWidth && currentLine.length > 4) {
-        const splitChunks = breakLongToken(currentLine, availWidth, fontSizePx, measureWidth);
-        paraLines.push(...splitChunks.slice(0, -1));
-        currentLine = splitChunks[splitChunks.length - 1];
-      }
+        const paraLines: string[] = [];
+        let lineIdx = lines.length;
+        let curLimit = getLineLimit(lineIdx, expectedLines, lhPx);
+        let currentLine = words[0];
 
-      for (let i = 1; i < words.length; i++) {
-        const candidate = `${currentLine} ${words[i]}`;
-        if (measureWidth(candidate, fontSizePx) <= availWidth) {
-          currentLine = candidate;
-        } else {
-          paraLines.push(currentLine);
-          currentLine = words[i];
-          if (measureWidth(currentLine, fontSizePx) > availWidth && currentLine.length > 4) {
-            const splitChunks = breakLongToken(currentLine, availWidth, fontSizePx, measureWidth);
-            paraLines.push(...splitChunks.slice(0, -1));
-            currentLine = splitChunks[splitChunks.length - 1];
+        if (measureWidth(currentLine, fontSizePx) > curLimit && currentLine.length > 4) {
+          const splitChunks = breakLongToken(currentLine, curLimit, fontSizePx, measureWidth);
+          paraLines.push(...splitChunks.slice(0, -1));
+          lineIdx += Math.max(0, splitChunks.length - 1);
+          curLimit = getLineLimit(lineIdx, expectedLines, lhPx);
+          currentLine = splitChunks[splitChunks.length - 1];
+        }
+
+        for (let i = 1; i < words.length; i++) {
+          const candidate = `${currentLine} ${words[i]}`;
+          if (measureWidth(candidate, fontSizePx) <= curLimit) {
+            currentLine = candidate;
+          } else {
+            paraLines.push(currentLine);
+            lineIdx += 1;
+            curLimit = getLineLimit(lineIdx, expectedLines, lhPx);
+            currentLine = words[i];
+            if (measureWidth(currentLine, fontSizePx) > curLimit && currentLine.length > 4) {
+              const splitChunks = breakLongToken(currentLine, curLimit, fontSizePx, measureWidth);
+              paraLines.push(...splitChunks.slice(0, -1));
+              lineIdx += Math.max(0, splitChunks.length - 1);
+              curLimit = getLineLimit(lineIdx, expectedLines, lhPx);
+              currentLine = splitChunks[splitChunks.length - 1];
+            }
           }
         }
-      }
-      paraLines.push(currentLine);
+        paraLines.push(currentLine);
 
-      lines.push(
-        ...(shouldBalance
+        const balanced = shouldBalance
           ? balanceComicLines(paraLines, availWidth, fontSizePx, measureWidth)
-          : paraLines)
-      );
-    }
-    return lines;
+          : paraLines;
+        lines.push(...balanced);
+      }
+      return lines;
+    };
+
+    const pass1 = runWrap(estMaxLines);
+    if (!getBandMaxWidthPx || pass1.length === estMaxLines) return pass1;
+    return runWrap(pass1.length);
   };
 
   if (!settings.autoFit) {
-    const lines = wrapAtSize(settings.fontSize);
+    const lines = wrapAtSize(settings.fontSize, settings.lineHeight);
     const lineHeightPx = settings.fontSize * settings.lineHeight;
     const totalH = lines.length * lineHeightPx;
     return {
@@ -290,26 +315,58 @@ export function fitTextInRegion(
 
   const maxCandidate = Math.min(
     Math.max(settings.fontSize, 26),
-    Math.max(14, Math.floor(availHeight * 0.42))
+    Math.max(14, Math.floor(availHeight * 0.44))
   );
-  const minCandidate = 9;
+  const readableFloor = 11;
+  const emergencyFloor = 9.5;
 
-  for (let size = maxCandidate; size >= minCandidate; size -= 1) {
-    const lines = wrapAtSize(size);
-    const lineHeightPx = size * settings.lineHeight;
+  const fitsLines = (lines: string[], fontSizePx: number, lineHeightPx: number): boolean => {
     const totalHeight = lines.length * lineHeightPx;
-    const maxLineW = lines.reduce((m, l) => Math.max(m, measureWidth(l, size)), 0);
-    if (totalHeight <= availHeight && maxLineW <= availWidth * 1.02) {
-      return { fontSize: size, lines, lineHeightPx, overflowed: false };
+    if (totalHeight > availHeight) return false;
+    for (let i = 0; i < lines.length; i++) {
+      const limit = getLineLimit(i, lines.length, lineHeightPx);
+      if (measureWidth(lines[i], fontSizePx) > limit * 1.02) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Stage 1 & 2: Try preferred line-height stepping down gradually to 11px readable floor
+  for (let size = maxCandidate; size >= readableFloor; size -= 0.75) {
+    const lines = wrapAtSize(size, settings.lineHeight);
+    const lineHeightPx = size * settings.lineHeight;
+    if (fitsLines(lines, size, lineHeightPx)) {
+      return { fontSize: Number(size.toFixed(2)), lines, lineHeightPx, overflowed: false };
     }
   }
 
-  const fallbackLines = wrapAtSize(minCandidate);
+  // Stage 3: Slightly tighten line-height while staying inside readable floor (11px)
+  const tightenedLh = Math.max(1.12, settings.lineHeight - 0.14);
+  for (let size = Math.min(maxCandidate, settings.fontSize); size >= readableFloor; size -= 0.75) {
+    const lines = wrapAtSize(size, tightenedLh);
+    const lineHeightPx = size * tightenedLh;
+    if (fitsLines(lines, size, lineHeightPx)) {
+      return { fontSize: Number(size.toFixed(2)), lines, lineHeightPx, overflowed: false };
+    }
+  }
+
+  // Stage 4: Emergency compact floor down to 9.5px for very dense bubbles
+  for (let size = readableFloor - 0.5; size >= emergencyFloor; size -= 0.5) {
+    const lines = wrapAtSize(size, tightenedLh);
+    const lineHeightPx = size * tightenedLh;
+    if (fitsLines(lines, size, lineHeightPx)) {
+      return { fontSize: Number(size.toFixed(2)), lines, lineHeightPx, overflowed: false };
+    }
+  }
+
+  const fallbackLines = wrapAtSize(emergencyFloor, tightenedLh);
+  const fallbackLhPx = emergencyFloor * tightenedLh;
   return {
-    fontSize: minCandidate,
+    fontSize: emergencyFloor,
     lines: fallbackLines,
-    lineHeightPx: minCandidate * settings.lineHeight,
-    overflowed: fallbackLines.length * minCandidate * settings.lineHeight > availHeight,
+    lineHeightPx: fallbackLhPx,
+    overflowed: !fitsLines(fallbackLines, emergencyFloor, fallbackLhPx),
   };
 }
 
@@ -393,19 +450,14 @@ export function createDefaultFontSettings(
 }
 
 /**
- * Matches glossary terms present in source text to build deterministic translation hints.
+ * Matches glossary terms present in source text using boundary-safe Unicode token rules
+ * so substrings never match unrelated words.
  */
 export function findMatchingGlossaryTerms(
   text: string,
   glossary: GlossaryEntry[]
 ): GlossaryEntry[] {
-  if (!text || !glossary.length) return [];
-  const lower = text.toLowerCase();
-  return glossary.filter((entry) => {
-    const term = entry.originalTerm.trim();
-    if (!term) return false;
-    return lower.includes(term.toLowerCase());
-  });
+  return boundarySafeGlossaryMatch(text, glossary);
 }
 
 const VALID_GLOSSARY_CATEGORIES = new Set<GlossaryCategory>([

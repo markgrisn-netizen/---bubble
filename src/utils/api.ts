@@ -8,7 +8,10 @@ import type {
   BrowserPrivacyMode,
   BrowserTabSnapshot,
   Chapter,
+  GlossaryCategory,
   GlossaryEntry,
+  GlossaryScope,
+  GlossarySuggestion,
   OperationLog,
   Page,
   Project,
@@ -396,21 +399,68 @@ export const api = {
     requestJson<{ job: TranslationJob }>(`/api/jobs/${jobId}/${action}`, { method: 'POST' }),
   clearLogs: () => requestJson<{ ok: boolean }>('/api/logs', { method: 'DELETE' }),
 
-  // Glossary
-  getGlossary: (projectId: string) =>
-    requestJson<{ entries: GlossaryEntry[] }>(`/api/glossary/${projectId}`),
-  addGlossaryTerm: (payload: Omit<GlossaryEntry, 'id'>) =>
+  // Personal Glossary (Global + Project + Edit + AI Suggestions)
+  getGlossary: (projectId: string, includeGlobal = false) =>
+    requestJson<{
+      entries: GlossaryEntry[];
+      globalEntries?: GlossaryEntry[];
+      projectEntries?: GlossaryEntry[];
+      overriddenGlobalIds?: string[];
+      overridingProjectIds?: string[];
+    }>(`/api/glossary/${encodeURIComponent(projectId)}${includeGlobal ? '?includeGlobal=1' : ''}`),
+  getGlobalGlossary: () =>
+    requestJson<{ entries: GlossaryEntry[] }>('/api/glossary?scope=global'),
+  addGlossaryTerm: (payload: Omit<GlossaryEntry, 'id'> & { scope?: GlossaryScope }) =>
     requestJson<{ entry: GlossaryEntry }>('/api/glossary', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
-  importGlossaryTerms: (projectId: string, entries: Array<Omit<GlossaryEntry, 'id' | 'projectId'>>) =>
-    requestJson<{ added: GlossaryEntry[]; count: number }>(`/api/glossary/${projectId}/import`, {
-      method: 'POST',
-      body: JSON.stringify({ entries }),
+  updateGlossaryTerm: (
+    id: string,
+    patch: Partial<Pick<GlossaryEntry, 'originalTerm' | 'translatedTerm' | 'category' | 'notes' | 'scope' | 'projectId'>>
+  ) =>
+    requestJson<{ entry: GlossaryEntry }>(`/api/glossary/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(patch),
     }),
+  importGlossaryTerms: (projectId: string, entries: Array<Omit<GlossaryEntry, 'id' | 'projectId'>>) =>
+    requestJson<{ added: GlossaryEntry[]; count: number }>(
+      `/api/glossary/${encodeURIComponent(projectId)}/import`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ entries }),
+      }
+    ),
   deleteGlossaryTerm: (id: string) =>
-    requestJson<{ ok: boolean }>(`/api/glossary/${id}`, { method: 'DELETE' }),
+    requestJson<{ ok: boolean }>(`/api/glossary/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  getGlossarySuggestions: (projectId?: string) =>
+    requestJson<{ suggestions: GlossarySuggestion[] }>(
+      projectId
+        ? `/api/glossary-suggestions?projectId=${encodeURIComponent(projectId)}`
+        : '/api/glossary-suggestions'
+    ),
+  approveGlossarySuggestion: (
+    id: string,
+    payload: {
+      scope: GlossaryScope;
+      projectId?: string;
+      translatedTerm?: string;
+      category?: GlossaryCategory;
+      notes?: string;
+    }
+  ) =>
+    requestJson<{ entry: GlossaryEntry; suggestion: GlossarySuggestion }>(
+      `/api/glossary-suggestions/${encodeURIComponent(id)}/approve`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }
+    ),
+  dismissGlossarySuggestion: (id: string) =>
+    requestJson<{ suggestion: GlossarySuggestion }>(
+      `/api/glossary-suggestions/${encodeURIComponent(id)}/dismiss`,
+      { method: 'POST' }
+    ),
 
   // AI & Settings
   getAiCatalog: () =>

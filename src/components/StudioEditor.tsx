@@ -61,6 +61,7 @@ import {
 import { BubbleCanvas, type CanvasToolMode } from './BubbleCanvas';
 import { BubbleInspector } from './BubbleInspector';
 import { ExportModal } from './ExportModal';
+import type { RegionQualityAudit } from '../utils/bubbleSegmentation';
 
 const PROVIDER_DISPLAY_NAMES: Record<AiProviderId, string> = {
   gemini: 'Gemini',
@@ -131,6 +132,7 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
   const [busyAction, setBusyAction] = useState(false);
   const [statusError, setStatusError] = useState('');
   const [exportOpen, setExportOpen] = useState(false);
+  const [regionAudits, setRegionAudits] = useState<Record<string, RegionQualityAudit>>({});
 
   // Batch translation job tracking inside Studio
   const [chapterJob, setChapterJob] = useState<TranslationJob | null>(null);
@@ -186,17 +188,20 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
         ]);
         setProject(data.project);
         setChapter(data.chapter);
-        setPages(data.pages);
+        const safePages = Array.isArray(data.pages)
+          ? data.pages.filter((p): p is Page => Boolean(p && p.id))
+          : [];
+        setPages(safePages);
         if (jobsRes.jobs.length > 0) {
           setChapterJob(jobsRes.jobs[0]);
         } else {
           setChapterJob(null);
         }
         setActivePageId((prevId) => {
-          if (data.pages.length === 0) return '';
-          if (prevId && data.pages.some((p) => p.id === prevId)) return prevId;
-          setSelectedRegionId(data.pages[0].regions[0]?.id || null);
-          return data.pages[0].id;
+          if (safePages.length === 0) return '';
+          if (prevId && safePages.some((p) => p.id === prevId)) return prevId;
+          setSelectedRegionId(safePages[0].regions?.[0]?.id || null);
+          return safePages[0].id;
         });
       } catch (err) {
         if (!options?.silent) {
@@ -292,9 +297,9 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
     };
   }, [pages, thumbCache]);
 
-  const activePage = pages.find((p) => p.id === activePageId) || pages[0] || null;
+  const activePage = pages.find((p) => p?.id === activePageId) || pages.find((p) => Boolean(p)) || null;
   const selectedRegion =
-    activePage?.regions.find((r) => r.id === selectedRegionId) || null;
+    activePage?.regions?.find((r) => r?.id === selectedRegionId) || null;
 
   const pushUndo = (currentPage: Page) => {
     setUndoStack((prev) => [...prev.slice(-24), JSON.parse(JSON.stringify(currentPage))]);
@@ -389,7 +394,9 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
       regionType: 'dialogue',
       boundingBox: box,
     });
-    setPages((all) => all.map((p) => (p.id === activePage.id ? res.page : p)));
+    setPages((all) =>
+      all.map((p) => (p && p.id === activePage.id && res?.page ? res.page : p))
+    );
     setSelectedRegionId(res.region.id);
     setToolMode('select');
   };
@@ -399,7 +406,7 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
     pushUndo(activePage);
     const nextStrokes = [...(activePage.manualStrokes || []), stroke];
     setPages((all) =>
-      all.map((p) => (p.id === activePage.id ? { ...p, manualStrokes: nextStrokes } : p))
+      all.map((p) => (p && p.id === activePage.id ? { ...p, manualStrokes: nextStrokes } : p))
     );
     void api.cleanPage(activePage.id, nextStrokes);
   };
@@ -410,8 +417,10 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
     setStatusError('');
     try {
       const res = await api.analyzePage(activePage.id);
-      setPages((all) => all.map((p) => (p.id === activePage.id ? res.page : p)));
-      setSelectedRegionId(res.page.regions[0]?.id || null);
+      if (res?.page) {
+        setPages((all) => all.map((p) => (p && p.id === activePage.id ? res.page : p)));
+        setSelectedRegionId(res.page.regions?.[0]?.id || null);
+      }
     } catch (err) {
       setStatusError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -425,8 +434,10 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
     setStatusError('');
     try {
       const res = await api.translatePage(activePage.id);
-      setPages((all) => all.map((p) => (p.id === activePage.id ? res.page : p)));
-      setSelectedRegionId(res.page.regions[0]?.id || null);
+      if (res?.page) {
+        setPages((all) => all.map((p) => (p && p.id === activePage.id ? res.page : p)));
+        setSelectedRegionId(res.page.regions?.[0]?.id || null);
+      }
       await loadChapterData({ silent: true });
     } catch (err) {
       setStatusError(err instanceof Error ? err.message : String(err));
@@ -546,13 +557,17 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
       chapter.id,
       reordered.map((p) => p.id)
     );
-    setPages(res.pages);
+    if (Array.isArray(res?.pages)) {
+      setPages(res.pages.filter((p): p is Page => Boolean(p && p.id)));
+    }
   };
 
   const handleRotatePage = async (page: Page) => {
     const nextRot = ((page.rotation + 90) % 360) as Page['rotation'];
     const res = await api.updatePage(page.id, { rotation: nextRot });
-    setPages((all) => all.map((p) => (p.id === page.id ? res.page : p)));
+    if (res?.page) {
+      setPages((all) => all.map((p) => (p && p.id === page.id ? res.page : p)));
+    }
   };
 
   const handleDuplicatePage = async (pageId: string) => {
@@ -563,9 +578,12 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
   const handleDeletePage = async (pageId: string) => {
     if (pages.length <= 1) return;
     const res = await api.deletePage(pageId);
-    setPages(res.pages);
-    if (activePageId === pageId && res.pages[0]) {
-      setActivePageId(res.pages[0].id);
+    const nextPages = Array.isArray(res?.pages)
+      ? res.pages.filter((p): p is Page => Boolean(p && p.id))
+      : [];
+    setPages(nextPages);
+    if (activePageId === pageId && nextPages[0]) {
+      setActivePageId(nextPages[0].id);
     }
   };
 
@@ -585,7 +603,9 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
         height: asset.height,
         contentHash: asset.contentHash,
       });
-      setPages((all) => all.map((p) => (p.id === targetId ? res.page : p)));
+      if (res?.page) {
+        setPages((all) => all.map((p) => (p && p.id === targetId ? res.page : p)));
+      }
     } catch (err) {
       setStatusError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -1505,6 +1525,7 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
           onUpdateRegionGeometry={handleUpdateGeometry}
           onCreateRegion={(box) => void handleCreateRegion(box)}
           onAddManualStroke={handleAddStroke}
+          onRegionAudits={setRegionAudits}
         />
 
         {/* Right Bubble & Context Inspector */}
@@ -1512,6 +1533,7 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
           lang={lang}
           project={project}
           region={selectedRegion}
+          regionAudit={selectedRegion ? regionAudits[selectedRegion.id] : undefined}
           availableFonts={availableFonts}
           busyRegionAction={busyAction}
           onUpdateRegion={handleUpdateRegion}
@@ -1521,7 +1543,9 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
             setStatusError('');
             try {
               const res = await api.retranslateBubble(regionId, style, instruction);
-              setPages((all) => all.map((p) => (p.id === activePage.id ? res.page : p)));
+              if (res?.page) {
+                setPages((all) => all.map((p) => (p && p.id === activePage.id ? res.page : p)));
+              }
             } catch (err) {
               setStatusError(err instanceof Error ? err.message : String(err));
             } finally {
@@ -1530,7 +1554,9 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
           }}
           onDeleteRegion={async (regionId) => {
             const res = await api.deleteBubble(regionId);
-            setPages((all) => all.map((p) => (p.id === activePage.id ? res.page : p)));
+            if (res?.page) {
+              setPages((all) => all.map((p) => (p && p.id === activePage.id ? res.page : p)));
+            }
             setSelectedRegionId(null);
           }}
           onSaveStoryNotes={async (notes) => {

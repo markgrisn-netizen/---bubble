@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { AiSettings, ManualStroke, Page, Point, TextRegion } from '../types/domain';
 import { renderCompositePageToCanvas } from '../utils/inpainting';
+import type { RegionQualityAudit } from '../utils/bubbleSegmentation';
 import { boxToPolygon, polygonToBox } from '../utils/bubbleLayout';
 import { computeNaturalFitSize } from '../utils/canvasViewport';
 import {
@@ -26,6 +27,7 @@ interface BubbleCanvasProps {
   onUpdateRegionGeometry: (regionId: string, polygon: Point[]) => void;
   onCreateRegion: (box: { x: number; y: number; width: number; height: number }) => void;
   onAddManualStroke: (stroke: ManualStroke) => void;
+  onRegionAudits?: (audits: Record<string, RegionQualityAudit>) => void;
 }
 
 export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
@@ -43,6 +45,7 @@ export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
   onUpdateRegionGeometry,
   onCreateRegion,
   onAddManualStroke,
+  onRegionAudits,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -50,6 +53,7 @@ export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
   const [containerSize, setContainerSize] = useState({ w: 860, h: 680 });
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [compareSplit, setCompareSplit] = useState(50);
+  const [renderError, setRenderError] = useState<string | null>(null);
 
   useLayoutEffect(() => {
     const el = containerRef.current;
@@ -113,20 +117,29 @@ export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
         }
       : page;
 
+    setRenderError(null);
     void renderCompositePageToCanvas(canvas, effectivePage, {
       showOriginalOnly: false,
       showText: true,
       inpaintingEngine,
-    }).then(() => {
-      if (!cancelled && canvas) {
-        setCanvasDims({ w: canvas.width, h: canvas.height });
-      }
-    });
+      onRegionAudits: !livePolyOverride ? onRegionAudits : undefined,
+    })
+      .then(() => {
+        if (!cancelled && canvas) {
+          setRenderError(null);
+          setCanvasDims({ w: canvas.width, h: canvas.height });
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setRenderError(err instanceof Error ? err.message : 'Failed to render page image');
+        }
+      });
 
     return () => {
       cancelled = true;
     };
-  }, [page, inpaintingEngine, livePolyOverride]);
+  }, [page, inpaintingEngine, livePolyOverride, onRegionAudits]);
 
   const clientToNormalized = (clientX: number, clientY: number): Point => {
     const canvas = canvasRef.current;
@@ -336,6 +349,19 @@ export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
           data-testid="studio-canvas"
           className="w-full h-full block object-contain"
         />
+
+        {renderError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100/95 dark:bg-[#0B0E14]/95 p-6 text-center pointer-events-none">
+            <div className="max-w-xs space-y-1.5">
+              <div className="text-xs font-bold text-[#EA3829] dark:text-[#FFE01B]">
+                تعذّر تحميل ملف الصورة لهذه الصفحة
+              </div>
+              <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 break-all" dir="ltr">
+                {page.originalImage}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Before / After Original Image Split Overlay (aligned to contained bitmap) */}
         {compareOriginal && (

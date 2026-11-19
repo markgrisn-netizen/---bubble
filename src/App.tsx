@@ -216,6 +216,7 @@ export default function App() {
           lang={lang}
           projects={projects}
           loading={loadingProjects}
+          inpaintingEngine={aiSettings.inpaintingEngine}
           onOpenImportModal={(initialTab, targetProjectId) =>
             setImportModalState({
               isOpen: true,

@@ -100,7 +100,7 @@ export async function rotateImageAsset90(asset: ImportedPageAsset): Promise<Impo
   const img = new Image();
   await new Promise<void>((resolve, reject) => {
     img.onload = () => resolve();
-    img.onerror = (e) => reject(e);
+    img.onerror = () => reject(new Error('Failed to decode image for rotation'));
     img.src = asset.dataUrl;
   });
   const w = img.naturalWidth || asset.width || 900;
@@ -165,7 +165,7 @@ export async function sliceTallWebtoonAssetIfNeeded(
   const img = new Image();
   await new Promise<void>((resolve, reject) => {
     img.onload = () => resolve();
-    img.onerror = (e) => reject(e);
+    img.onerror = () => reject(new Error('Failed to decode webtoon strip image'));
     img.src = asset.dataUrl;
   });
 
