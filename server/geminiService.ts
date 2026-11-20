@@ -166,7 +166,7 @@ export function resolveImageBase64(imageSrc: string): { base64: string; mimeType
   }
 
   if (!fs.existsSync(absPath)) {
-    throw new Error(`Image file not found on server: ${imageSrc}`);
+    throw new Error(`[SOURCE_IMAGE_MISSING] تعذّر العثور على ملف الصورة على الخادم: ${imageSrc}`);
   }
 
   const ext = path.extname(absPath).toLowerCase();

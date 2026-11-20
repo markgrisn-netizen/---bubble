@@ -150,6 +150,37 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
   } | null>(null);
   const [thumbCache, setThumbCache] = useState<Record<string, string>>({});
   const thumbInFlightRef = useRef<Set<string>>(new Set());
+  const bakedSignatureRef = useRef<Record<string, string>>({});
+  const bakeTimerRef = useRef<number | null>(null);
+  const [bakePending, setBakePending] = useState(false);
+
+  const computePageRenderSignature = useCallback(
+    (pg: Page) =>
+      `${pg.id}:${pg.status}:${pg.rotation}:${aiSettings.inpaintingEngine}:${JSON.stringify(
+        pg.manualStrokes || []
+      )}:${JSON.stringify(
+        (pg.regions || []).map((r) => [
+          r.id,
+          r.translatedText,
+          r.boundingBox,
+          r.fontSettings,
+          r.cleanMode,
+          r.sfxMode,
+          r.approvalStatus,
+        ])
+      )}`,
+    [aiSettings.inpaintingEngine]
+  );
+
+  useEffect(() => {
+    if (!busyAction && !bakePending) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [busyAction, bakePending]);
 
   useEffect(() => {
     if (!advancedOpen) return;
@@ -191,6 +222,11 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
         const safePages = Array.isArray(data.pages)
           ? data.pages.filter((p): p is Page => Boolean(p && p.id))
           : [];
+        for (const pg of safePages) {
+          if (pg.processedImage && !bakedSignatureRef.current[pg.id]) {
+            bakedSignatureRef.current[pg.id] = computePageRenderSignature(pg);
+          }
+        }
         setPages(safePages);
         if (jobsRes.jobs.length > 0) {
           setChapterJob(jobsRes.jobs[0]);
@@ -200,6 +236,18 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
         setActivePageId((prevId) => {
           if (safePages.length === 0) return '';
           if (prevId && safePages.some((p) => p.id === prevId)) return prevId;
+          try {
+            const raw = localStorage.getItem('faqqa_session_v1');
+            const parsed = raw ? JSON.parse(raw) : null;
+            const savedPageId = parsed?.pageIdByChapter?.[chapterId];
+            if (savedPageId && safePages.some((p) => p.id === savedPageId)) {
+              const restored = safePages.find((p) => p.id === savedPageId);
+              setSelectedRegionId(restored?.regions?.[0]?.id || null);
+              return savedPageId;
+            }
+          } catch {
+            // Ignore malformed storage
+          }
           setSelectedRegionId(safePages[0].regions?.[0]?.id || null);
           return safePages[0].id;
         });
@@ -213,7 +261,7 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
         }
       }
     },
-    [chapterId]
+    [chapterId, computePageRenderSignature]
   );
 
   useEffect(() => {
@@ -221,6 +269,75 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
       void loadChapterData();
     }
   }, [chapterId, refreshKey, loadChapterData]);
+
+  useEffect(() => {
+    if (!chapterId || !activePageId) return;
+    try {
+      const raw = localStorage.getItem('faqqa_session_v1');
+      const prev = raw ? JSON.parse(raw) : {};
+      const map = prev && typeof prev.pageIdByChapter === 'object' ? prev.pageIdByChapter : {};
+      localStorage.setItem(
+        'faqqa_session_v1',
+        JSON.stringify({
+          ...prev,
+          chapterId,
+          pageIdByChapter: { ...map, [chapterId]: activePageId },
+        })
+      );
+    } catch {
+      // Ignore storage error
+    }
+  }, [chapterId, activePageId]);
+
+  useEffect(() => {
+    return () => {
+      if (bakeTimerRef.current !== null) {
+        window.clearTimeout(bakeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleCompositeRendered = useCallback(
+    (renderedPage: Page, canvas: HTMLCanvasElement) => {
+      if (renderedPage.status !== 'completed') return;
+      if (renderedPage.regions.length === 0 && (renderedPage.manualStrokes?.length || 0) === 0) {
+        return;
+      }
+      const sig = computePageRenderSignature(renderedPage);
+      if (renderedPage.processedImage && bakedSignatureRef.current[renderedPage.id] === sig) {
+        return;
+      }
+
+      if (bakeTimerRef.current !== null) {
+        window.clearTimeout(bakeTimerRef.current);
+      }
+
+      const dataUrl =
+        canvas.width * canvas.height > 2_500_000
+          ? canvas.toDataURL('image/webp', 0.94)
+          : canvas.toDataURL('image/png');
+
+      bakeTimerRef.current = window.setTimeout(async () => {
+        setBakePending(true);
+        try {
+          const res = await api.renderPage(renderedPage.id, dataUrl);
+          bakedSignatureRef.current[renderedPage.id] = sig;
+          if (res?.page?.processedImage) {
+            setPages((all) =>
+              all.map((p) =>
+                p && p.id === res.page.id ? { ...p, processedImage: res.page.processedImage } : p
+              )
+            );
+          }
+        } catch {
+          // Keep editing uninterrupted; next render/export will retry
+        } finally {
+          setBakePending(false);
+        }
+      }, 650);
+    },
+    [computePageRenderSignature]
+  );
 
   // Poll active chapter job every 1500ms while queued or running, refreshing pages on progress
   useEffect(() => {
@@ -1526,6 +1643,7 @@ export const StudioEditor: React.FC<StudioEditorProps> = ({
           onCreateRegion={(box) => void handleCreateRegion(box)}
           onAddManualStroke={handleAddStroke}
           onRegionAudits={setRegionAudits}
+          onCompositeRendered={handleCompositeRendered}
         />
 
         {/* Right Bubble & Context Inspector */}

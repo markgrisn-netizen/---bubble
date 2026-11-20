@@ -6,7 +6,14 @@ import express from 'express';
 import dotenv from 'dotenv';
 import JSZip from 'jszip';
 import { createServer as createViteServer } from 'vite';
-import { appendLog, getDb, getUploadsDir, saveBase64Asset, saveDb } from './server/store.ts';
+import {
+  appendLog,
+  getDb,
+  getUploadsDir,
+  saveBase64Asset,
+  saveDb,
+  verifyImageAssetUrl,
+} from './server/store.ts';
 import {
   collectPendingGlossarySuggestions,
   GLOBAL_GLOSSARY_PROJECT_ID,
@@ -61,7 +68,7 @@ import {
   updateBrowserPrivacySettings,
 } from './server/webBrowserEngine.ts';
 import { importMobileSharePayload } from './server/mobileShare.ts';
-import { controlJob, createTranslationJob } from './server/jobRunner.ts';
+import { controlJob, createTranslationJob, recoverInterruptedJobsOnStartup } from './server/jobRunner.ts';
 import { mergeStoryMemoryUpdate } from './server/batchTranslation.ts';
 import {
   boxToPolygon,
@@ -1296,20 +1303,41 @@ async function startServer() {
   });
 
   app.post('/api/pages/render', (req, res) => {
-    const { pageId, processedDataUrl } = req.body || {};
-    const db = getDb();
-    const page = db.pages.find((p) => p.id === pageId);
-    if (!page) {
-      res.status(404).json({ error: 'Page not found' });
-      return;
-    }
-    if (processedDataUrl && typeof processedDataUrl === 'string') {
+    try {
+      const { pageId, processedDataUrl } = req.body || {};
+      const db = getDb();
+      const page = db.pages.find((p) => p.id === pageId);
+      if (!page) {
+        res.status(404).json({ error: 'Page not found' });
+        return;
+      }
+      if (!processedDataUrl || typeof processedDataUrl !== 'string') {
+        res.status(400).json({ error: 'processedDataUrl is required' });
+        return;
+      }
       const saved = saveBase64Asset(processedDataUrl, `rendered_${page.id}`);
+      const check = verifyImageAssetUrl(saved.url);
+      if (!check.ok) {
+        try {
+          if (fs.existsSync(saved.filePath)) fs.unlinkSync(saved.filePath);
+        } catch {
+          // Ignore cleanup failure
+        }
+        res.status(500).json({ error: `Rendered asset verification failed (${check.reason || 'INVALID'})` });
+        return;
+      }
+      // Keep page.originalImage completely untouched; only store verified composite asset
       page.processedImage = saved.url;
+      if (page.status !== 'completed') {
+        page.status = 'completed';
+      }
+      saveDb();
+      res.json({ page, verified: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const status = /ENOSPC|no space/i.test(msg) ? 507 : 400;
+      res.status(status).json({ error: msg });
     }
-    page.status = 'completed';
-    saveDb();
-    res.json({ page });
   });
 
   // Bubble / Region CRUD & Single-Bubble Retranslation
@@ -1763,6 +1791,15 @@ async function startServer() {
                 Buffer.from(b64, 'base64')
               );
             }
+          } else if (p.processedImage) {
+            const verified = verifyImageAssetUrl(p.processedImage);
+            if (verified.ok && verified.filePath) {
+              const ext = path.extname(verified.filePath) || '.png';
+              zip.file(
+                `${contentMode === 'both' ? 'translated/' : ''}${num}_translated${ext}`,
+                fs.readFileSync(verified.filePath)
+              );
+            }
           }
         }
         if (contentMode === 'original' || contentMode === 'both') {
@@ -2009,6 +2046,8 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
+
+  recoverInterruptedJobsOnStartup();
 
   httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`Faqqa server listening on http://localhost:${PORT}`);

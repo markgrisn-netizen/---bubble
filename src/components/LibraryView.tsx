@@ -17,7 +17,7 @@ import {
   WifiOff,
   X,
 } from 'lucide-react';
-import type { AiSettings, LanguageCode, ProjectWithDetails } from '../types/domain';
+import type { AiSettings, LanguageCode, ProjectWithDetails, TranslationJob } from '../types/domain';
 import { tFor } from '../i18n/translations';
 import {
   getOfflineStorageEstimate,
@@ -44,6 +44,7 @@ import { estimateChapterDownloadBytes, formatBytesLabel } from '../utils/offline
 interface LibraryViewProps {
   lang: LanguageCode;
   projects: ProjectWithDetails[];
+  activeJobs?: TranslationJob[];
   loading: boolean;
   inpaintingEngine?: AiSettings['inpaintingEngine'];
   onOpenImportModal: (initialTab: 'files' | 'url' | 'companion', targetProjectId?: string) => void;
@@ -71,6 +72,7 @@ type FilterKey =
 export const LibraryView: React.FC<LibraryViewProps> = ({
   lang,
   projects,
+  activeJobs = [],
   loading,
   inpaintingEngine = 'telea_biharmonic',
   onOpenImportModal,
@@ -287,6 +289,48 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Active / Resumable Server Translation Job Recovery Banner */}
+      {activeJobs.length > 0 && (
+        <section
+          data-testid="library-active-jobs-banner"
+          aria-label={t.home.activeJobBannerTitle}
+          className="faqqa-card rounded-[20px] p-3.5 sm:p-4 bg-[#FFFBEB] dark:bg-[#1E2028] border-2 border-[#111111] dark:border-[#FFE01B] space-y-2.5"
+        >
+          <div className="flex items-center gap-2 text-xs sm:text-sm font-black text-[#111111] dark:text-[#FFE01B]">
+            <Languages className="w-4 h-4 text-[#EA3829] shrink-0" />
+            <span>{t.home.activeJobBannerTitle}</span>
+          </div>
+          <div className="space-y-2">
+            {activeJobs.slice(0, 3).map((job) => (
+              <div
+                key={job.id}
+                className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-white dark:bg-[#14151A] border border-[#111111]/15 dark:border-white/15"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="font-bold text-xs sm:text-sm text-[#111111] dark:text-white truncate">
+                    {job.chapterTitle}
+                  </span>
+                  <span className="font-mono-tabular text-xs font-extrabold text-emerald-700 dark:text-emerald-400">
+                    {job.completedPages}/{job.totalPages} ({job.progress}%)
+                  </span>
+                  <span className="text-[11px] font-semibold text-[#524E46] dark:text-slate-300">
+                    {job.status === 'paused' ? t.home.activeJobPausedLabel : t.home.activeJobRunningLabel}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onOpenChapterInStudio(job.chapterId)}
+                  className="faqqa-btn-yellow inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black cursor-pointer shrink-0"
+                >
+                  <PenLine className="w-3.5 h-3.5" />
+                  <span>{t.home.activeJobResumeBtn}</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 4 Comic Feature Cards (2x2 on mobile, 4-across on desktop) */}
       <section aria-label={lang === 'ar' ? 'المزايا الرئيسية' : 'Key Features'}>

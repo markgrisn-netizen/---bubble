@@ -42,20 +42,153 @@ export function getUploadsDir(): string {
   return UPLOADS_DIR;
 }
 
+export function validateImageBuffer(buf: Buffer): {
+  valid: boolean;
+  ext?: 'png' | 'jpg' | 'webp' | 'gif';
+  reason?: string;
+} {
+  if (!buf || buf.length < 16) {
+    return { valid: false, reason: 'IMAGE_EMPTY_OR_TRUNCATED' };
+  }
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (
+    buf[0] === 0x89 &&
+    buf[1] === 0x50 &&
+    buf[2] === 0x4e &&
+    buf[3] === 0x47 &&
+    buf[4] === 0x0d &&
+    buf[5] === 0x0a &&
+    buf[6] === 0x1a &&
+    buf[7] === 0x0a
+  ) {
+    return { valid: true, ext: 'png' };
+  }
+  // JPEG: FF D8 FF
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) {
+    return { valid: true, ext: 'jpg' };
+  }
+  // WEBP: RIFF....WEBP
+  if (
+    buf.subarray(0, 4).toString('ascii') === 'RIFF' &&
+    buf.subarray(8, 12).toString('ascii') === 'WEBP'
+  ) {
+    return { valid: true, ext: 'webp' };
+  }
+  // GIF: GIF87a / GIF89a
+  const gifSig = buf.subarray(0, 6).toString('ascii');
+  if (gifSig === 'GIF87a' || gifSig === 'GIF89a') {
+    return { valid: true, ext: 'gif' };
+  }
+  return { valid: false, reason: 'CORRUPT_OR_UNKNOWN_IMAGE_HEADER' };
+}
+
+export function resolveLocalAssetPath(urlPath: string): string | null {
+  if (!urlPath || typeof urlPath !== 'string') return null;
+  if (urlPath.startsWith('/uploads/')) {
+    const cleanRel = path.normalize(urlPath.slice('/uploads/'.length)).replace(/^(\.\.(\/|\\|$))+/, '');
+    const candidate = path.resolve(UPLOADS_DIR, cleanRel);
+    return candidate.startsWith(UPLOADS_DIR) ? candidate : null;
+  }
+  if (urlPath.startsWith('/src/')) {
+    const srcDir = path.resolve(process.cwd(), 'src');
+    const cleanRel = path.normalize(urlPath.slice('/src/'.length)).replace(/^(\.\.(\/|\\|$))+/, '');
+    const candidate = path.resolve(srcDir, cleanRel);
+    return candidate.startsWith(srcDir) ? candidate : null;
+  }
+  return null;
+}
+
+export function verifyImageAssetUrl(urlPath: string): {
+  ok: boolean;
+  filePath?: string;
+  reason?: string;
+} {
+  const filePath = resolveLocalAssetPath(urlPath);
+  if (!filePath || !fs.existsSync(filePath)) {
+    return { ok: false, reason: 'FILE_NOT_FOUND' };
+  }
+  try {
+    const buf = fs.readFileSync(filePath);
+    const check = validateImageBuffer(buf);
+    if (!check.valid) {
+      return { ok: false, filePath, reason: check.reason };
+    }
+    return { ok: true, filePath };
+  } catch (err) {
+    return { ok: false, filePath, reason: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+export function cleanupOrphanTempFiles(): number {
+  let removed = 0;
+  for (const dir of [DATA_DIR, UPLOADS_DIR]) {
+    try {
+      if (!fs.existsSync(dir)) continue;
+      for (const entry of fs.readdirSync(dir)) {
+        if (entry.endsWith('.tmp')) {
+          try {
+            fs.unlinkSync(path.join(dir, entry));
+            removed += 1;
+          } catch {
+            // Ignore locked temp file
+          }
+        }
+      }
+    } catch {
+      // Ignore directory read error
+    }
+  }
+  return removed;
+}
+
 export function saveBase64Asset(dataUrl: string, prefix = 'page'): { url: string; filePath: string } {
   ensureDataDirs();
+  if (!dataUrl || typeof dataUrl !== 'string') {
+    throw new Error('Image payload is empty or invalid.');
+  }
   const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
   let ext = 'png';
-  let base64 = dataUrl;
+  let base64 = dataUrl.trim();
   if (match) {
-    const mime = match[1];
-    base64 = match[2];
+    const mime = match[1].toLowerCase();
+    base64 = match[2].trim();
     if (mime.includes('jpeg') || mime.includes('jpg')) ext = 'jpg';
     else if (mime.includes('webp')) ext = 'webp';
+    else if (mime.includes('gif')) ext = 'gif';
   }
+  if (!base64) {
+    throw new Error('Base64 image payload is empty.');
+  }
+
+  const buf = Buffer.from(base64, 'base64');
+  const check = validateImageBuffer(buf);
+  if (!check.valid) {
+    throw new Error(`Corrupted or unsupported image data (${check.reason || 'INVALID_IMAGE'})`);
+  }
+  if (check.ext) {
+    ext = check.ext;
+  }
+
   const filename = `${prefix}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}.${ext}`;
   const filePath = path.join(UPLOADS_DIR, filename);
-  fs.writeFileSync(filePath, Buffer.from(base64, 'base64'));
+  const tmpPath = `${filePath}.tmp`;
+
+  try {
+    fs.writeFileSync(tmpPath, buf);
+    const stat = fs.statSync(tmpPath);
+    if (stat.size !== buf.length || stat.size < 16) {
+      throw new Error('Atomic asset write size verification failed.');
+    }
+    fs.renameSync(tmpPath, filePath);
+  } catch (err) {
+    try {
+      if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+    } catch {
+      // Ignore cleanup failure
+    }
+    throw err;
+  }
+
   return { url: `/uploads/${filename}`, filePath };
 }
 
@@ -740,27 +873,53 @@ function syncUntouchedSeedRegions(db: DatabaseState): boolean {
   return changed;
 }
 
+function parseDbFile(filePath: string): DatabaseState | null {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const parsed = JSON.parse(raw) as DatabaseState;
+    if (!parsed || !Array.isArray(parsed.projects) || !Array.isArray(parsed.pages)) {
+      return null;
+    }
+    if (parsed.user) {
+      parsed.user.settings = normalizeAiSettings(parsed.user.settings);
+    }
+    if (!Array.isArray(parsed.glossarySuggestions)) {
+      parsed.glossarySuggestions = [];
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function reloadDbFromDiskForTest(): DatabaseState {
+  cachedDb = null;
+  return getDb();
+}
+
 export function getDb(): DatabaseState {
   ensureDataDirs();
   if (cachedDb) return cachedDb;
-  if (fs.existsSync(DB_FILE)) {
-    try {
-      const raw = fs.readFileSync(DB_FILE, 'utf-8');
-      cachedDb = JSON.parse(raw) as DatabaseState;
-      if (cachedDb?.user) {
-        cachedDb.user.settings = normalizeAiSettings(cachedDb.user.settings);
-      }
-      if (cachedDb && !Array.isArray(cachedDb.glossarySuggestions)) {
-        cachedDb.glossarySuggestions = [];
-      }
-      if (cachedDb && syncUntouchedSeedRegions(cachedDb)) {
-        saveDb();
-      }
-      return cachedDb;
-    } catch {
-      // Fallback to fresh seed if corrupted
+
+  const primary = parseDbFile(DB_FILE);
+  if (primary) {
+    cachedDb = primary;
+    if (syncUntouchedSeedRegions(cachedDb)) {
+      saveDb();
     }
+    return cachedDb;
   }
+
+  const backupFile = `${DB_FILE}.bak`;
+  const backup = parseDbFile(backupFile);
+  if (backup) {
+    cachedDb = backup;
+    syncUntouchedSeedRegions(cachedDb);
+    saveDb();
+    return cachedDb;
+  }
+
   cachedDb = buildSeedState();
   saveDb();
   return cachedDb;
@@ -769,9 +928,31 @@ export function getDb(): DatabaseState {
 export function saveDb(): void {
   ensureDataDirs();
   if (!cachedDb) return;
+  const serialized = JSON.stringify(cachedDb, null, 2);
   const tmpFile = `${DB_FILE}.tmp`;
-  fs.writeFileSync(tmpFile, JSON.stringify(cachedDb, null, 2), 'utf-8');
-  fs.renameSync(tmpFile, DB_FILE);
+  const backupFile = `${DB_FILE}.bak`;
+  try {
+    fs.writeFileSync(tmpFile, serialized, 'utf-8');
+    if (fs.existsSync(DB_FILE)) {
+      try {
+        const existingRaw = fs.readFileSync(DB_FILE, 'utf-8');
+        if (existingRaw.trim().length > 2) {
+          JSON.parse(existingRaw);
+          fs.copyFileSync(DB_FILE, backupFile);
+        }
+      } catch {
+        // Do not overwrite backup with corrupted primary
+      }
+    }
+    fs.renameSync(tmpFile, DB_FILE);
+  } catch (err) {
+    try {
+      if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
+    } catch {
+      // Ignore cleanup failure
+    }
+    throw err;
+  }
 }
 
 export function appendLog(

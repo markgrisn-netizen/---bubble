@@ -102,6 +102,7 @@ export type PageStatus =
   | 'analyzing'
   | 'analyzed'
   | 'translating'
+  | 'rendering'
   | 'cleaned'
   | 'completed'
   | 'error';
@@ -121,6 +122,7 @@ export interface Page {
   pageNumber: number;
   originalImage: string; // URL or Data URL (immutable)
   processedImage?: string; // Optional cached composite
+  assetMissing?: boolean; // Dynamically flagged if server asset file is missing on disk
   status: PageStatus;
   errorMessage?: string;
   width: number;
@@ -249,7 +251,9 @@ export interface TranslationJob {
   selectedPageIds?: string[];
   forceRetranslate?: boolean;
   pageStates: Record<string, 'queued' | 'running' | 'completed' | 'failed' | 'skipped'>;
+  pageStages?: Record<string, PageStatus>;
   errorMessage?: string;
+  lastHeartbeatAt?: string;
   createdAt: string;
   completedAt?: string;
 }

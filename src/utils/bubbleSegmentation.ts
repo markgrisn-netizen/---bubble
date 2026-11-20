@@ -78,6 +78,44 @@ export function pointInPolygon(x: number, y: number, poly: Point[]): boolean {
   return inside;
 }
 
+function expandPolygonOutward(
+  poly: Point[],
+  pad: number | { top: number; bottom: number; left: number; right: number },
+  clampW?: number,
+  clampH?: number
+): Point[] {
+  if (poly.length === 0) return [];
+  const pads =
+    typeof pad === 'number' ? { top: pad, bottom: pad, left: pad, right: pad } : pad;
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const p of poly) {
+    if (p.x < minX) minX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y > maxY) maxY = p.y;
+  }
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const halfW = Math.max(2, (maxX - minX) / 2);
+  const halfH = Math.max(2, (maxY - minY) / 2);
+
+  return poly.map((p) => {
+    const nx = Math.max(-1, Math.min(1, (p.x - cx) / halfW));
+    const ny = Math.max(-1, Math.min(1, (p.y - cy) / halfH));
+    const pxPad = nx < 0 ? pads.left : pads.right;
+    const pyPad = ny < 0 ? pads.top : pads.bottom;
+    const ex = p.x + nx * pxPad;
+    const ey = p.y + ny * pyPad;
+    return {
+      x: clampW !== undefined ? Math.max(0, Math.min(clampW - 1, ex)) : ex,
+      y: clampH !== undefined ? Math.max(0, Math.min(clampH - 1, ey)) : ey,
+    };
+  });
+}
+
 function colorDistance(r1: number, g1: number, b1: number, r2: number, g2: number, b2: number): number {
   const dr = Math.abs(r1 - r2);
   const dg = Math.abs(g1 - g2);
@@ -218,13 +256,13 @@ export function computeRegionRoiBounds(
   // (critical when OCR returned only the tight text cluster instead of the outer balloon walls)
   const expandX =
     region.regionType === 'outside'
-      ? 6
+      ? 12
       : region.regionType === 'narration'
       ? Math.min(34, Math.max(12, Math.round(boxW * 0.16)))
       : Math.min(64, Math.max(18, Math.round(boxW * 0.32)));
   const expandY =
     region.regionType === 'outside'
-      ? 6
+      ? 12
       : region.regionType === 'narration'
       ? Math.min(30, Math.max(12, Math.round(boxH * 0.18)))
       : Math.min(64, Math.max(18, Math.round(boxH * 0.32)));
@@ -413,44 +451,144 @@ export function segmentBubbleInterior(
   // If flood-fill escaped overwhelmingly into open page margins/gutter/background (>26% perimeter),
   // restrict flood-fill cleanly to the provided polygon/box envelope so we don't leak into panel gutters!
   if (perimeterEscapeRatio > 0.26) {
-    // Check if there IS an actual outline around pxPoly itself (borderless text over white background vs oversized balloon)
+    // Expand polygon uniformly in both X and Y regardless of aspect ratio
     const localPoly = pxPoly.map((p) => ({ x: p.x - roiX, y: p.y - roiY }));
-    const localCx = localBox.x + localBox.width / 2;
-    const localCy = localBox.y + localBox.height / 2;
-    const expandedEnvPoly = localPoly.map((p) => ({
-      x: localCx + (p.x - localCx) * 1.04,
-      y: localCy + (p.y - localCy) * 1.04,
-    }));
+    const baseExpand = Math.min(
+      26,
+      Math.max(14, Math.round(Math.min(localBox.width, localBox.height) * 0.14))
+    );
+    const maxRayScan = Math.min(
+      52,
+      Math.max(baseExpand + 8, Math.round(Math.min(localBox.width, localBox.height) * 0.3))
+    );
 
-    // Check outer ring contrast around localBox to distinguish borderless floating text vs closed box
-    let nonBgOuterSamples = 0;
-    let totalOuterSamples = 0;
-    const ringMinX = Math.max(0, Math.floor(localBox.x - 4));
-    const ringMaxX = Math.min(roiW - 1, Math.ceil(localBox.x + localBox.width + 4));
-    const ringMinY = Math.max(0, Math.floor(localBox.y - 4));
-    const ringMaxY = Math.min(roiH - 1, Math.ceil(localBox.y + localBox.height + 4));
+    // Cast outward rays from all 4 sides of localBox up to maxRayScan to locate real bubble walls
+    const xStart = Math.max(0, Math.floor(localBox.x));
+    const xEnd = Math.min(roiW - 1, Math.ceil(localBox.x + localBox.width));
+    const yStart = Math.max(0, Math.floor(localBox.y));
+    const yEnd = Math.min(roiH - 1, Math.ceil(localBox.y + localBox.height));
 
-    for (let x = ringMinX; x <= ringMaxX; x += 2) {
-      totalOuterSamples += 2;
-      if (bgMatch[ringMinY * roiW + x] === 0) nonBgOuterSamples += 1;
-      if (bgMatch[ringMaxY * roiW + x] === 0) nonBgOuterSamples += 1;
+    const sideStats: Array<{ hits: number; total: number; dists: number[] }> = [
+      { hits: 0, total: 0, dists: [] }, // top
+      { hits: 0, total: 0, dists: [] }, // bottom
+      { hits: 0, total: 0, dists: [] }, // left
+      { hits: 0, total: 0, dists: [] }, // right
+    ];
+    for (let x = xStart; x <= xEnd; x += 3) {
+      sideStats[0].total += 1;
+      for (let d = 1; d <= maxRayScan; d++) {
+        const y = yStart - d;
+        if (y < 0) break;
+        if (bgMatch[y * roiW + x] === 0) {
+          sideStats[0].hits += 1;
+          sideStats[0].dists.push(d);
+          break;
+        }
+      }
+      sideStats[1].total += 1;
+      for (let d = 1; d <= maxRayScan; d++) {
+        const y = yEnd + d;
+        if (y >= roiH) break;
+        if (bgMatch[y * roiW + x] === 0) {
+          sideStats[1].hits += 1;
+          sideStats[1].dists.push(d);
+          break;
+        }
+      }
     }
-    for (let y = ringMinY; y <= ringMaxY; y += 2) {
-      totalOuterSamples += 2;
-      if (bgMatch[y * roiW + ringMinX] === 0) nonBgOuterSamples += 1;
-      if (bgMatch[y * roiW + ringMaxX] === 0) nonBgOuterSamples += 1;
+    for (let y = yStart; y <= yEnd; y += 3) {
+      sideStats[2].total += 1;
+      for (let d = 1; d <= maxRayScan; d++) {
+        const x = xStart - d;
+        if (x < 0) break;
+        if (bgMatch[y * roiW + x] === 0) {
+          sideStats[2].hits += 1;
+          sideStats[2].dists.push(d);
+          break;
+        }
+      }
+      sideStats[3].total += 1;
+      for (let d = 1; d <= maxRayScan; d++) {
+        const x = xEnd + d;
+        if (x >= roiW) break;
+        if (bgMatch[y * roiW + x] === 0) {
+          sideStats[3].hits += 1;
+          sideStats[3].dists.push(d);
+          break;
+        }
+      }
     }
-    const localContrastRing = totalOuterSamples > 0 ? nonBgOuterSamples / totalOuterSamples : 0;
 
-    // If perimeter escaped heavily AND outer border contrast is weak (< 0.22), there is no closed bubble wall!
-    if (localContrastRing < 0.22 && perimeterEscapeRatio > 0.42) {
+    let totalRays = 0;
+    let totalWallHits = 0;
+    let sidesWithWall = 0;
+    const sideExpand = [baseExpand, baseExpand, baseExpand, baseExpand];
+    for (let i = 0; i < sideStats.length; i++) {
+      const s = sideStats[i];
+      totalRays += s.total;
+      totalWallHits += s.hits;
+      if (s.total > 0 && s.hits / s.total >= 0.25) {
+        sidesWithWall += 1;
+        if (s.dists.length > 0) {
+          s.dists.sort((a, b) => a - b);
+          // Stop right at the outer wall (p85 + 2) so open gaps don't flood around the outside of walls
+          const p85 = s.dists[Math.min(s.dists.length - 1, Math.floor(s.dists.length * 0.85))];
+          sideExpand[i] = Math.min(maxRayScan, Math.max(6, p85 + 2));
+        }
+      }
+    }
+    const wallHitRatio = totalRays > 0 ? totalWallHits / totalRays : 0;
+
+    // On open top/bottom edges where walls are open (<25% hit), trace isolated foreground text/punctuation (e.g. !! below box)
+    const innerX0 = Math.min(xEnd, xStart + Math.floor((xEnd - xStart) * 0.1));
+    const innerX1 = Math.max(innerX0, xEnd - Math.floor((xEnd - xStart) * 0.1));
+    const innerSpanW = Math.max(1, innerX1 - innerX0 + 1);
+    for (const [sideIdx, dir, originY] of [
+      [0, -1, yStart],
+      [1, 1, yEnd],
+    ] as const) {
+      if (sideStats[sideIdx].total > 0 && sideStats[sideIdx].hits / sideStats[sideIdx].total < 0.25) {
+        let gapRows = 0;
+        let lastInkD = 0;
+        for (let d = 1; d <= maxRayScan; d++) {
+          const y = originY + dir * d;
+          if (y < 0 || y >= roiH) break;
+          let inkCols = 0;
+          for (let x = innerX0; x <= innerX1; x++) {
+            if (bgMatch[y * roiW + x] === 0) inkCols += 1;
+          }
+          const frac = inkCols / innerSpanW;
+          if (frac >= 0.45) break; // Stop immediately before solid wall or panel artwork
+          if (frac > 0.01) {
+            lastInkD = d;
+            gapRows = 0;
+          } else {
+            gapRows += 1;
+            if (gapRows > 18) break;
+          }
+        }
+        if (lastInkD > 0) {
+          sideExpand[sideIdx] = Math.min(maxRayScan, Math.max(sideExpand[sideIdx], lastInkD + 8));
+        }
+      }
+    }
+
+    // Only reject as borderless if perimeter escaped heavily AND fewer than 2 sides show comic bubble walls
+    if (perimeterEscapeRatio > 0.42 && (wallHitRatio < 0.2 || sidesWithWall < 2)) {
       return {
         ...emptyResult(true),
         perimeterEscapeRatio,
-        borderCoverageRatio: localContrastRing,
+        borderCoverageRatio: wallHitRatio,
         confidence: 0.32,
       };
     }
+
+    const expandedEnvPoly = expandPolygonOutward(localPoly, {
+      top: sideExpand[0],
+      bottom: sideExpand[1],
+      left: sideExpand[2],
+      right: sideExpand[3],
+    });
 
     // Clamp reachedBg inside expandedEnvPoly so border openings/gaps can't bleed outside region
     for (let y = 0; y < roiH; y++) {
@@ -462,16 +600,68 @@ export function segmentBubbleInterior(
     }
   }
 
-  // Stage 2: Pinch narrow tail throats outside localBox BEFORE hole-fill
-  // Any horizontal or vertical chord outside localBox narrower than throatLimit is a speech tail!
+  // Stage 2: Separate cleaning fill (never pinches top/bottom text inside localBox) from layout tail-pinch fill
   const throatMin = Math.max(6, Math.min(18, Math.round(Math.min(localBox.width, localBox.height) * 0.2)));
   const lbX0 = localBox.x - 3;
   const lbX1 = localBox.x + localBox.width + 3;
   const lbY0 = localBox.y - 3;
   const lbY1 = localBox.y + localBox.height + 3;
 
+  // Measure max horizontal fill chord for layout spike/tail pinching
+  let maxRowRun = 0;
+  for (let y = 0; y < roiH; y++) {
+    let run = 0;
+    for (let x = 0; x < roiW; x++) {
+      if (reachedBg[y * roiW + x] === 1) {
+        run += 1;
+        if (run > maxRowRun) maxRowRun = run;
+      } else {
+        run = 0;
+      }
+    }
+  }
+  const innerNeckMax = Math.max(4, Math.min(throatMin, Math.round(maxRowRun * 0.28)));
+
+  // 2A. Cleaning pinched mask: only pinch narrow external tail throats far outside localBox
+  const cleanPadOut = 8;
+  const cleanPinched = new Uint8Array(reachedBg);
+  for (let y = 0; y < roiH; y++) {
+    const farOutsideY = y < localBox.y - cleanPadOut || y > localBox.y + localBox.height + cleanPadOut;
+    if (!farOutsideY) continue;
+    let runStart = -1;
+    for (let x = 0; x <= roiW; x++) {
+      const val = x < roiW ? reachedBg[y * roiW + x] : 0;
+      if (val === 1 && runStart === -1) {
+        runStart = x;
+      } else if (val === 0 && runStart !== -1) {
+        if (x - runStart <= throatMin) {
+          for (let k = runStart; k < x; k++) cleanPinched[y * roiW + k] = 0;
+        }
+        runStart = -1;
+      }
+    }
+  }
+  for (let x = 0; x < roiW; x++) {
+    const farOutsideX = x < localBox.x - cleanPadOut || x > localBox.x + localBox.width + cleanPadOut;
+    if (!farOutsideX) continue;
+    let runStart = -1;
+    for (let y = 0; y <= roiH; y++) {
+      const val = y < roiH ? cleanPinched[y * roiW + x] : 0;
+      if (val === 1 && runStart === -1) {
+        runStart = y;
+      } else if (val === 0 && runStart !== -1) {
+        if (y - runStart <= throatMin) {
+          for (let k = runStart; k < y; k++) cleanPinched[k * roiW + x] = 0;
+        }
+        runStart = -1;
+      }
+    }
+  }
+
+  // 2B. Layout pinched mask: keeps exact tail/spike neck pinching for centering & text wrapping
   const pinched = new Uint8Array(reachedBg);
   for (let y = 0; y < roiH; y++) {
+    const inTailCapBand = y < localBox.y + localBox.height * 0.14 || y > localBox.y + localBox.height * 0.86;
     let runStart = -1;
     for (let x = 0; x <= roiW; x++) {
       const val = x < roiW ? reachedBg[y * roiW + x] : 0;
@@ -480,7 +670,7 @@ export function segmentBubbleInterior(
       } else if (val === 0 && runStart !== -1) {
         const runLen = x - runStart;
         const outsideCore = y < lbY0 || y > lbY1;
-        if (outsideCore && runLen <= throatMin) {
+        if ((outsideCore && runLen <= throatMin) || (inTailCapBand && runLen <= innerNeckMax)) {
           for (let k = runStart; k < x; k++) pinched[y * roiW + k] = 0;
         }
         runStart = -1;
@@ -504,102 +694,186 @@ export function segmentBubbleInterior(
     }
   }
 
-  // Re-flood from center so detached tail tips aren't kept
-  const mainBodyBg = new Uint8Array(totalPixels);
-  qHead = 0;
-  qTail = 0;
-  for (let y = seedY0; y <= seedY1; y += 2) {
-    for (let x = seedX0; x <= seedX1; x += 2) {
+  const floodMainBody = (sourceMask: Uint8Array): Uint8Array => {
+    const body = new Uint8Array(totalPixels);
+    qHead = 0;
+    qTail = 0;
+    for (let y = seedY0; y <= seedY1; y += 2) {
+      for (let x = seedX0; x <= seedX1; x += 2) {
+        const pos = y * roiW + x;
+        if (sourceMask[pos] === 1 && body[pos] === 0) {
+          body[pos] = 1;
+          queue[qTail++] = pos;
+        }
+      }
+    }
+    while (qHead < qTail) {
+      const pos = queue[qHead++];
+      const x = pos % roiW;
+      const y = (pos - x) / roiW;
+      if (x > 0 && sourceMask[pos - 1] === 1 && body[pos - 1] === 0) {
+        body[pos - 1] = 1;
+        queue[qTail++] = pos - 1;
+      }
+      if (x + 1 < roiW && sourceMask[pos + 1] === 1 && body[pos + 1] === 0) {
+        body[pos + 1] = 1;
+        queue[qTail++] = pos + 1;
+      }
+      if (y > 0 && sourceMask[pos - roiW] === 1 && body[pos - roiW] === 0) {
+        body[pos - roiW] = 1;
+        queue[qTail++] = pos - roiW;
+      }
+      if (y + 1 < roiH && sourceMask[pos + roiW] === 1 && body[pos + roiW] === 0) {
+        body[pos + roiW] = 1;
+        queue[qTail++] = pos + roiW;
+      }
+    }
+    return body;
+  };
+
+  const cleanMainBg = floodMainBody(cleanPinched);
+  const layoutMainBg = floodMainBody(pinched);
+
+  // Seal narrow letter-to-border ink contact gaps inside/near localBox (plus expanded chamber collar) so exterior flood cannot enter letters/punctuation touching or near the rim
+  const bridgePad = Math.min(44, Math.max(16, Math.round(Math.min(localBox.width, localBox.height) * 0.22)));
+  const bridgeMinX = Math.max(0, Math.floor(localBox.x - bridgePad));
+  const bridgeMaxX = Math.min(roiW - 1, Math.ceil(localBox.x + localBox.width + bridgePad));
+  const bridgeMinY = Math.max(0, Math.floor(localBox.y - bridgePad));
+  const bridgeMaxY = Math.min(roiH - 1, Math.ceil(localBox.y + localBox.height + bridgePad));
+  const coreMaxBridge = bg.isDark
+    ? 6
+    : Math.min(16, Math.max(10, Math.round(localBox.width * 0.12)));
+  const collarMaxBridge = bg.isDark ? 5 : 10;
+  const bridgedCleanBg = new Uint8Array(cleanMainBg);
+
+  for (let y = bridgeMinY; y <= bridgeMaxY; y++) {
+    const inCoreY = y >= localBox.y - 4 && y <= localBox.y + localBox.height + 4;
+    const maxGap = inCoreY ? coreMaxBridge : collarMaxBridge;
+    let lastOneX = -1;
+    for (let x = bridgeMinX; x <= bridgeMaxX; x++) {
+      if (cleanMainBg[y * roiW + x] === 1) {
+        if (lastOneX !== -1 && x - lastOneX > 1 && x - lastOneX - 1 <= maxGap) {
+          for (let kx = lastOneX + 1; kx < x; kx++) {
+            bridgedCleanBg[y * roiW + kx] = 1;
+          }
+        }
+        lastOneX = x;
+      }
+    }
+  }
+  for (let x = bridgeMinX; x <= bridgeMaxX; x++) {
+    const inCoreX = x >= localBox.x - 4 && x <= localBox.x + localBox.width + 4;
+    const maxGap = inCoreX ? coreMaxBridge : collarMaxBridge;
+    let lastOneY = -1;
+    for (let y = bridgeMinY; y <= bridgeMaxY; y++) {
+      if (cleanMainBg[y * roiW + x] === 1) {
+        if (lastOneY !== -1 && y - lastOneY > 1 && y - lastOneY - 1 <= maxGap) {
+          for (let ky = lastOneY + 1; ky < y; ky++) {
+            bridgedCleanBg[ky * roiW + x] = 1;
+          }
+        }
+        lastOneY = y;
+      }
+    }
+  }
+  // Diagonal 1D bridges inside [localBox - 6, localBox + 6] for glyphs touching curved corners
+  const diagMinX = Math.max(0, Math.floor(localBox.x - 6));
+  const diagMaxX = Math.min(roiW - 1, Math.ceil(localBox.x + localBox.width + 6));
+  const diagMinY = Math.max(0, Math.floor(localBox.y - 6));
+  const diagMaxY = Math.min(roiH - 1, Math.ceil(localBox.y + localBox.height + 6));
+  const diagBridge = bg.isDark ? 5 : 10;
+  for (const [dx, dy] of [[1, 1], [1, -1]] as const) {
+    for (let sy = diagMinY; sy <= diagMaxY; sy++) {
+      for (let sx = diagMinX; sx <= diagMaxX; sx++) {
+        // Only start diagonals on perimeter of diag box to scan each line once
+        const isEdge = sx === diagMinX || (dy === 1 ? sy === diagMinY : sy === diagMaxY);
+        if (!isEdge) continue;
+        let step = 0;
+        let lastOneStep = -1;
+        while (true) {
+          const x = sx + step * dx;
+          const y = sy + step * dy;
+          if (x < diagMinX || x > diagMaxX || y < diagMinY || y > diagMaxY) break;
+          if (cleanMainBg[y * roiW + x] === 1) {
+            if (lastOneStep !== -1 && step - lastOneStep > 1 && step - lastOneStep - 1 <= diagBridge) {
+              for (let k = lastOneStep + 1; k < step; k++) {
+                const bx = sx + k * dx;
+                const by = sy + k * dy;
+                bridgedCleanBg[by * roiW + bx] = 1;
+              }
+            }
+            lastOneStep = step;
+          }
+          step += 1;
+        }
+      }
+    }
+  }
+
+  // Stage 3: Topological Exterior Flood-Fill to absorb 100% of enclosed text strokes, shadows, & counters
+  const computeRawInterior = (bodyMask: Uint8Array): Uint8Array => {
+    const ext = new Uint8Array(totalPixels);
+    qHead = 0;
+    qTail = 0;
+    const trySeedExt = (x: number, y: number) => {
       const pos = y * roiW + x;
-      if (pinched[pos] === 1 && mainBodyBg[pos] === 0) {
-        mainBodyBg[pos] = 1;
+      if (bodyMask[pos] === 0 && ext[pos] === 0) {
+        ext[pos] = 1;
         queue[qTail++] = pos;
       }
+    };
+    for (let x = 0; x < roiW; x++) {
+      trySeedExt(x, 0);
+      trySeedExt(x, roiH - 1);
     }
-  }
-  while (qHead < qTail) {
-    const pos = queue[qHead++];
-    const x = pos % roiW;
-    const y = (pos - x) / roiW;
-    if (x > 0 && pinched[pos - 1] === 1 && mainBodyBg[pos - 1] === 0) {
-      mainBodyBg[pos - 1] = 1;
-      queue[qTail++] = pos - 1;
+    for (let y = 0; y < roiH; y++) {
+      trySeedExt(0, y);
+      trySeedExt(roiW - 1, y);
     }
-    if (x + 1 < roiW && pinched[pos + 1] === 1 && mainBodyBg[pos + 1] === 0) {
-      mainBodyBg[pos + 1] = 1;
-      queue[qTail++] = pos + 1;
+    while (qHead < qTail) {
+      const pos = queue[qHead++];
+      const x = pos % roiW;
+      const y = (pos - x) / roiW;
+      if (x > 0) {
+        const n = pos - 1;
+        if (bodyMask[n] === 0 && ext[n] === 0) {
+          ext[n] = 1;
+          queue[qTail++] = n;
+        }
+      }
+      if (x + 1 < roiW) {
+        const n = pos + 1;
+        if (bodyMask[n] === 0 && ext[n] === 0) {
+          ext[n] = 1;
+          queue[qTail++] = n;
+        }
+      }
+      if (y > 0) {
+        const n = pos - roiW;
+        if (bodyMask[n] === 0 && ext[n] === 0) {
+          ext[n] = 1;
+          queue[qTail++] = n;
+        }
+      }
+      if (y + 1 < roiH) {
+        const n = pos + roiW;
+        if (bodyMask[n] === 0 && ext[n] === 0) {
+          ext[n] = 1;
+          queue[qTail++] = n;
+        }
+      }
     }
-    if (y > 0 && pinched[pos - roiW] === 1 && mainBodyBg[pos - roiW] === 0) {
-      mainBodyBg[pos - roiW] = 1;
-      queue[qTail++] = pos - roiW;
+    const raw = new Uint8Array(totalPixels);
+    for (let i = 0; i < totalPixels; i++) {
+      raw[i] = ext[i] === 0 ? 1 : 0;
     }
-    if (y + 1 < roiH && pinched[pos + roiW] === 1 && mainBodyBg[pos + roiW] === 0) {
-      mainBodyBg[pos + roiW] = 1;
-      queue[qTail++] = pos + roiW;
-    }
-  }
-
-  // Stage 3: Topological Exterior Flood-Fill to fill 100% of enclosed text strokes, shadows, & counters
-  const exterior = new Uint8Array(totalPixels);
-  qHead = 0;
-  qTail = 0;
-
-  const trySeedExterior = (x: number, y: number) => {
-    const pos = y * roiW + x;
-    if (mainBodyBg[pos] === 0 && exterior[pos] === 0) {
-      exterior[pos] = 1;
-      queue[qTail++] = pos;
-    }
+    return raw;
   };
-  for (let x = 0; x < roiW; x++) {
-    trySeedExterior(x, 0);
-    trySeedExterior(x, roiH - 1);
-  }
-  for (let y = 0; y < roiH; y++) {
-    trySeedExterior(0, y);
-    trySeedExterior(roiW - 1, y);
-  }
 
-  while (qHead < qTail) {
-    const pos = queue[qHead++];
-    const x = pos % roiW;
-    const y = (pos - x) / roiW;
-    if (x > 0) {
-      const n = pos - 1;
-      if (mainBodyBg[n] === 0 && exterior[n] === 0) {
-        exterior[n] = 1;
-        queue[qTail++] = n;
-      }
-    }
-    if (x + 1 < roiW) {
-      const n = pos + 1;
-      if (mainBodyBg[n] === 0 && exterior[n] === 0) {
-        exterior[n] = 1;
-        queue[qTail++] = n;
-      }
-    }
-    if (y > 0) {
-      const n = pos - roiW;
-      if (mainBodyBg[n] === 0 && exterior[n] === 0) {
-        exterior[n] = 1;
-        queue[qTail++] = n;
-      }
-    }
-    if (y + 1 < roiH) {
-      const n = pos + roiW;
-      if (mainBodyBg[n] === 0 && exterior[n] === 0) {
-        exterior[n] = 1;
-        queue[qTail++] = n;
-      }
-    }
-  }
+  const rawInterior = computeRawInterior(bridgedCleanBg);
+  const rawLayoutInterior = computeRawInterior(layoutMainBg);
 
-  const rawInterior = new Uint8Array(totalPixels);
-  for (let i = 0; i < totalPixels; i++) {
-    rawInterior[i] = exterior[i] === 0 ? 1 : 0;
-  }
-
-  // Stage 4: Keep strictly 1px safety inset away from dark/contrasting border pixels so 0px of border bleeds
+  // Stage 4: Keep strong contrasting border ink protected while removing anti-aliased edge halos/remnants
   const interiorMask = new Uint8Array(rawInterior);
   let boundaryCount = 0;
   let contrastedBoundaryCount = 0;
@@ -617,7 +891,6 @@ export function segmentBubbleInterior(
 
       if (touchesOutside) {
         boundaryCount += 1;
-        // Check if neighboring outside pixel is a contrasting border pixel (dark ink / outline)
         const neighbors = [pos - 1, pos + 1, pos - roiW, pos + roiW];
         let hasBorderContrast = false;
         for (const nPos of neighbors) {
@@ -632,25 +905,54 @@ export function segmentBubbleInterior(
         }
         if (hasBorderContrast) {
           contrastedBoundaryCount += 1;
-          // Erode boundary pixel if it itself is anti-aliased edge ink near the black outline
-          const pp = pos * 4;
-          const selfDist = colorDistance(
-            roiData[pp],
-            roiData[pp + 1],
-            roiData[pp + 2],
-            bg.r,
-            bg.g,
-            bg.b
-          );
-          if (selfDist > 18) {
-            interiorMask[pos] = 0;
+          const wasBridgedLetterStroke = bridgedCleanBg[pos] === 1 && cleanMainBg[pos] === 0;
+          if (!wasBridgedLetterStroke) {
+            const pp = pos * 4;
+            const selfDist = colorDistance(
+              roiData[pp],
+              roiData[pp + 1],
+              roiData[pp + 2],
+              bg.r,
+              bg.g,
+              bg.b
+            );
+            if (selfDist > 78) {
+              interiorMask[pos] = 0;
+            }
           }
         }
       }
     }
   }
 
-  // Compute area, visual centroid, bounding box, and per-row interior spans
+  // Absorb isolated 1px inward-protruding letter tips/halos (>= 3 orthogonal interior neighbors) without eroding convex borders
+  const tipMinX = Math.max(1, bridgeMinX);
+  const tipMaxX = Math.min(roiW - 2, bridgeMaxX);
+  const tipMinY = Math.max(1, bridgeMinY);
+  const tipMaxY = Math.min(roiH - 2, bridgeMaxY);
+  for (let pass = 0; pass < 2; pass++) {
+    const promote: number[] = [];
+    for (let y = tipMinY; y <= tipMaxY; y++) {
+      for (let x = tipMinX; x <= tipMaxX; x++) {
+        const pos = y * roiW + x;
+        if (interiorMask[pos] === 1) continue;
+        const nCount =
+          interiorMask[pos - 1] +
+          interiorMask[pos + 1] +
+          interiorMask[pos - roiW] +
+          interiorMask[pos + roiW];
+        if (nCount >= 3) {
+          promote.push(pos);
+        }
+      }
+    }
+    if (promote.length === 0) break;
+    for (const pos of promote) {
+      interiorMask[pos] = 1;
+    }
+  }
+
+  // Compute area, visual centroid, bounding box, and per-row interior spans using layout mask (tail/spike excluded)
   let area = 0;
   let sumX = 0;
   let sumY = 0;
@@ -661,7 +963,8 @@ export function segmentBubbleInterior(
 
   for (let y = 0; y < roiH; y++) {
     for (let x = 0; x < roiW; x++) {
-      if (interiorMask[y * roiW + x] === 1) {
+      const pos = y * roiW + x;
+      if (interiorMask[pos] === 1 && rawLayoutInterior[pos] === 1) {
         area += 1;
         sumX += x;
         sumY += y;
@@ -686,12 +989,13 @@ export function segmentBubbleInterior(
 
   const rowSpans: BubbleRowSpan[] = [];
   for (let y = minIY; y <= maxIY; y++) {
-    // Find longest contiguous run of interior pixels on scanline y (avoids notch gaps)
+    // Find longest contiguous run of layout-interior pixels on scanline y (avoids notch gaps)
     let bestLeft = -1;
     let bestRight = -1;
     let curStart = -1;
     for (let x = minIX; x <= maxIX + 1; x++) {
-      const inside = x <= maxIX && interiorMask[y * roiW + x] === 1;
+      const pos = y * roiW + x;
+      const inside = x <= maxIX && interiorMask[pos] === 1 && rawLayoutInterior[pos] === 1;
       if (inside && curStart === -1) {
         curStart = x;
       } else if (!inside && curStart !== -1) {
@@ -719,11 +1023,37 @@ export function segmentBubbleInterior(
     height: Math.max(1, maxIY - minIY + 1),
   };
 
-  // Compute inscribed core chamber excluding narrow top/bottom jagged spikes/tails
+  // Compute inscribed core chamber excluding narrow top/bottom jagged spikes/tails and isolated boundary slivers
   const maxSpanWidth = rowSpans.reduce((m, s) => Math.max(m, s.width), 0);
-  const coreThreshold = maxSpanWidth * 0.56;
-  const coreSpans = rowSpans.filter((s) => s.width >= coreThreshold);
-  const activeSpans = coreSpans.length >= 4 ? coreSpans : rowSpans;
+  const coreThreshold = maxSpanWidth * 0.52;
+  const rawCoreSpans = rowSpans.filter((s) => s.width >= coreThreshold);
+  let activeSpans = rawCoreSpans;
+  if (rawCoreSpans.length >= 2) {
+    const runs: BubbleRowSpan[][] = [];
+    let curRun: BubbleRowSpan[] = [rawCoreSpans[0]];
+    for (let i = 1; i < rawCoreSpans.length; i++) {
+      if (rawCoreSpans[i].y - rawCoreSpans[i - 1].y <= 3) {
+        curRun.push(rawCoreSpans[i]);
+      } else {
+        runs.push(curRun);
+        curRun = [rawCoreSpans[i]];
+      }
+    }
+    runs.push(curRun);
+
+    let bestRun = runs[0];
+    let bestScore = -1;
+    for (const r of runs) {
+      const score = r.reduce((sum, s) => sum + s.width, 0);
+      if (score > bestScore) {
+        bestScore = score;
+        bestRun = r;
+      }
+    }
+    activeSpans = bestRun.length >= 4 ? bestRun : rawCoreSpans.length >= 4 ? rawCoreSpans : rowSpans;
+  } else {
+    activeSpans = rowSpans;
+  }
 
   let wSum = 0;
   let wCxSum = 0;
@@ -745,21 +1075,29 @@ export function segmentBubbleInterior(
     if (s.y > coreMaxY) coreMaxY = s.y;
   }
 
-  const centroidPx: Point =
+  const weightedCentroid: Point =
     wSum > 0
       ? { x: wCxSum / wSum, y: wCySum / wSum }
       : { x: roiX + sumX / area, y: roiY + sumY / area };
 
-  const coreW = Number.isFinite(coreMinX) ? Math.max(12, coreMaxX - coreMinX + 1) : safeBoxPx.width;
-  const coreH = Number.isFinite(coreMinY) ? Math.max(12, coreMaxY - coreMinY + 1) : safeBoxPx.height;
-  // Slightly inset vertical top/bottom clearance inside core chamber so bold Arabic glyphs clear jagged rims
-  const vInset = Math.max(2, Math.round(coreH * 0.08));
+  const coreW = Number.isFinite(coreMinX) ? Math.max(4, coreMaxX - coreMinX + 1) : safeBoxPx.width;
+  const coreH = Number.isFinite(coreMinY) ? Math.max(4, coreMaxY - coreMinY + 1) : safeBoxPx.height;
+  // Blend weighted Y centroid with core chamber midpoint so asymmetric ovals anchor naturally without top/bottom crowding
+  const centroidPx: Point = Number.isFinite(coreMinY)
+    ? {
+        x: weightedCentroid.x,
+        y: weightedCentroid.y * 0.35 + ((coreMinY + coreMaxY) / 2) * 0.65,
+      }
+    : weightedCentroid;
+
+  // Slightly inset vertical top/bottom clearance inside core chamber so bold Arabic glyphs clear curved rims
+  const vInset = Math.min(Math.floor(coreH * 0.2), Math.max(2, Math.round(coreH * 0.08)));
   const textSafeBoxPx: BoundingBox = Number.isFinite(coreMinY)
     ? {
         x: coreMinX,
         y: coreMinY + vInset,
         width: coreW,
-        height: Math.max(12, coreH - vInset * 2),
+        height: Math.max(4, coreH - vInset * 2),
       }
     : { ...safeBoxPx };
 
@@ -831,16 +1169,26 @@ export function cleanRoiBufferInPlace(
   }
 
   // Conservative stroke-only fallback for borderless / open-background text ('outside' or low confidence)
-  const localPoly = pxPoly.map((p) => ({ x: p.x - roiX, y: p.y - roiY }));
+  const localPolyRaw = pxPoly.map((p) => ({ x: p.x - roiX, y: p.y - roiY }));
+  const openPad = Math.min(18, Math.max(8, Math.round(Math.min(roiW, roiH) * 0.12)));
+  const localPoly = expandPolygonOutward(localPolyRaw, openPad, roiW, roiH);
+
   const totalPixels = roiW * roiH;
   const strokeMask = new Uint8Array(totalPixels);
-  const rgbThreshold = background.isUniform ? (background.isDark ? 34 : 38) : 52;
-  const lumaThreshold = background.isUniform ? 34 : 46;
+  const coreRgbThresh = background.isUniform ? 26 : 36;
+  const coreLumaThresh = background.isUniform ? 24 : 34;
+  const haloRgbThresh = 12;
+  const haloLumaThresh = 12;
+
+  const coreQueue = new Int32Array(totalPixels);
+  let cHead = 0;
+  let cTail = 0;
 
   for (let y = 0; y < roiH; y++) {
     for (let x = 0; x < roiW; x++) {
       if (!pointInPolygon(x, y, localPoly)) continue;
-      const idx = (y * roiW + x) * 4;
+      const pos = y * roiW + x;
+      const idx = pos * 4;
       const r = roiData[idx];
       const g = roiData[idx + 1];
       const b = roiData[idx + 2];
@@ -848,25 +1196,102 @@ export function cleanRoiBufferInPlace(
         (Math.abs(r - background.r) + Math.abs(g - background.g) + Math.abs(b - background.b)) / 3;
       const pLuma = 0.299 * r + 0.587 * g + 0.114 * b;
       const lumaDiff = Math.abs(pLuma - background.luma);
-      if (rgbDiff > rgbThreshold || lumaDiff > lumaThreshold) {
-        strokeMask[y * roiW + x] = 1;
+      if (rgbDiff > coreRgbThresh || lumaDiff > coreLumaThresh) {
+        strokeMask[pos] = 1;
+        coreQueue[cTail++] = pos;
       }
     }
   }
 
+  // Connected-component trace: follow protruding ascenders/descenders seeded inside localPoly up to 12px into ROI margin
+  const traceDist = new Int16Array(totalPixels).fill(-1);
+  for (let i = 0; i < cTail; i++) traceDist[coreQueue[i]] = 0;
+  while (cHead < cTail) {
+    const pos = coreQueue[cHead++];
+    const dist = traceDist[pos];
+    if (dist >= 12) continue;
+    const x = pos % roiW;
+    const y = (pos - x) / roiW;
+    for (let dy = -1; dy <= 1; dy++) {
+      const ny = y + dy;
+      if (ny < 1 || ny >= roiH - 1) continue;
+      for (let dx = -1; dx <= 1; dx++) {
+        if (dx === 0 && dy === 0) continue;
+        const nx = x + dx;
+        if (nx < 1 || nx >= roiW - 1) continue;
+        const npos = ny * roiW + nx;
+        if (strokeMask[npos] === 1) continue;
+        const idx = npos * 4;
+        const r = roiData[idx];
+        const g = roiData[idx + 1];
+        const b = roiData[idx + 2];
+        const rgbDiff =
+          (Math.abs(r - background.r) + Math.abs(g - background.g) + Math.abs(b - background.b)) / 3;
+        const pLuma = 0.299 * r + 0.587 * g + 0.114 * b;
+        const lumaDiff = Math.abs(pLuma - background.luma);
+        if (rgbDiff > coreRgbThresh || lumaDiff > coreLumaThresh) {
+          strokeMask[npos] = 1;
+          traceDist[npos] = pointInPolygon(nx, ny, localPoly) ? 0 : dist + 1;
+          coreQueue[cTail++] = npos;
+        }
+      }
+    }
+  }
+
+  // Hysteresis growth: absorb anti-aliased halo pixels attached to core ink strokes (including traced tips)
+  const seedQueue = new Int32Array(totalPixels);
+  let sHead = 0;
+  let sTail = 0;
+  const haloDist = new Int16Array(totalPixels).fill(-1);
+  for (let i = 0; i < cTail; i++) {
+    seedQueue[sTail++] = coreQueue[i];
+    haloDist[coreQueue[i]] = 0;
+  }
+  while (sHead < sTail) {
+    const pos = seedQueue[sHead++];
+    const dist = haloDist[pos];
+    if (dist >= 3) continue;
+    const x = pos % roiW;
+    const y = (pos - x) / roiW;
+    for (let dy = -1; dy <= 1; dy++) {
+      const ny = y + dy;
+      if (ny < 1 || ny >= roiH - 1) continue;
+      for (let dx = -1; dx <= 1; dx++) {
+        if (dx === 0 && dy === 0) continue;
+        const nx = x + dx;
+        if (nx < 1 || nx >= roiW - 1) continue;
+        const npos = ny * roiW + nx;
+        if (strokeMask[npos] === 1) continue;
+        const idx = npos * 4;
+        const r = roiData[idx];
+        const g = roiData[idx + 1];
+        const b = roiData[idx + 2];
+        const rgbDiff =
+          (Math.abs(r - background.r) + Math.abs(g - background.g) + Math.abs(b - background.b)) / 3;
+        const pLuma = 0.299 * r + 0.587 * g + 0.114 * b;
+        const lumaDiff = Math.abs(pLuma - background.luma);
+        if (rgbDiff > haloRgbThresh || lumaDiff > haloLumaThresh) {
+          strokeMask[npos] = 1;
+          haloDist[npos] = dist + 1;
+          seedQueue[sTail++] = npos;
+        }
+      }
+    }
+  }
+
+  // 2px dilation disk to wipe residual drop-shadows and JPEG ringing around open text & traced stroke tips
   const dilated = new Uint8Array(totalPixels);
   for (let y = 0; y < roiH; y++) {
     for (let x = 0; x < roiW; x++) {
       if (strokeMask[y * roiW + x] !== 1) continue;
-      for (let dy = -1; dy <= 1; dy++) {
+      for (let dy = -2; dy <= 2; dy++) {
         const ny = y + dy;
-        if (ny < 0 || ny >= roiH) continue;
-        for (let dx = -1; dx <= 1; dx++) {
+        if (ny < 1 || ny >= roiH - 1) continue;
+        for (let dx = -2; dx <= 2; dx++) {
+          if (Math.abs(dx) + Math.abs(dy) > 3) continue;
           const nx = x + dx;
-          if (nx < 0 || nx >= roiW) continue;
-          if (pointInPolygon(nx, ny, localPoly)) {
-            dilated[ny * roiW + nx] = 1;
-          }
+          if (nx < 1 || nx >= roiW - 1) continue;
+          dilated[ny * roiW + nx] = 1;
         }
       }
     }
@@ -888,7 +1313,7 @@ export function cleanRoiBufferInPlace(
     [-1, 1],
     [1, 1],
   ];
-  const maxPasses = Math.min(28, Math.max(10, Math.ceil(Math.min(roiW, roiH) * 0.25)));
+  const maxPasses = Math.min(36, Math.max(12, Math.ceil(Math.min(roiW, roiH) * 0.3)));
 
   for (let pass = 0; pass < maxPasses; pass++) {
     const newlyFilled: Array<{ pos: number; r: number; g: number; b: number }> = [];
@@ -955,13 +1380,20 @@ export function getSafeWidthAtBandY(
   bandHeight: number,
   paddingFraction = 0.08
 ): { leftX: number; rightX: number; width: number } {
-  if (seg.rowSpans.length === 0) {
-    const pad = seg.safeBoxPx.width * paddingFraction;
+  const clampSpan = (rawLeft: number, rawRight: number): { leftX: number; rightX: number; width: number } => {
+    const rawW = Math.max(1, rawRight - rawLeft + 1);
+    const pad = Math.min(rawW * 0.25, Math.max(1.5, rawW * paddingFraction));
+    const leftX = rawLeft + pad;
+    const rightX = Math.max(leftX, rawRight - pad);
     return {
-      leftX: seg.safeBoxPx.x + pad,
-      rightX: seg.safeBoxPx.x + seg.safeBoxPx.width - pad,
-      width: Math.max(12, seg.safeBoxPx.width - pad * 2),
+      leftX,
+      rightX,
+      width: Math.max(4, rightX - leftX + 1),
     };
+  };
+
+  if (seg.rowSpans.length === 0) {
+    return clampSpan(seg.safeBoxPx.x, seg.safeBoxPx.x + Math.max(1, seg.safeBoxPx.width - 1));
   }
 
   const y0 = Math.round(bandCenterY - bandHeight * 0.45);
@@ -990,21 +1422,10 @@ export function getSafeWidthAtBandY(
         nearest = span;
       }
     }
-    const pad = Math.max(4, nearest.width * paddingFraction);
-    return {
-      leftX: nearest.leftX + pad,
-      rightX: nearest.rightX - pad,
-      width: Math.max(12, nearest.width - pad * 2),
-    };
+    return clampSpan(nearest.leftX, nearest.rightX);
   }
 
-  const rawWidth = minRight - maxLeft + 1;
-  const pad = Math.max(3, rawWidth * paddingFraction);
-  return {
-    leftX: maxLeft + pad,
-    rightX: minRight - pad,
-    width: Math.max(12, rawWidth - pad * 2),
-  };
+  return clampSpan(maxLeft, minRight);
 }
 
 /**
@@ -1021,7 +1442,7 @@ export function auditCleanedAndRenderedRegion(params: {
   imgW: number;
   imgH: number;
   textCenterPx?: Point;
-  textLines?: Array<{ y: number; width: number; height: number }>;
+  textLines?: Array<{ x?: number; y: number; width: number; height: number }>;
   overflowed?: boolean;
 }): RegionQualityAudit {
   const {
@@ -1079,8 +1500,9 @@ export function auditCleanedAndRenderedRegion(params: {
   if (textCenterPx && textLines.length > 0 && seg.hasClosedBubble) {
     for (const line of textLines) {
       const halfW = line.width / 2;
-      const left = textCenterPx.x - halfW;
-      const right = textCenterPx.x + halfW;
+      const lineCenterX = line.x ?? textCenterPx.x;
+      const left = lineCenterX - halfW;
+      const right = lineCenterX + halfW;
       const top = line.y - line.height / 2;
       const bottom = line.y + line.height / 2;
 
@@ -1089,7 +1511,7 @@ export function auditCleanedAndRenderedRegion(params: {
         break;
       }
 
-      const span = getSafeWidthAtBandY(seg, line.y, line.height, 0.02);
+      const span = getSafeWidthAtBandY(seg, line.y, line.height, 0.01);
       if (left < span.leftX - 2 || right > span.rightX + 2) {
         textOutOfBounds = true;
         break;

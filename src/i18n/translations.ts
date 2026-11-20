@@ -83,6 +83,10 @@ export const translations = {
       originalsIncludedBadge: 'مع الأصول',
       translatedOnlyBadge: 'المترجم فقط',
       pagesSavedLabel: 'صفحة محفوظة',
+      activeJobBannerTitle: 'مهمة ترجمة نشطة أو مستأنفة محفوظة بأمان',
+      activeJobResumeBtn: 'متابعة في المحرر',
+      activeJobPausedLabel: 'متوقفة مؤقتاً',
+      activeJobRunningLabel: 'قيد المعالجة على الخادم',
     },
     importModal: {
       title: 'استيراد عدد أو فصل جديد',
@@ -155,6 +159,9 @@ export const translations = {
       previewZoom: 'معاينة وتكبير',
       uploadingChunked: 'جاري الرفع على دفعات دون فقدان البيانات...',
       openEndedHint: 'يدعم أي عدد صفحات (صفحة واحدة، فصل طويل، أو رواية مصورة من عشرات أو مئات الصفحات)',
+      partialUploadSaved: 'تم حفظ الصفحات التي رُفعت بالفعل على الخادم بأمان. يمكنك استئناف رفع الباقي أو فتح الفصل مباشرة.',
+      retryRemainingPages: 'استئناف رفع الصفحات المتبقية',
+      openPartialChapter: 'فتح الفصل المحفوظ',
     },
     studio: {
       pagesList: 'الصفحات',
@@ -614,6 +621,10 @@ export const translations = {
       originalsIncludedBadge: 'With Originals',
       translatedOnlyBadge: 'Translated Only',
       pagesSavedLabel: 'pages saved',
+      activeJobBannerTitle: 'Active or Resumable Translation Progress Saved',
+      activeJobResumeBtn: 'Open in Studio',
+      activeJobPausedLabel: 'Paused',
+      activeJobRunningLabel: 'Running Safely on Server',
     },
     importModal: {
       title: 'Import New Issue / Chapter',
@@ -686,6 +697,9 @@ export const translations = {
       previewZoom: 'Preview & Zoom',
       uploadingChunked: 'Uploading pages in chunks...',
       openEndedHint: 'Open-ended page count: upload 1 page, a long issue, or a 100+ page graphic novel',
+      partialUploadSaved: 'Already uploaded pages are safely saved on disk. Resume remaining pages or open the saved chapter now.',
+      retryRemainingPages: 'Resume Remaining Pages',
+      openPartialChapter: 'Open Saved Chapter',
     },
     studio: {
       pagesList: 'Pages',

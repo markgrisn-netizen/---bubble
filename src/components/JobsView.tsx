@@ -3,6 +3,8 @@ import { Pause, Play, RefreshCw, Trash2, XCircle } from 'lucide-react';
 import type { LanguageCode, OperationLog, TranslationJob } from '../types/domain';
 import { tFor } from '../i18n/translations';
 import { api } from '../utils/api';
+import { useAppLifecycle } from '../utils/appLifecycle';
+import { formatPageStageLabel } from '../utils/persistenceUtils';
 
 interface JobsViewProps {
   lang: LanguageCode;
@@ -25,6 +27,12 @@ export const JobsView: React.FC<JobsViewProps> = ({ lang, onOpenChapter }) => {
     const timer = setInterval(() => void fetchJobs(), 2500);
     return () => clearInterval(timer);
   }, []);
+
+  useAppLifecycle({
+    onResume: () => {
+      void fetchJobs();
+    },
+  });
 
   const handleAction = async (
     jobId: string,
@@ -159,10 +167,13 @@ export const JobsView: React.FC<JobsViewProps> = ({ lang, onOpenChapter }) => {
 
                   {states.length > 0 && (
                     <div className="flex flex-wrap items-center gap-1 pt-1">
-                      {states.slice(0, 60).map(([pid, st], idx) => (
+                      {states.slice(0, 60).map(([pid, st], idx) => {
+                        const stage = job.pageStages?.[pid];
+                        const stageLabel = stage ? ` · ${formatPageStageLabel(lang, stage)}` : '';
+                        return (
                         <span
                           key={pid}
-                          title={`#${idx + 1}: ${st}`}
+                          title={`#${idx + 1}: ${st}${stageLabel}`}
                           className={`inline-flex items-center justify-center min-w-[24px] h-5 px-1 rounded text-[10px] font-mono-tabular border ${
                             st === 'completed' || st === 'skipped'
                               ? 'border-emerald-400/80 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300'
@@ -175,7 +186,8 @@ export const JobsView: React.FC<JobsViewProps> = ({ lang, onOpenChapter }) => {
                         >
                           {idx + 1}
                         </span>
-                      ))}
+                        );
+                      })}
                       {states.length > 60 && (
                         <span className="text-[10px] font-mono-tabular text-slate-400 px-1">
                           +{states.length - 60}

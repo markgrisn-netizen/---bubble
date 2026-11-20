@@ -93,7 +93,7 @@
         ]
       },
       "createdAt": "2026-11-18T08:43:52.185Z",
-      "updatedAt": "2026-11-19T08:57:22.585Z",
+      "updatedAt": "2026-11-20T11:25:21.986Z",
       "coverImage": "/uploads/ch_ch-23767060_p1_1794991458667_bf5dde02.webp"
     },
     {
@@ -651,7 +651,8 @@
           "approvalStatus": "approved",
           "translationStatus": "translated"
         }
-      ]
+      ],
+      "processedImage": "/uploads/rendered_page-av-1_1795171465280_f4d6320f.png"
     },
     {
       "id": "page-sd-1",
@@ -985,7 +986,8 @@
           "approvalStatus": "approved",
           "translationStatus": "translated"
         }
-      ]
+      ],
+      "processedImage": "/uploads/rendered_page-sd-1_1795171468312_4db00eef.png"
     },
     {
       "id": "page-sd-2",
@@ -1257,7 +1259,8 @@
           "approvalStatus": "approved",
           "translationStatus": "translated"
         }
-      ]
+      ],
+      "processedImage": "/uploads/rendered_page-sd-2_1795171469684_f1266c2a.png"
     },
     {
       "id": "page-sd-3",
@@ -4460,6 +4463,292 @@
     }
   ],
   "logs": [
+    {
+      "id": "log-1795174528202-m1l5",
+      "timestamp": "2026-11-20T11:35:28.202Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_CLEAN_TEST__\""
+    },
+    {
+      "id": "log-1795174524482-srvl",
+      "timestamp": "2026-11-20T11:35:24.482Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Chapter\" (total=1)",
+      "projectId": "proj-9e4d7ec2",
+      "chapterId": "ch-684ee4b5"
+    },
+    {
+      "id": "log-1795174524448-5wl1",
+      "timestamp": "2026-11-20T11:35:24.448Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_CLEAN_TEST__\"",
+      "projectId": "proj-9e4d7ec2"
+    },
+    {
+      "id": "log-1795174394429-ofan",
+      "timestamp": "2026-11-20T11:33:14.429Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_CLEAN_TEST__\""
+    },
+    {
+      "id": "log-1795174390640-9mhu",
+      "timestamp": "2026-11-20T11:33:10.640Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Chapter\" (total=1)",
+      "projectId": "proj-971dd9ff",
+      "chapterId": "ch-90aae1df"
+    },
+    {
+      "id": "log-1795174390613-psgs",
+      "timestamp": "2026-11-20T11:33:10.613Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_CLEAN_TEST__\"",
+      "projectId": "proj-971dd9ff"
+    },
+    {
+      "id": "log-1795174185119-wu4a",
+      "timestamp": "2026-11-20T11:29:45.119Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_CLEAN_TEST__\""
+    },
+    {
+      "id": "log-1795174174706-by16",
+      "timestamp": "2026-11-20T11:29:34.706Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Chapter\" (total=1)",
+      "projectId": "proj-229e2c78",
+      "chapterId": "ch-f9335783"
+    },
+    {
+      "id": "log-1795174174676-h8a7",
+      "timestamp": "2026-11-20T11:29:34.676Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_CLEAN_TEST__\"",
+      "projectId": "proj-229e2c78"
+    },
+    {
+      "id": "log-1795173921991-iai9",
+      "timestamp": "2026-11-20T11:25:21.991Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-5c1f4d6a"
+    },
+    {
+      "id": "log-1795173915369-qht9",
+      "timestamp": "2026-11-20T11:25:15.369Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-dfea3f66"
+    },
+    {
+      "id": "log-1795173911822-xb66",
+      "timestamp": "2026-11-20T11:25:11.822Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795173910460-6f6u",
+      "timestamp": "2026-11-20T11:25:10.460Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-8325bb0f"
+    },
+    {
+      "id": "log-1795173899534-ylwc",
+      "timestamp": "2026-11-20T11:24:59.534Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-4853f4dc"
+    },
+    {
+      "id": "log-1795173892993-hm2f",
+      "timestamp": "2026-11-20T11:24:52.993Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-0c4772a5"
+    },
+    {
+      "id": "log-1795173889440-sdd7",
+      "timestamp": "2026-11-20T11:24:49.440Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795173887965-8qh6",
+      "timestamp": "2026-11-20T11:24:47.965Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-c86ba7f6"
+    },
+    {
+      "id": "log-1795171914987-nyy9",
+      "timestamp": "2026-11-20T10:51:54.987Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171911181-569i",
+      "timestamp": "2026-11-20T10:51:51.181Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Test R2\" (total=1)",
+      "projectId": "proj-c4cb686e",
+      "chapterId": "ch-99057283"
+    },
+    {
+      "id": "log-1795171911158-5dho",
+      "timestamp": "2026-11-20T10:51:51.158Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-c4cb686e"
+    },
+    {
+      "id": "log-1795171874596-kyve",
+      "timestamp": "2026-11-20T10:51:14.596Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-6bc74f38"
+    },
+    {
+      "id": "log-1795171868044-1pp5",
+      "timestamp": "2026-11-20T10:51:08.044Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-4ee563ba"
+    },
+    {
+      "id": "log-1795171864804-6vdw",
+      "timestamp": "2026-11-20T10:51:04.804Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795171863479-2aft",
+      "timestamp": "2026-11-20T10:51:03.479Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-9faedc37"
+    },
+    {
+      "id": "log-1795171761138-obrv",
+      "timestamp": "2026-11-20T10:49:21.138Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171584326-kbxh",
+      "timestamp": "2026-11-20T10:46:24.326Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Test\" (total=1)",
+      "projectId": "proj-32136d71",
+      "chapterId": "ch-773a3aa1"
+    },
+    {
+      "id": "log-1795171584302-zm7e",
+      "timestamp": "2026-11-20T10:46:24.302Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-32136d71"
+    },
+    {
+      "id": "log-1795171582954-6bp0",
+      "timestamp": "2026-11-20T10:46:22.954Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171549135-kgoq",
+      "timestamp": "2026-11-20T10:45:49.135Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-b5edc095"
+    },
+    {
+      "id": "log-1795171548668-f10l",
+      "timestamp": "2026-11-20T10:45:48.668Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171524727-t11d",
+      "timestamp": "2026-11-20T10:45:24.727Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-a7ddb279"
+    },
+    {
+      "id": "log-1795171423961-p2uc",
+      "timestamp": "2026-11-20T10:43:43.961Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-45948793"
+    },
+    {
+      "id": "log-1795171417392-1pcs",
+      "timestamp": "2026-11-20T10:43:37.392Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-6cfa53b7"
+    },
+    {
+      "id": "log-1795171412911-sdlc",
+      "timestamp": "2026-11-20T10:43:32.911Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795171411470-ouzi",
+      "timestamp": "2026-11-20T10:43:31.470Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-e4373c25"
+    },
     {
       "id": "log-1795079159293-eqp9",
       "timestamp": "2026-11-19T09:05:59.293Z",

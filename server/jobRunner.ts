@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import type { AiProviderId, TranslationJob } from '../src/types/domain.ts';
-import { appendLog, getDb, saveDb } from './store.ts';
+import { appendLog, cleanupOrphanTempFiles, getDb, saveDb } from './store.ts';
 import {
   analyzeComicPageWithProvider,
   normalizeAiProviderId,
@@ -170,6 +170,60 @@ export function controlJob(
   return job;
 }
 
+/**
+ * Recovers interrupted translation jobs & orphaned in-flight page states after an unexpected
+ * server shutdown, crash, or container restart — without re-translating already-completed pages.
+ */
+export function recoverInterruptedJobsOnStartup(): {
+  recoveredJobIds: string[];
+  resetPageIds: string[];
+} {
+  cleanupOrphanTempFiles();
+  const db = getDb();
+  const recoveredJobIds: string[] = [];
+  const resetPageIds: string[] = [];
+
+  for (const job of db.jobs) {
+    if (job.status === 'running' || job.status === 'queued') {
+      for (const [pageId, state] of Object.entries(job.pageStates || {})) {
+        if (state === 'running') {
+          job.pageStates[pageId] = 'queued';
+          const pg = db.pages.find((p) => p.id === pageId);
+          if (pg && (pg.status === 'analyzing' || pg.status === 'translating')) {
+            pg.status = pg.regions.length > 0 ? 'analyzed' : 'pending';
+            resetPageIds.push(pg.id);
+          }
+        }
+      }
+      job.status = 'queued';
+      recoveredJobIds.push(job.id);
+    }
+  }
+
+  for (const pg of db.pages) {
+    if (pg.status === 'analyzing' || pg.status === 'translating') {
+      pg.status = pg.regions.length > 0 ? 'analyzed' : 'pending';
+      if (!resetPageIds.includes(pg.id)) {
+        resetPageIds.push(pg.id);
+      }
+    }
+  }
+
+  if (recoveredJobIds.length > 0 || resetPageIds.length > 0) {
+    saveDb();
+    appendLog(
+      'info',
+      'JOB_RECOVERED',
+      `Recovered ${recoveredJobIds.length} interrupted batch job(s) and reset ${resetPageIds.length} in-flight page(s) while keeping completed pages intact.`
+    );
+    for (const jobId of recoveredJobIds) {
+      scheduleJobExecution(jobId);
+    }
+  }
+
+  return { recoveredJobIds, resetPageIds };
+}
+
 function scheduleJobExecution(jobId: string): void {
   if (activeRunners.has(jobId)) return;
   activeRunners.add(jobId);
@@ -283,9 +337,17 @@ function scheduleJobExecution(jobId: string): void {
               page.regions = analyzed.regions;
               visionProviderUsed = analyzed.providerUsed;
               visionModelUsed = analyzed.modelUsed;
+              // Persist OCR analysis immediately before translation so crashes never lose detected bubbles
+              page.status = 'analyzed';
+              saveDb();
             }
 
-            if (isAborted()) return;
+            if (isAborted()) {
+              page.status = page.regions.length > 0 ? 'analyzed' : 'pending';
+              freshJob.pageStates[pageId] = 'queued';
+              saveDb();
+              return;
+            }
 
             page.status = 'translating';
             saveDb();
@@ -361,24 +423,32 @@ function scheduleJobExecution(jobId: string): void {
             ).length;
           } catch (err) {
             if (isAborted()) {
-              page.status = 'pending';
+              page.status = page.regions.length > 0 ? 'analyzed' : 'pending';
               freshJob.pageStates[pageId] = 'queued';
               saveDb();
               return;
             }
             const msg = err instanceof Error ? err.message : String(err);
+            const isDiskFull = /ENOSPC|no space/i.test(msg);
             page.status = 'error';
             page.errorMessage = msg;
-            freshJob.pageStates[pageId] = 'failed';
+            freshJob.pageStates[pageId] = isDiskFull ? 'queued' : 'failed';
             freshJob.failedPages = Object.values(freshJob.pageStates).filter(
               (s) => s === 'failed'
             ).length;
-            freshJob.errorMessage = msg;
+            freshJob.errorMessage = isDiskFull ? 'STORAGE_FULL' : msg;
+            if (isDiskFull) {
+              freshJob.status = 'paused';
+            }
             appendLog('error', 'PAGE_PROCESS_FAILED', `Page ${page.pageNumber}: ${msg}`, {
               projectId: project.id,
               chapterId: chapter.id,
               pageId: page.id,
             });
+            if (isDiskFull) {
+              saveDb();
+              return;
+            }
           }
 
           const doneCount = Object.values(freshJob.pageStates).filter(

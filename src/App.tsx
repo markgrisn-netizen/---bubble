@@ -8,6 +8,7 @@ import type {
   ProvidersDetailedStatusMap,
   ProvidersStatusMap,
   ThemeMode,
+  TranslationJob,
 } from './types/domain';
 import { api } from './utils/api';
 import { AppShell, type AppSection } from './components/AppShell';
@@ -98,6 +99,25 @@ const DEFAULT_FONTS = [
   'JetBrains Mono',
 ];
 
+const SESSION_STORAGE_KEY = 'faqqa_session_v1';
+
+interface SavedSessionPointer {
+  section?: AppSection;
+  chapterId?: string;
+  pageIdByChapter?: Record<string, string>;
+}
+
+function readSavedSession(): SavedSessionPointer {
+  try {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 export default function App() {
   const [lang, setLang] = useState<LanguageCode>(() => {
     const saved = localStorage.getItem('pt_lang');
@@ -108,10 +128,15 @@ export default function App() {
     return saved === 'dark' ? 'dark' : 'light';
   });
 
-  const [activeSection, setActiveSection] = useState<AppSection>('library');
+  const [activeSection, setActiveSection] = useState<AppSection>(() => {
+    const s = readSavedSession().section;
+    const allowed: AppSection[] = ['library', 'browser', 'studio', 'reader', 'glossary', 'jobs', 'settings'];
+    return s && allowed.includes(s) ? s : 'library';
+  });
   const [projects, setProjects] = useState<ProjectWithDetails[]>([]);
+  const [activeJobs, setActiveJobs] = useState<TranslationJob[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
-  const [activeChapterId, setActiveChapterId] = useState<string>('');
+  const [activeChapterId, setActiveChapterId] = useState<string>(() => readSavedSession().chapterId || '');
 
   const [aiSettings, setAiSettings] = useState<AiSettings>(DEFAULT_AI_SETTINGS);
   const [serverConfigured, setServerConfigured] = useState(false);
@@ -157,13 +182,38 @@ export default function App() {
     localStorage.setItem('pt_theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    try {
+      const prev = readSavedSession();
+      localStorage.setItem(
+        SESSION_STORAGE_KEY,
+        JSON.stringify({
+          ...prev,
+          section: activeSection,
+          chapterId: activeChapterId,
+        })
+      );
+    } catch {
+      // Ignore storage quota errors for lightweight session pointer
+    }
+  }, [activeSection, activeChapterId]);
+
   const refreshProjects = async () => {
     setLoadingProjects(true);
     try {
-      const [pRes, sRes] = await Promise.all([api.getProjects(), api.getSettings()]);
+      const [pRes, sRes, jRes] = await Promise.all([
+        api.getProjects(),
+        api.getSettings(),
+        api.getJobs().catch(() => ({ jobs: [] as TranslationJob[] })),
+      ]);
       setProjects(pRes.projects);
       setAiSettings(sRes.settings);
       setServerConfigured(sRes.configured);
+      setActiveJobs(
+        (jRes.jobs || []).filter(
+          (j) => j.status === 'running' || j.status === 'queued' || j.status === 'paused'
+        )
+      );
       if (sRes.providersStatus) {
         setProvidersStatus(sRes.providersStatus);
       }
@@ -171,9 +221,13 @@ export default function App() {
         setProvidersDetailed(sRes.providersDetailed);
       }
 
-      if (!activeChapterId) {
-        const firstChapter = pRes.projects.find((p) => p.chapters.length > 0)?.chapters[0];
+      const allChapterIds = new Set(pRes.projects.flatMap((p) => p.chapters.map((c) => c.id)));
+      const firstChapter = pRes.projects.find((p) => p.chapters.length > 0)?.chapters[0];
+      if (!activeChapterId || !allChapterIds.has(activeChapterId)) {
         if (firstChapter) setActiveChapterId(firstChapter.id);
+        if ((activeSection === 'studio' || activeSection === 'reader') && activeChapterId && !allChapterIds.has(activeChapterId)) {
+          setActiveSection('library');
+        }
       }
     } catch {
       // If offline, user can still open cached chapters
@@ -185,6 +239,23 @@ export default function App() {
   useEffect(() => {
     void refreshProjects();
   }, []);
+
+  useEffect(() => {
+    if (activeSection !== 'library' || activeJobs.length === 0) return;
+    const timer = window.setInterval(() => {
+      void api
+        .getJobs()
+        .then((res) => {
+          setActiveJobs(
+            (res.jobs || []).filter(
+              (j) => j.status === 'running' || j.status === 'queued' || j.status === 'paused'
+            )
+          );
+        })
+        .catch(() => {});
+    }, 3500);
+    return () => window.clearInterval(timer);
+  }, [activeSection, activeJobs.length]);
 
   const activeChapterLabel = (() => {
     for (const p of projects) {
@@ -215,6 +286,7 @@ export default function App() {
         <LibraryView
           lang={lang}
           projects={projects}
+          activeJobs={activeJobs}
           loading={loadingProjects}
           inpaintingEngine={aiSettings.inpaintingEngine}
           onOpenImportModal={(initialTab, targetProjectId) =>

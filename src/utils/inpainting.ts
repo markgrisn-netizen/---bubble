@@ -44,7 +44,7 @@ export interface RegionCleanOutcome {
 
 export interface RenderedRegionMetrics {
   textCenterPx: Point;
-  textLines: Array<{ y: number; width: number; height: number }>;
+  textLines: Array<{ x?: number; y: number; width: number; height: number }>;
   overflowed: boolean;
 }
 
@@ -182,11 +182,11 @@ export function renderRegionText(
     useSegmentedBounds && seg
       ? seg.textSafeBoxPx || seg.safeBoxPx
       : normalizedBoxToImagePx(region.boundingBox, imgW, imgH);
-  const boxW = Math.max(16, pxBox.width);
-  const boxH = Math.max(16, pxBox.height);
+  const boxW = Math.max(8, pxBox.width);
+  const boxH = Math.max(8, pxBox.height);
 
   const scaleFactor = imgW / 1000;
-  const baseFontSizePx = Math.max(10, fs.fontSize * scaleFactor);
+  const baseFontSizePx = Math.max(8, fs.fontSize * scaleFactor);
 
   const fontStack = isRtl
     ? `"${fs.fontFamily}", "Cairo", "IBM Plex Sans Arabic", "Tajawal", sans-serif`
@@ -202,7 +202,10 @@ export function renderRegionText(
 
   const baseCenterPx =
     useSegmentedBounds && seg
-      ? seg.centroidPx
+      ? {
+          x: seg.centroidPx.x,
+          y: pxBox.y + pxBox.height / 2,
+        }
       : (() => {
           const normCenter = computeRegionCenterNormalized(
             region.boundingBox,
@@ -216,8 +219,8 @@ export function renderRegionText(
 
   const rawCenterX = baseCenterPx.x + (fs.offsetX / 1000) * imgW;
   const rawCenterY = baseCenterPx.y + (fs.offsetY / 1000) * imgH;
-  const centerX = Math.max(12, Math.min(imgW - 12, rawCenterX));
-  const centerY = Math.max(12, Math.min(imgH - 12, rawCenterY));
+  const centerX = Math.max(8, Math.min(imgW - 8, rawCenterX));
+  const centerY = Math.max(8, Math.min(imgH - 8, rawCenterY));
 
   const needsBackingPill =
     region.cleanMode === 'keep' || (region.regionType === 'sfx' && region.sfxMode === 'side');
@@ -226,9 +229,10 @@ export function renderRegionText(
     const chars = Array.from(text);
     const stepSize = Math.min(
       baseFontSizePx * 1.15,
-      Math.max(11, (boxH * 0.85) / Math.max(1, chars.length))
+      boxW * 0.85,
+      Math.max(8, (boxH * 0.85) / Math.max(1, chars.length))
     );
-    ctx.font = `${fs.fontWeight} ${Math.round(stepSize * 0.9)}px ${fontStack}`;
+    ctx.font = `${fs.fontWeight} ${Math.max(6, Math.round(stepSize * 0.9))}px ${fontStack}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.translate(centerX, centerY);
@@ -255,11 +259,13 @@ export function renderRegionText(
   const measureFn = (str: string, fontSizePx: number): number => {
     ctx.direction = isRtl ? 'rtl' : 'ltr';
     ctx.font = `${fs.fontWeight} ${fontSizePx}px ${fontStack}`;
-    return ctx.measureText(str).width;
+    const m = ctx.measureText(str);
+    const inkW = (m.actualBoundingBoxLeft || 0) + (m.actualBoundingBoxRight || 0);
+    return Math.max(m.width, inkW);
   };
 
   const sfxSideShiftY = region.regionType === 'sfx' && region.sfxMode === 'side' ? boxH * 0.55 : 0;
-  const effectiveCenterY = Math.max(12, Math.min(imgH - 12, centerY + sfxSideShiftY));
+  const initialCenterY = Math.max(8, Math.min(imgH - 8, centerY + sfxSideShiftY));
 
   // Query true inscribed contour width at each line's Y slice when segmented
   const getBandMaxWidthPx =
@@ -267,12 +273,12 @@ export function renderRegionText(
       ? (lineIdx: number, totalExpectedLines: number, lineHeightPx: number): number => {
           const totalH = totalExpectedLines * lineHeightPx;
           const lineY =
-            effectiveCenterY - totalH / 2 + lineHeightPx / 2 + lineIdx * lineHeightPx;
+            initialCenterY - totalH / 2 + lineHeightPx / 2 + lineIdx * lineHeightPx;
           const span = getSafeWidthAtBandY(
             seg,
             lineY,
             lineHeightPx,
-            Math.max(0.06, Math.min(0.2, fs.padding / 100))
+            Math.max(0.05, Math.min(0.18, fs.padding / 100))
           );
           return span.width;
         }
@@ -288,10 +294,25 @@ export function renderRegionText(
       padding: fs.padding,
       autoFit: fs.autoFit,
       align: fs.align,
+      contourPaddingApplied: useSegmentedBounds,
     },
     measureFn,
     getBandMaxWidthPx
   );
+
+  const totalTextHeight = fitted.lines.length * fitted.lineHeightPx;
+  let effectiveCenterY = initialCenterY;
+  if (
+    !fs.rotation &&
+    fs.offsetY === 0 &&
+    !(region.regionType === 'sfx' && region.sfxMode === 'side')
+  ) {
+    const minCy = pxBox.y + totalTextHeight / 2 + 1;
+    const maxCy = pxBox.y + pxBox.height - totalTextHeight / 2 - 1;
+    if (minCy <= maxCy) {
+      effectiveCenterY = Math.max(minCy, Math.min(maxCy, effectiveCenterY));
+    }
+  }
 
   ctx.font = `${fs.fontWeight} ${fitted.fontSize}px ${fontStack}`;
   ctx.direction = isRtl ? 'rtl' : 'ltr';
@@ -311,7 +332,6 @@ export function renderRegionText(
     ctx.rotate((fs.rotation * Math.PI) / 180);
   }
 
-  const totalTextHeight = fitted.lines.length * fitted.lineHeightPx;
   const maxLineWidth = fitted.lines.reduce((m, l) => Math.max(m, ctx.measureText(l).width), 0);
 
   if (needsBackingPill && fitted.lines.length > 0) {
@@ -331,7 +351,7 @@ export function renderRegionText(
   }
 
   const startY = -totalTextHeight / 2 + fitted.lineHeightPx / 2;
-  const renderedLines: Array<{ y: number; width: number; height: number }> = [];
+  const renderedLines: Array<{ x?: number; y: number; width: number; height: number }> = [];
 
   for (let i = 0; i < fitted.lines.length; i++) {
     const line = fitted.lines[i];
@@ -340,22 +360,37 @@ export function renderRegionText(
 
     let drawX = anchorX;
     const m = ctx.measureText(line);
-    const lineWidthPx = m.width;
+    const inkW = (m.actualBoundingBoxLeft || 0) + (m.actualBoundingBoxRight || 0);
+    const lineWidthPx = Math.max(m.width, inkW);
 
     if (fs.align === 'center') {
-      // Shift slightly toward the scanline band center if contour is asymmetric and user hasn't manually offset X
-      if (useSegmentedBounds && seg && fs.offsetX === 0 && !fs.rotation) {
-        const span = getSafeWidthAtBandY(seg, absLineY, fitted.lineHeightPx, 0.04);
-        const spanMidX = (span.leftX + span.rightX) / 2;
-        const maxShift = Math.max(0, (span.width - lineWidthPx) * 0.45);
-        const deltaToSpanMid = Math.max(-maxShift, Math.min(maxShift, spanMidX - centerX));
-        drawX += deltaToSpanMid * 0.55;
-      }
       drawX += computeOpticalCenterOffsetX(
         m.actualBoundingBoxLeft,
         m.actualBoundingBoxRight,
         fitted.fontSize
       );
+
+      // Center cleanly inside the exact scanline band & hard-clamp within left/right contour walls
+      if (useSegmentedBounds && seg && fs.offsetX === 0 && !fs.rotation) {
+        const span = getSafeWidthAtBandY(seg, absLineY, fitted.lineHeightPx, 0.03);
+        const spanMidX = (span.leftX + span.rightX) / 2;
+        const targetLocalX = spanMidX - centerX;
+        const halfW = lineWidthPx / 2;
+        const minLocalX = span.leftX + halfW - centerX;
+        const maxLocalX = span.rightX - halfW - centerX;
+        if (minLocalX <= maxLocalX) {
+          drawX = Math.max(minLocalX, Math.min(maxLocalX, targetLocalX));
+        } else {
+          drawX = targetLocalX;
+        }
+      } else if (!fs.rotation && fs.offsetX === 0) {
+        const halfW = lineWidthPx / 2;
+        const minLocalX = pxBox.x + 2 + halfW - centerX;
+        const maxLocalX = pxBox.x + pxBox.width - 2 - halfW - centerX;
+        if (minLocalX <= maxLocalX) {
+          drawX = Math.max(minLocalX, Math.min(maxLocalX, drawX));
+        }
+      }
     }
 
     // Clamp line horizontally inside canvas bounds when unrotated
@@ -381,6 +416,7 @@ export function renderRegionText(
     ctx.fillText(line, drawX, lineY);
 
     renderedLines.push({
+      x: centerX + drawX,
       y: absLineY,
       width: lineWidthPx,
       height: fitted.lineHeightPx,

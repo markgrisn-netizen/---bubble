@@ -28,6 +28,7 @@ interface BubbleCanvasProps {
   onCreateRegion: (box: { x: number; y: number; width: number; height: number }) => void;
   onAddManualStroke: (stroke: ManualStroke) => void;
   onRegionAudits?: (audits: Record<string, RegionQualityAudit>) => void;
+  onCompositeRendered?: (page: Page, canvas: HTMLCanvasElement) => void;
 }
 
 export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
@@ -46,9 +47,12 @@ export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
   onCreateRegion,
   onAddManualStroke,
   onRegionAudits,
+  onCompositeRendered,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const onCompositeRenderedRef = useRef(onCompositeRendered);
+  onCompositeRenderedRef.current = onCompositeRendered;
   const [canvasDims, setCanvasDims] = useState({ w: page.width || 900, h: page.height || 1200 });
   const [containerSize, setContainerSize] = useState({ w: 860, h: 680 });
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -128,6 +132,9 @@ export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
         if (!cancelled && canvas) {
           setRenderError(null);
           setCanvasDims({ w: canvas.width, h: canvas.height });
+          if (!livePolyOverride && onCompositeRenderedRef.current) {
+            onCompositeRenderedRef.current(effectivePage, canvas);
+          }
         }
       })
       .catch((err) => {
@@ -279,7 +286,9 @@ export const BubbleCanvas: React.FC<BubbleCanvasProps> = ({
     if (livePolyOverride && livePolyOverride.regionId === r.id) {
       return livePolyOverride.polygon;
     }
-    return r.boundingPolygon.length >= 3 ? r.boundingPolygon : boxToPolygon(r.boundingBox);
+    return r.boundingPolygon && r.boundingPolygon.length >= 3
+      ? r.boundingPolygon
+      : boxToPolygon(r.boundingBox);
   };
 
   const cursorClass =

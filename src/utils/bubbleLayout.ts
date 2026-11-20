@@ -175,11 +175,12 @@ export interface FittedTextResult {
 
 /**
  * Rebalances consecutive wrapped lines so Western/Arabic oval speech bubbles
- * avoid awkward short orphan words on the final line while staying inside availWidth.
+ * avoid awkward short orphan words on the final line while strictly respecting
+ * each line's per-band contour limit.
  */
 function balanceComicLines(
   lines: string[],
-  availWidth: number,
+  getLineLimit: (idx: number) => number,
   fontSizePx: number,
   measureWidth: (str: string, fontSizePx: number) => number
 ): string[] {
@@ -193,8 +194,11 @@ function balanceComicLines(
       const movedWord = curWords[curWords.length - 1];
       const candidateNext = `${movedWord} ${nextWords.join(' ')}`;
       const candidateCur = curWords.slice(0, -1).join(' ');
+      const curLimit = getLineLimit(i);
+      const nextLimit = getLineLimit(i + 1);
       if (
-        measureWidth(candidateNext, fontSizePx) <= availWidth &&
+        measureWidth(candidateNext, fontSizePx) <= nextLimit &&
+        measureWidth(candidateCur, fontSizePx) <= curLimit &&
         measureWidth(candidateCur, fontSizePx) >= measureWidth(candidateNext, fontSizePx) * 0.65
       ) {
         balanced[i] = candidateCur;
@@ -208,7 +212,7 @@ function balanceComicLines(
 /**
  * Deterministic contour-aware word-wrapper and gradual auto-fit sizer for Western & Arabic comic speech bubbles:
  * 1. Wraps against optional per-band contour widths (so wide center lines fill oval/cloud width while narrow top/bottom lines stay inset from curved walls).
- * 2. Gradually steps down font size to readable floor (11px), slightly tightens line-height if needed, and falls back to 9.5px only when strictly necessary while flagging `overflowed`.
+ * 2. Gradually steps down font size to readable floor (11px), slightly tightens line-height if needed, and falls back smoothly down to 7px for ultra-tight bubbles while never allowing glyphs past contour bounds.
  */
 export function fitTextInRegion(
   text: string,
@@ -216,6 +220,7 @@ export function fitTextInRegion(
   boxHeightPx: number,
   settings: Pick<FontSettings, 'fontSize' | 'lineHeight' | 'padding' | 'autoFit'> & {
     align?: FontSettings['align'];
+    contourPaddingApplied?: boolean;
   },
   measureWidth: (str: string, fontSizePx: number) => number,
   getBandMaxWidthPx?: (lineIndex: number, totalExpectedLines: number, lineHeightPx: number) => number
@@ -230,21 +235,28 @@ export function fitTextInRegion(
     };
   }
 
-  const padRatio = Math.min(0.32, Math.max(0.06, settings.padding / 100));
-  const availWidth = Math.max(24, boxWidthPx * (1 - padRatio * 2));
-  const availHeight = Math.max(20, boxHeightPx * (1 - padRatio * 2));
+  const rawPadRatio = Math.min(0.32, Math.max(0.04, settings.padding / 100));
+  const hPadRatio = settings.contourPaddingApplied ? Math.min(0.03, rawPadRatio * 0.25) : rawPadRatio;
+  const vPadRatio = settings.contourPaddingApplied ? Math.min(0.04, rawPadRatio * 0.3) : rawPadRatio;
+
+  const availWidth = Math.max(8, boxWidthPx * (1 - hPadRatio * 2));
+  const availHeight = Math.max(10, boxHeightPx * (1 - vPadRatio * 2));
   const shouldBalance = settings.align !== 'left' && settings.align !== 'right';
 
   const getLineLimit = (lineIdx: number, estTotal: number, lhPx: number): number => {
     if (!getBandMaxWidthPx) return availWidth;
     const contourW = getBandMaxWidthPx(lineIdx, estTotal, lhPx);
-    return Math.max(20, Math.min(availWidth, contourW));
+    return Math.max(6, Math.min(availWidth, contourW));
   };
 
-  const wrapAtSize = (fontSizePx: number, lineHeightMult: number): string[] => {
+  const wrapAtSize = (
+    fontSizePx: number,
+    lineHeightMult: number,
+    allowTokenBreak = false
+  ): string[] => {
     const paragraphs = cleanText.split(/\r?\n/);
     const lhPx = fontSizePx * lineHeightMult;
-    const estMaxLines = Math.max(1, Math.floor(availHeight / Math.max(8, lhPx)));
+    const estMaxLines = Math.max(1, Math.floor(availHeight / Math.max(5, lhPx)));
 
     const runWrap = (expectedLines: number): string[] => {
       const lines: string[] = [];
@@ -255,12 +267,13 @@ export function fitTextInRegion(
           continue;
         }
 
+        const baseOffset = lines.length;
         const paraLines: string[] = [];
-        let lineIdx = lines.length;
+        let lineIdx = baseOffset;
         let curLimit = getLineLimit(lineIdx, expectedLines, lhPx);
         let currentLine = words[0];
 
-        if (measureWidth(currentLine, fontSizePx) > curLimit && currentLine.length > 4) {
+        if (allowTokenBreak && measureWidth(currentLine, fontSizePx) > curLimit && currentLine.length > 1) {
           const splitChunks = breakLongToken(currentLine, curLimit, fontSizePx, measureWidth);
           paraLines.push(...splitChunks.slice(0, -1));
           lineIdx += Math.max(0, splitChunks.length - 1);
@@ -277,7 +290,7 @@ export function fitTextInRegion(
             lineIdx += 1;
             curLimit = getLineLimit(lineIdx, expectedLines, lhPx);
             currentLine = words[i];
-            if (measureWidth(currentLine, fontSizePx) > curLimit && currentLine.length > 4) {
+            if (allowTokenBreak && measureWidth(currentLine, fontSizePx) > curLimit && currentLine.length > 1) {
               const splitChunks = breakLongToken(currentLine, curLimit, fontSizePx, measureWidth);
               paraLines.push(...splitChunks.slice(0, -1));
               lineIdx += Math.max(0, splitChunks.length - 1);
@@ -289,7 +302,12 @@ export function fitTextInRegion(
         paraLines.push(currentLine);
 
         const balanced = shouldBalance
-          ? balanceComicLines(paraLines, availWidth, fontSizePx, measureWidth)
+          ? balanceComicLines(
+              paraLines,
+              (localIdx) => getLineLimit(baseOffset + localIdx, expectedLines, lhPx),
+              fontSizePx,
+              measureWidth
+            )
           : paraLines;
         lines.push(...balanced);
       }
@@ -302,7 +320,7 @@ export function fitTextInRegion(
   };
 
   if (!settings.autoFit) {
-    const lines = wrapAtSize(settings.fontSize, settings.lineHeight);
+    const lines = wrapAtSize(settings.fontSize, settings.lineHeight, false);
     const lineHeightPx = settings.fontSize * settings.lineHeight;
     const totalH = lines.length * lineHeightPx;
     return {
@@ -313,55 +331,60 @@ export function fitTextInRegion(
     };
   }
 
+  const widthBoundCandidate =
+    cleanText.length > 2 ? Math.max(9, Math.floor(availWidth * 0.55)) : Math.max(10, Math.floor(availWidth * 0.9));
   const maxCandidate = Math.min(
     Math.max(settings.fontSize, 26),
-    Math.max(14, Math.floor(availHeight * 0.44))
+    Math.max(9, Math.floor(availHeight * 0.44)),
+    widthBoundCandidate
   );
   const readableFloor = 11;
-  const emergencyFloor = 9.5;
+  const emergencyFloor = 7;
 
   const fitsLines = (lines: string[], fontSizePx: number, lineHeightPx: number): boolean => {
-    const totalHeight = lines.length * lineHeightPx;
+    const totalHeight = lines.length * lineHeightPx + fontSizePx * 0.08;
     if (totalHeight > availHeight) return false;
     for (let i = 0; i < lines.length; i++) {
       const limit = getLineLimit(i, lines.length, lineHeightPx);
-      if (measureWidth(lines[i], fontSizePx) > limit * 1.02) {
+      if (measureWidth(lines[i], fontSizePx) > limit) {
         return false;
       }
     }
     return true;
   };
 
-  // Stage 1 & 2: Try preferred line-height stepping down gradually to 11px readable floor
+  // Stage 1 & 2: Try preferred line-height stepping down gradually to 11px readable floor (whole words intact)
   for (let size = maxCandidate; size >= readableFloor; size -= 0.75) {
-    const lines = wrapAtSize(size, settings.lineHeight);
+    const lines = wrapAtSize(size, settings.lineHeight, false);
     const lineHeightPx = size * settings.lineHeight;
     if (fitsLines(lines, size, lineHeightPx)) {
       return { fontSize: Number(size.toFixed(2)), lines, lineHeightPx, overflowed: false };
     }
   }
 
-  // Stage 3: Slightly tighten line-height while staying inside readable floor (11px)
-  const tightenedLh = Math.max(1.12, settings.lineHeight - 0.14);
+  // Stage 3: Slightly tighten line-height while staying inside readable floor (11px, whole words intact)
+  const tightenedLh = Math.max(1.08, settings.lineHeight - 0.16);
   for (let size = Math.min(maxCandidate, settings.fontSize); size >= readableFloor; size -= 0.75) {
-    const lines = wrapAtSize(size, tightenedLh);
+    const lines = wrapAtSize(size, tightenedLh, false);
     const lineHeightPx = size * tightenedLh;
     if (fitsLines(lines, size, lineHeightPx)) {
       return { fontSize: Number(size.toFixed(2)), lines, lineHeightPx, overflowed: false };
     }
   }
 
-  // Stage 4: Emergency compact floor down to 9.5px for very dense bubbles
-  for (let size = readableFloor - 0.5; size >= emergencyFloor; size -= 0.5) {
-    const lines = wrapAtSize(size, tightenedLh);
-    const lineHeightPx = size * tightenedLh;
+  // Stage 4: Emergency compact floor down to 7px for small/narrow/dense manga bubbles (still keeping whole words intact)
+  const compactLh = Math.max(1.04, settings.lineHeight - 0.22);
+  for (let size = Math.min(maxCandidate, readableFloor - 0.5); size >= emergencyFloor; size -= 0.5) {
+    const lines = wrapAtSize(size, compactLh, false);
+    const lineHeightPx = size * compactLh;
     if (fitsLines(lines, size, lineHeightPx)) {
       return { fontSize: Number(size.toFixed(2)), lines, lineHeightPx, overflowed: false };
     }
   }
 
-  const fallbackLines = wrapAtSize(emergencyFloor, tightenedLh);
-  const fallbackLhPx = emergencyFloor * tightenedLh;
+  // Final emergency fallback allowing token break only if an unspaced word exceeds 7px width limit
+  const fallbackLines = wrapAtSize(emergencyFloor, compactLh, true);
+  const fallbackLhPx = emergencyFloor * compactLh;
   return {
     fontSize: emergencyFloor,
     lines: fallbackLines,

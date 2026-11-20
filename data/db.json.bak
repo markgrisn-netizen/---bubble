@@ -1,0 +1,5546 @@
+{
+  "user": {
+    "id": "user-studio-1",
+    "email": "studio@paneltranslate.local",
+    "settings": {
+      "provider": "gemini",
+      "visionProvider": "gemini",
+      "translationModel": "gemini-4-hydrogen",
+      "visionOcrModel": "gemini-4-hydrogen",
+      "inpaintingEngine": "telea_biharmonic",
+      "creativity": 0.35,
+      "fidelity": 0.85,
+      "parallelPages": 2,
+      "rateLimitPerMinute": 30,
+      "autoFallback": true,
+      "allowPaidFallback": false,
+      "fallbackOrder": [
+        "gemini",
+        "deepseek",
+        "qwen_studio",
+        "groq",
+        "openrouter",
+        "cloudflare"
+      ],
+      "providers": {
+        "gemini": {
+          "translationModel": "gemini-4-hydrogen",
+          "visionModel": "gemini-4-hydrogen",
+          "endpointUrl": "https://generativelanguage.googleapis.com"
+        },
+        "groq": {
+          "translationModel": "llama-3.3-70b-versatile",
+          "visionModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+          "endpointUrl": "https://api.groq.com/openai/v1"
+        },
+        "openrouter": {
+          "translationModel": "deepseek/deepseek-chat-v3-0324:free",
+          "visionModel": "qwen/qwen2.5-vl-72b-instruct:free",
+          "endpointUrl": "https://openrouter.ai/api/v1"
+        },
+        "cloudflare": {
+          "translationModel": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+          "visionModel": "@cf/meta/llama-3.2-11b-vision-instruct",
+          "accountId": "",
+          "endpointUrl": "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/v1"
+        },
+        "deepseek": {
+          "translationModel": "deepseek-reasoner",
+          "endpointUrl": "https://api.deepseek.com/v1"
+        },
+        "qwen_studio": {
+          "translationModel": "qwen-plus",
+          "visionModel": "qwen-vl-max",
+          "endpointUrl": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+        }
+      }
+    },
+    "createdAt": "2026-11-16T18:12:38.841Z"
+  },
+  "projects": [
+    {
+      "id": "proj-445c6862",
+      "userId": "user-studio-1",
+      "title": "G",
+      "comicFormat": "american",
+      "sourceLanguage": "en",
+      "targetLanguage": "ar",
+      "readingDirection": "vertical",
+      "translationStyle": "natural_pro",
+      "storyMemory": {
+        "characters": [],
+        "locations": [
+          "London (لندن)",
+          "England (إنجلترا)",
+          "Italy (إيطاليا)",
+          "Ireland (أيرلندا)",
+          "Dakota (داكوتا)",
+          "Wyoming (وايومنغ)",
+          "Oregon (أوريغون)",
+          "Yehoonah River (نهر ييهونا)",
+          "Limerick (ليمريك)"
+        ],
+        "loreTerms": [
+          "Sword in the Stone (السيف في الصخرة)"
+        ],
+        "relationships": [],
+        "keyFacts": [],
+        "translationDecisions": [],
+        "recurringNotes": "",
+        "chapterSummaries": [
+          "ظهور سيف مغروس في سندان وصخرة في لندن مكتوب عليه أن من ينزعه هو ملك إنجلترا الشرعي، لكن لم يستطع أحد تحريكه فطواه النسيان.",
+          "مجموعة صغيرة تضم عائلتين (إيطالية وأيرلندية) ودليلاً وشابين تسافر مع بعض الماشية للحاق بقافلة عربات متجهة إلى داكوتا أو وايومنغ أو أوريغون، بالقرب من نهر ييهونا."
+        ]
+      },
+      "createdAt": "2026-11-18T08:43:52.185Z",
+      "updatedAt": "2026-11-20T11:25:21.986Z",
+      "coverImage": "/uploads/ch_ch-23767060_p1_1794991458667_bf5dde02.webp"
+    },
+    {
+      "id": "proj-e48fa55e",
+      "userId": "user-studio-1",
+      "title": "G",
+      "comicFormat": "superhero",
+      "sourceLanguage": "en",
+      "targetLanguage": "ar",
+      "readingDirection": "ltr",
+      "translationStyle": "natural_pro",
+      "storyMemory": {
+        "characters": [],
+        "locations": [],
+        "recurringNotes": "",
+        "chapterSummaries": [
+          "في رحلة كوميدية عبر الزمن في ديديلاند، يحاول ديكي دعوة صديقه ميك عبر وسائل الاتصال المختلفة؛ من الصراخ في العصر الحجري، إلى إشارات الدخان، فالهاتف الكلاسيكي، وصولاً إلى هاتف عصر الفضاء عام 1969 ذي الرقم الطويل الذي ينتهي باتصال خاطئ بمغسلة صينية، ليعود ديكي في النهاية للصراخ من النافذة كما في العصر الحجري."
+        ]
+      },
+      "createdAt": "2026-11-18T08:11:00.182Z",
+      "updatedAt": "2026-11-18T08:11:00.832Z",
+      "coverImage": "/uploads/ch_ch-e560d169_p1_1794989460833_cfe24319.webp"
+    },
+    {
+      "id": "proj-063147e8",
+      "userId": "user-studio-1",
+      "title": "H",
+      "comicFormat": "superhero",
+      "sourceLanguage": "en",
+      "targetLanguage": "ar",
+      "readingDirection": "ltr",
+      "translationStyle": "cinematic",
+      "storyMemory": {
+        "characters": [],
+        "locations": [],
+        "recurringNotes": "",
+        "chapterSummaries": []
+      },
+      "createdAt": "2026-11-17T15:29:34.332Z",
+      "updatedAt": "2026-11-17T15:31:00.554Z",
+      "coverImage": "/uploads/ch_ch-50240bd9_p1_1794929375507_16b9ad15.webp"
+    },
+    {
+      "id": "proj-cd7f2b1d",
+      "userId": "user-studio-1",
+      "title": "H",
+      "comicFormat": "superhero",
+      "sourceLanguage": "en",
+      "targetLanguage": "ar",
+      "readingDirection": "ltr",
+      "translationStyle": "cinematic",
+      "storyMemory": {
+        "characters": [],
+        "locations": [],
+        "recurringNotes": "",
+        "chapterSummaries": []
+      },
+      "createdAt": "2026-11-17T13:11:47.972Z",
+      "updatedAt": "2026-11-17T15:28:49.775Z",
+      "coverImage": "/uploads/ch_ch-c9097f12_p1_1794921111582_5a0602a6.webp"
+    },
+    {
+      "id": "proj-apex-vanguard",
+      "userId": "user-studio-1",
+      "title": "طليعة القمة — Apex Vanguard",
+      "comicFormat": "superhero",
+      "coverImage": "/src/assets/images/western_superhero_cover_1794852321934.jpg",
+      "sourceLanguage": "en",
+      "targetLanguage": "ar",
+      "readingDirection": "ltr",
+      "translationStyle": "cinematic",
+      "storyMemory": {
+        "characters": [
+          {
+            "id": "char-av-1",
+            "name": "Sentinel",
+            "translatedName": "سينتينيل",
+            "speechStyle": "نبرة بطولية حازمة واثقة ومقتضبة في قلب المعركة",
+            "relations": "حامية نيو مترو وقائدة طليعة القمة"
+          },
+          {
+            "id": "char-av-2",
+            "name": "Commander Vance",
+            "translatedName": "القائد فانس",
+            "speechStyle": "أسلوب عسكري صارم ومباشر أثناء الأزمات",
+            "relations": "قائد عمليات الدفاع في نيو مترو"
+          }
+        ],
+        "locations": [
+          "New Metro / نيو مترو",
+          "Quantum Reactor Grid / شبكة المفاعل الكمومي"
+        ],
+        "recurringNotes": "فصحى سينمائية احترافية لكوميكس الأبطال الخارقين مع الحفاظ على أسماء الأبطال والمصطلحات التقنية والعسكرية.",
+        "chapterSummaries": [
+          "تتعرض شبكة الطاقة في نيو مترو لهجوم خاطف فجراً وتواجه سينتينيل النيران بدرعها الطاقي."
+        ]
+      },
+      "createdAt": "2026-11-16T18:12:38.841Z",
+      "updatedAt": "2026-11-17T13:04:17.676Z"
+    },
+    {
+      "id": "proj-silent-dawn",
+      "userId": "user-studio-1",
+      "title": "سجلات الفجر الصامت — Silent Dawn",
+      "comicFormat": "manga",
+      "coverImage": "/src/assets/images/manga_cover_silent_dawn_1794847947377.jpg",
+      "sourceLanguage": "ja",
+      "targetLanguage": "ar",
+      "readingDirection": "rtl",
+      "translationStyle": "natural_pro",
+      "storyMemory": {
+        "characters": [
+          {
+            "id": "char-1",
+            "name": "Kenji",
+            "translatedName": "كينجي",
+            "speechStyle": "هادئ وحازم، يستخدم عبارات قصيرة ومتزنة",
+            "relations": "الساموراي المسافر الباحث عن معبد الجبل"
+          },
+          {
+            "id": "char-2",
+            "name": "Ren",
+            "translatedName": "رين",
+            "speechStyle": "مندفع وقوي النبرة أثناء القتال",
+            "relations": "حليف كينجي ومبارز الكاتانا"
+          }
+        ],
+        "locations": [
+          "معبد الجبل البعيد",
+          "جسر الضباب"
+        ],
+        "recurringNotes": "حافظ على الطابع الملحمي الرصين وتجنب العامية.",
+        "chapterSummaries": [
+          "وصل كينجي إلى مشارف الجبل وهو يعزم على إكمال تدريبه رغم المشقة."
+        ]
+      },
+      "createdAt": "2026-11-16T18:12:38.841Z",
+      "updatedAt": "2026-11-16T18:12:38.841Z"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch-apex-1",
+      "projectId": "proj-apex-vanguard",
+      "title": "العدد #01: بروتوكول الأفق — Issue #01",
+      "chapterNumber": 1,
+      "pageCount": 1,
+      "status": "completed",
+      "lastReadPage": 1,
+      "createdAt": "2026-11-16T18:12:38.841Z",
+      "updatedAt": "2026-11-16T18:12:38.841Z"
+    },
+    {
+      "id": "ch-silent-dawn-1",
+      "projectId": "proj-silent-dawn",
+      "title": "الفصل 01: طريق المعبد",
+      "chapterNumber": 1,
+      "pageCount": 2,
+      "status": "completed",
+      "lastReadPage": 1,
+      "createdAt": "2026-11-16T18:12:38.841Z",
+      "updatedAt": "2026-11-16T18:12:38.841Z"
+    },
+    {
+      "id": "ch-silent-dawn-2",
+      "projectId": "proj-silent-dawn",
+      "title": "الفصل 02: أضواء الشفق (ويب تون)",
+      "chapterNumber": 2,
+      "pageCount": 1,
+      "status": "partial",
+      "lastReadPage": 1,
+      "createdAt": "2026-11-16T18:12:38.841Z",
+      "updatedAt": "2026-11-16T18:12:38.841Z"
+    },
+    {
+      "id": "ch-c9097f12",
+      "projectId": "proj-cd7f2b1d",
+      "title": "العدد #01",
+      "chapterNumber": 1,
+      "pageCount": 1,
+      "status": "processing",
+      "lastReadPage": 1,
+      "createdAt": "2026-11-17T13:11:51.581Z",
+      "updatedAt": "2026-11-17T13:11:51.581Z"
+    },
+    {
+      "id": "ch-50240bd9",
+      "projectId": "proj-063147e8",
+      "title": "العدد #01",
+      "chapterNumber": 1,
+      "pageCount": 1,
+      "status": "draft",
+      "lastReadPage": 1,
+      "createdAt": "2026-11-17T15:29:35.506Z",
+      "updatedAt": "2026-11-17T15:29:35.506Z"
+    },
+    {
+      "id": "ch-e560d169",
+      "projectId": "proj-e48fa55e",
+      "title": "العدد #01",
+      "chapterNumber": 1,
+      "pageCount": 1,
+      "status": "draft",
+      "lastReadPage": 1,
+      "createdAt": "2026-11-18T08:11:00.832Z",
+      "updatedAt": "2026-11-18T08:11:00.832Z"
+    },
+    {
+      "id": "ch-23767060",
+      "projectId": "proj-445c6862",
+      "title": "العدد #01",
+      "chapterNumber": 1,
+      "pageCount": 2,
+      "status": "draft",
+      "lastReadPage": 1,
+      "createdAt": "2026-11-18T08:44:18.666Z",
+      "updatedAt": "2026-11-18T08:46:35.893Z"
+    }
+  ],
+  "pages": [
+    {
+      "id": "page-av-1",
+      "chapterId": "ch-apex-1",
+      "pageNumber": 1,
+      "originalImage": "/src/assets/images/western_superhero_page_1794852323898.jpg",
+      "status": "completed",
+      "width": 896,
+      "height": 1200,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [
+        {
+          "id": "panel-av-1",
+          "box": {
+            "x": 28,
+            "y": 24,
+            "width": 944,
+            "height": 356
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "panel-av-2",
+          "box": {
+            "x": 28,
+            "y": 394,
+            "width": 944,
+            "height": 234
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "panel-av-3",
+          "box": {
+            "x": 28,
+            "y": 642,
+            "width": 944,
+            "height": 334
+          },
+          "readingOrder": 3
+        }
+      ],
+      "regions": [
+        {
+          "id": "reg-av-1",
+          "pageId": "page-av-1",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 50,
+            "y": 38,
+            "width": 319,
+            "height": 32
+          },
+          "boundingPolygon": [
+            {
+              "x": 50,
+              "y": 38
+            },
+            {
+              "x": 369,
+              "y": 38
+            },
+            {
+              "x": 369,
+              "y": 70
+            },
+            {
+              "x": 50,
+              "y": 70
+            }
+          ],
+          "originalText": "NEW METRO — 02:14 AM",
+          "translatedText": "نيو مترو — 02:14 فجراً",
+          "alternatives": [
+            "مدينة نيو مترو — الساعة 02:14 فجراً",
+            "نيو مترو — الثانية والربع فجراً"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.99,
+          "readingOrder": 1,
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-av-2",
+          "pageId": "page-av-1",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 82,
+            "y": 90,
+            "width": 212,
+            "height": 70
+          },
+          "boundingPolygon": [
+            {
+              "x": 82,
+              "y": 90
+            },
+            {
+              "x": 294,
+              "y": 90
+            },
+            {
+              "x": 294,
+              "y": 160
+            },
+            {
+              "x": 82,
+              "y": 160
+            }
+          ],
+          "originalText": "THE GRID IS FAILING!",
+          "translatedText": "شبكة الطاقة تنهار!",
+          "alternatives": [
+            "الشبكة توشك على الانهيار!",
+            "نظام الطاقة يتهاوى!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.98,
+          "readingOrder": 2,
+          "speaker": "Sentinel",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 17,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-av-3",
+          "pageId": "page-av-1",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 116,
+            "y": 420,
+            "width": 212,
+            "height": 88
+          },
+          "boundingPolygon": [
+            {
+              "x": 116,
+              "y": 420
+            },
+            {
+              "x": 328,
+              "y": 420
+            },
+            {
+              "x": 328,
+              "y": 508
+            },
+            {
+              "x": 116,
+              "y": 508
+            }
+          ],
+          "originalText": "HOLD THE LINE, SENTINEL!",
+          "translatedText": "اثبتي في موقعكِ يا سينتينيل!",
+          "alternatives": [
+            "تمسّكي بخط الدفاع يا سينتينيل!",
+            "لا تتراجعي يا سينتينيل!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.98,
+          "readingOrder": 3,
+          "speaker": "Commander Vance",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 17,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-av-4",
+          "pageId": "page-av-1",
+          "regionType": "sfx",
+          "boundingBox": {
+            "x": 615,
+            "y": 515,
+            "width": 295,
+            "height": 125
+          },
+          "boundingPolygon": [
+            {
+              "x": 615,
+              "y": 515
+            },
+            {
+              "x": 910,
+              "y": 515
+            },
+            {
+              "x": 910,
+              "y": 640
+            },
+            {
+              "x": 615,
+              "y": 640
+            }
+          ],
+          "originalText": "KRAAK!",
+          "translatedText": "كرااااك!",
+          "alternatives": [
+            "دويّ!",
+            "انفجار!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 4,
+          "fontSettings": {
+            "fontFamily": "Lalezar",
+            "fontSize": 22,
+            "fontWeight": "800",
+            "color": "#DC2626",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 4,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "keep",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-av-5",
+          "pageId": "page-av-1",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 58,
+            "y": 646,
+            "width": 232,
+            "height": 108
+          },
+          "boundingPolygon": [
+            {
+              "x": 58,
+              "y": 646
+            },
+            {
+              "x": 290,
+              "y": 646
+            },
+            {
+              "x": 290,
+              "y": 754
+            },
+            {
+              "x": 58,
+              "y": 754
+            }
+          ],
+          "originalText": "NOT ON MY WATCH.",
+          "translatedText": "ليس ما دمتُ هنا.",
+          "alternatives": [
+            "لن يحدث ذلك بوجودي.",
+            "محال وأنا على قيد الحياة."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.98,
+          "readingOrder": 5,
+          "speaker": "Sentinel",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 17,
+            "fontWeight": "700",
+            "color": "#FFFFFF",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        }
+      ],
+      "processedImage": "/uploads/rendered_page-av-1_1795171465280_f4d6320f.png"
+    },
+    {
+      "id": "page-sd-1",
+      "chapterId": "ch-silent-dawn-1",
+      "pageNumber": 1,
+      "originalImage": "/src/assets/images/manga_sample_page_one_1794847946828.jpg",
+      "status": "completed",
+      "width": 896,
+      "height": 1200,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [
+        {
+          "id": "panel-1a",
+          "box": {
+            "x": 100,
+            "y": 40,
+            "width": 800,
+            "height": 510
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "panel-1b",
+          "box": {
+            "x": 100,
+            "y": 580,
+            "width": 800,
+            "height": 370
+          },
+          "readingOrder": 2
+        }
+      ],
+      "regions": [
+        {
+          "id": "reg-p1-1",
+          "pageId": "page-sd-1",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 690,
+            "y": 52,
+            "width": 200,
+            "height": 220
+          },
+          "boundingPolygon": [
+            {
+              "x": 690,
+              "y": 52
+            },
+            {
+              "x": 890,
+              "y": 52
+            },
+            {
+              "x": 890,
+              "y": 272
+            },
+            {
+              "x": 690,
+              "y": 272
+            }
+          ],
+          "originalText": "あそこか…遠いな。",
+          "translatedText": "أهناك... يبدو بعيداً جداً.",
+          "alternatives": [
+            "أهو ذاك المكان... إنه بعيد للغاية.",
+            "ذلك المعبد هناك... الطريق طويل.",
+            "أهناك؟ يبدو أبعد مما تصورت."
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.97,
+          "readingOrder": 1,
+          "speaker": "Kenji",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 19,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p1-2",
+          "pageId": "page-sd-1",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 100,
+            "y": 296,
+            "width": 176,
+            "height": 218
+          },
+          "boundingPolygon": [
+            {
+              "x": 100,
+              "y": 296
+            },
+            {
+              "x": 276,
+              "y": 296
+            },
+            {
+              "x": 276,
+              "y": 514
+            },
+            {
+              "x": 100,
+              "y": 514
+            }
+          ],
+          "originalText": "でも、行くしかない。",
+          "translatedText": "لكن لا مفر من المضي قدماً.",
+          "alternatives": [
+            "ومع ذلك، عليّ أن أذهب.",
+            "لا خيار أمامي سوى المتابعة.",
+            "رغم ذلك، سأواصل المسير."
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.96,
+          "readingOrder": 2,
+          "speaker": "Kenji",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p1-3",
+          "pageId": "page-sd-1",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 680,
+            "y": 596,
+            "width": 200,
+            "height": 208
+          },
+          "boundingPolygon": [
+            {
+              "x": 680,
+              "y": 596
+            },
+            {
+              "x": 880,
+              "y": 596
+            },
+            {
+              "x": 880,
+              "y": 804
+            },
+            {
+              "x": 680,
+              "y": 804
+            }
+          ],
+          "originalText": "待っていろ…。",
+          "translatedText": "انتظرني...",
+          "alternatives": [
+            "تمهل قليلاً...",
+            "ابقَ في انتظارنا...",
+            "انتظر وصولي..."
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.98,
+          "readingOrder": 3,
+          "speaker": "Kenji",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 20,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p1-4",
+          "pageId": "page-sd-1",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 120,
+            "y": 676,
+            "width": 196,
+            "height": 222
+          },
+          "boundingPolygon": [
+            {
+              "x": 120,
+              "y": 676
+            },
+            {
+              "x": 316,
+              "y": 676
+            },
+            {
+              "x": 316,
+              "y": 898
+            },
+            {
+              "x": 120,
+              "y": 898
+            }
+          ],
+          "originalText": "修行の道は始まったばかりだ。",
+          "translatedText": "طريق التدريب لم يبدأ سوى للتو.",
+          "alternatives": [
+            "مسيرة الصقل والتدريب ما زالت في بدايتها.",
+            "ما هذه إلا الخطوة الأولى في طريق التدريب.",
+            "رحلة التدريب بدأت لتوها فقط."
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.95,
+          "readingOrder": 4,
+          "speaker": "Kenji",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 17,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p1-5",
+          "pageId": "page-sd-1",
+          "regionType": "sfx",
+          "boundingBox": {
+            "x": 185,
+            "y": 215,
+            "width": 90,
+            "height": 75
+          },
+          "boundingPolygon": [
+            {
+              "x": 185,
+              "y": 215
+            },
+            {
+              "x": 275,
+              "y": 215
+            },
+            {
+              "x": 275,
+              "y": 290
+            },
+            {
+              "x": 185,
+              "y": 290
+            }
+          ],
+          "originalText": "サァ",
+          "translatedText": "حفيف",
+          "alternatives": [
+            "نسيم",
+            "همس الريح"
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.89,
+          "readingOrder": 5,
+          "fontSettings": {
+            "fontFamily": "Lalezar",
+            "fontSize": 16,
+            "fontWeight": "800",
+            "color": "#DC2626",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 4,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "keep",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        }
+      ],
+      "processedImage": "/uploads/rendered_page-sd-1_1795171468312_4db00eef.png"
+    },
+    {
+      "id": "page-sd-2",
+      "chapterId": "ch-silent-dawn-1",
+      "pageNumber": 2,
+      "originalImage": "/src/assets/images/manga_sample_page_two_1794847947045.jpg",
+      "status": "completed",
+      "width": 896,
+      "height": 1200,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [
+        {
+          "id": "panel-2a",
+          "box": {
+            "x": 20,
+            "y": 20,
+            "width": 650,
+            "height": 320
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "panel-2b",
+          "box": {
+            "x": 20,
+            "y": 210,
+            "width": 950,
+            "height": 610
+          },
+          "readingOrder": 2
+        }
+      ],
+      "regions": [
+        {
+          "id": "reg-p2-1",
+          "pageId": "page-sd-2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 730,
+            "y": 38,
+            "width": 200,
+            "height": 316
+          },
+          "boundingPolygon": [
+            {
+              "x": 730,
+              "y": 38
+            },
+            {
+              "x": 930,
+              "y": 38
+            },
+            {
+              "x": 930,
+              "y": 354
+            },
+            {
+              "x": 730,
+              "y": 354
+            }
+          ],
+          "originalText": "うおおおッ!!",
+          "translatedText": "هاااااه!!",
+          "alternatives": [
+            "تباً، إليك هذا!!",
+            "استعد الآن!!",
+            "هيااا!!"
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.94,
+          "readingOrder": 1,
+          "speaker": "Ren",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 22,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p2-2",
+          "pageId": "page-sd-2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 180,
+            "y": 416,
+            "width": 180,
+            "height": 232
+          },
+          "boundingPolygon": [
+            {
+              "x": 180,
+              "y": 416
+            },
+            {
+              "x": 360,
+              "y": 416
+            },
+            {
+              "x": 360,
+              "y": 648
+            },
+            {
+              "x": 180,
+              "y": 648
+            }
+          ],
+          "originalText": "ここだッ!!",
+          "translatedText": "هذه لحظتي!!",
+          "alternatives": [
+            "الآن حان الوقت!!",
+            "هنا تماماً!!",
+            "تلقَّ هذه!!"
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.96,
+          "readingOrder": 2,
+          "speaker": "Ren",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 20,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p2-3",
+          "pageId": "page-sd-2",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 726,
+            "y": 676,
+            "width": 228,
+            "height": 118
+          },
+          "boundingPolygon": [
+            {
+              "x": 726,
+              "y": 676
+            },
+            {
+              "x": 954,
+              "y": 676
+            },
+            {
+              "x": 954,
+              "y": 794
+            },
+            {
+              "x": 726,
+              "y": 794
+            }
+          ],
+          "originalText": "一瞬の静寂、そして――。",
+          "translatedText": "لحظة سكون مطبق، ثم—",
+          "alternatives": [
+            "صمت خاطف، وبعدها—",
+            "ساد السكون للحظة، ثم—"
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.95,
+          "readingOrder": 3,
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p2-4",
+          "pageId": "page-sd-2",
+          "regionType": "sfx",
+          "boundingBox": {
+            "x": 515,
+            "y": 840,
+            "width": 185,
+            "height": 105
+          },
+          "boundingPolygon": [
+            {
+              "x": 515,
+              "y": 840
+            },
+            {
+              "x": 700,
+              "y": 840
+            },
+            {
+              "x": 700,
+              "y": 945
+            },
+            {
+              "x": 515,
+              "y": 945
+            }
+          ],
+          "originalText": "シャキーン! SHING!",
+          "translatedText": "رنين السيف!",
+          "alternatives": [
+            "صليل النصل!",
+            "تشيينغ!"
+          ],
+          "sourceLanguage": "ja",
+          "confidence": 0.91,
+          "readingOrder": 4,
+          "fontSettings": {
+            "fontFamily": "Lalezar",
+            "fontSize": 17,
+            "fontWeight": "800",
+            "color": "#DC2626",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 4,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "keep",
+          "sfxMode": "side",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        }
+      ],
+      "processedImage": "/uploads/rendered_page-sd-2_1795171469684_f1266c2a.png"
+    },
+    {
+      "id": "page-sd-3",
+      "chapterId": "ch-silent-dawn-2",
+      "pageNumber": 1,
+      "originalImage": "/src/assets/images/manhwa_sample_page_three_1794847948010.jpg",
+      "status": "analyzed",
+      "width": 896,
+      "height": 1200,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [
+        {
+          "id": "panel-3a",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1000,
+            "height": 1000
+          },
+          "readingOrder": 1
+        }
+      ],
+      "regions": [
+        {
+          "id": "reg-p3-1",
+          "pageId": "page-sd-3",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 545,
+            "y": 58,
+            "width": 336,
+            "height": 212
+          },
+          "boundingPolygon": [
+            {
+              "x": 545,
+              "y": 58
+            },
+            {
+              "x": 881,
+              "y": 58
+            },
+            {
+              "x": 881,
+              "y": 270
+            },
+            {
+              "x": 545,
+              "y": 270
+            }
+          ],
+          "originalText": "The magic pulses stronger as night falls...",
+          "translatedText": "يزداد نبض السحر قوةً مع حلول الليل...",
+          "alternatives": [
+            "يشتد خفقان السحر كلما خيّم الظلام...",
+            "طاقة السحر تتعاظم مع هبوط الليل..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.99,
+          "readingOrder": 1,
+          "speaker": "Aiden",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 20,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-p3-2",
+          "pageId": "page-sd-3",
+          "regionType": "sfx",
+          "boundingBox": {
+            "x": 425,
+            "y": 740,
+            "width": 120,
+            "height": 60
+          },
+          "boundingPolygon": [
+            {
+              "x": 425,
+              "y": 740
+            },
+            {
+              "x": 545,
+              "y": 740
+            },
+            {
+              "x": 545,
+              "y": 800
+            },
+            {
+              "x": 425,
+              "y": 800
+            }
+          ],
+          "originalText": "스턱..",
+          "translatedText": "خطوة...",
+          "alternatives": [
+            "توقف...",
+            "وقع قدم..."
+          ],
+          "sourceLanguage": "ko",
+          "confidence": 0.87,
+          "readingOrder": 2,
+          "fontSettings": {
+            "fontFamily": "Lalezar",
+            "fontSize": 16,
+            "fontWeight": "800",
+            "color": "#E11D48",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 4,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "keep",
+          "sfxMode": "side",
+          "approvalStatus": "approved",
+          "translationStatus": "translated"
+        }
+      ]
+    },
+    {
+      "id": "pg-60abacda",
+      "chapterId": "ch-c9097f12",
+      "pageNumber": 1,
+      "originalImage": "/uploads/ch_ch-c9097f12_p1_1794921111582_5a0602a6.webp",
+      "status": "error",
+      "width": 1188,
+      "height": 1600,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [],
+      "regions": [],
+      "errorMessage": "{\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}"
+    },
+    {
+      "id": "pg-158ed8b1",
+      "chapterId": "ch-50240bd9",
+      "pageNumber": 1,
+      "originalImage": "/uploads/ch_ch-50240bd9_p1_1794929375507_16b9ad15.webp",
+      "status": "pending",
+      "width": 1145,
+      "height": 1600,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [],
+      "regions": []
+    },
+    {
+      "id": "pg-d9c3a735",
+      "chapterId": "ch-e560d169",
+      "pageNumber": 1,
+      "originalImage": "/uploads/ch_ch-e560d169_p1_1794989460833_cfe24319.webp",
+      "status": "completed",
+      "width": 1000,
+      "height": 1388,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [
+        {
+          "id": "panel-pg-d9c3a735-1",
+          "box": {
+            "x": 22,
+            "y": 30,
+            "width": 374,
+            "height": 182
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "panel-pg-d9c3a735-2",
+          "box": {
+            "x": 409,
+            "y": 30,
+            "width": 319,
+            "height": 183
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "panel-pg-d9c3a735-3",
+          "box": {
+            "x": 741,
+            "y": 31,
+            "width": 234,
+            "height": 182
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "panel-pg-d9c3a735-4",
+          "box": {
+            "x": 23,
+            "y": 216,
+            "width": 300,
+            "height": 186
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "panel-pg-d9c3a735-5",
+          "box": {
+            "x": 335,
+            "y": 222,
+            "width": 239,
+            "height": 180
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "panel-pg-d9c3a735-6",
+          "box": {
+            "x": 584,
+            "y": 223,
+            "width": 392,
+            "height": 179
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "panel-pg-d9c3a735-7",
+          "box": {
+            "x": 24,
+            "y": 409,
+            "width": 331,
+            "height": 184
+          },
+          "readingOrder": 7
+        },
+        {
+          "id": "panel-pg-d9c3a735-8",
+          "box": {
+            "x": 367,
+            "y": 409,
+            "width": 310,
+            "height": 183
+          },
+          "readingOrder": 8
+        },
+        {
+          "id": "panel-pg-d9c3a735-9",
+          "box": {
+            "x": 692,
+            "y": 410,
+            "width": 286,
+            "height": 183
+          },
+          "readingOrder": 9
+        },
+        {
+          "id": "panel-pg-d9c3a735-10",
+          "box": {
+            "x": 24,
+            "y": 601,
+            "width": 373,
+            "height": 181
+          },
+          "readingOrder": 10
+        },
+        {
+          "id": "panel-pg-d9c3a735-11",
+          "box": {
+            "x": 409,
+            "y": 599,
+            "width": 570,
+            "height": 183
+          },
+          "readingOrder": 11
+        },
+        {
+          "id": "panel-pg-d9c3a735-12",
+          "box": {
+            "x": 21,
+            "y": 787,
+            "width": 360,
+            "height": 187
+          },
+          "readingOrder": 12
+        },
+        {
+          "id": "panel-pg-d9c3a735-13",
+          "box": {
+            "x": 392,
+            "y": 790,
+            "width": 587,
+            "height": 188
+          },
+          "readingOrder": 13
+        }
+      ],
+      "regions": [
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-1",
+          "pageId": "pg-d9c3a735",
+          "regionType": "outside",
+          "boundingBox": {
+            "x": 58,
+            "y": 39,
+            "width": 321,
+            "height": 69
+          },
+          "boundingPolygon": [
+            {
+              "x": 58,
+              "y": 39
+            },
+            {
+              "x": 379,
+              "y": 39
+            },
+            {
+              "x": 379,
+              "y": 108
+            },
+            {
+              "x": 58,
+              "y": 108
+            }
+          ],
+          "originalText": "Ken Dodd's\nDIDDYMEN",
+          "translatedText": "أقزام ديدي\nلكين دود",
+          "alternatives": [
+            "ديدي مان لكين دود",
+            "عالم ديدي لكين دود"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.96,
+          "readingOrder": 1,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 3,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-2",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 410,
+            "y": 30,
+            "width": 222,
+            "height": 20
+          },
+          "boundingPolygon": [
+            {
+              "x": 410,
+              "y": 30
+            },
+            {
+              "x": 632,
+              "y": 30
+            },
+            {
+              "x": 632,
+              "y": 50
+            },
+            {
+              "x": 410,
+              "y": 50
+            }
+          ],
+          "originalText": "IN STONE-AGE DIDDYLAND...",
+          "translatedText": "في ديديلاند بالعصر الحجري...",
+          "alternatives": [
+            "في أرض ديدي خلال العصر الحجري...",
+            "في ديديلاند في العصر الحجري..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 2,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-3",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 562,
+            "y": 100,
+            "width": 94,
+            "height": 47
+          },
+          "boundingPolygon": [
+            {
+              "x": 562,
+              "y": 100
+            },
+            {
+              "x": 656,
+              "y": 100
+            },
+            {
+              "x": 656,
+              "y": 147
+            },
+            {
+              "x": 562,
+              "y": 147
+            }
+          ],
+          "originalText": "IF\nYOU LIKE,\nDICKY!",
+          "translatedText": "كما تشاء\nيا ديكي!",
+          "alternatives": [
+            "إن شئت،\nيا ديكي!",
+            "حاضر،\nيا ديكي!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.91,
+          "readingOrder": 3,
+          "speaker": "Mick",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-4",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 551,
+            "y": 36,
+            "width": 175,
+            "height": 77
+          },
+          "boundingPolygon": [
+            {
+              "x": 551,
+              "y": 36
+            },
+            {
+              "x": 726,
+              "y": 36
+            },
+            {
+              "x": 726,
+              "y": 113
+            },
+            {
+              "x": 551,
+              "y": 113
+            }
+          ],
+          "originalText": "ARE YOU\nCOMING OVER TO\nMY PLACE TONIGHT,\nMICK?",
+          "translatedText": "هل ستأتي\nإلى منزلي الليلة\nيا ميك؟",
+          "alternatives": [
+            "أتأتي لزيارتي\nالليلة يا ميك؟",
+            "هل ستمرّ عليّ\nالليلة يا ميك؟"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 4,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-5",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 470,
+            "y": 178,
+            "width": 95,
+            "height": 34
+          },
+          "boundingPolygon": [
+            {
+              "x": 470,
+              "y": 178
+            },
+            {
+              "x": 565,
+              "y": 178
+            },
+            {
+              "x": 565,
+              "y": 212
+            },
+            {
+              "x": 470,
+              "y": 212
+            }
+          ],
+          "originalText": "EARLY\nPHONE",
+          "translatedText": "هاتف\nبدائي",
+          "alternatives": [
+            "الهاتف\nالأول",
+            "هاتف\nالعصور الأولى"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 5,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-6",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 758,
+            "y": 58,
+            "width": 108,
+            "height": 54
+          },
+          "boundingPolygon": [
+            {
+              "x": 758,
+              "y": 58
+            },
+            {
+              "x": 866,
+              "y": 58
+            },
+            {
+              "x": 866,
+              "y": 112
+            },
+            {
+              "x": 758,
+              "y": 112
+            }
+          ],
+          "originalText": "CROAK!\nCROAK!\nCROAK!",
+          "translatedText": "نقيق!\nنقيق!\nنقيق!",
+          "alternatives": [
+            "كراك!\nكراك!\nكراك!",
+            "نعيق!\nنعيق!\nنعيق!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.92,
+          "readingOrder": 6,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-7",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 743,
+            "y": 30,
+            "width": 230,
+            "height": 26
+          },
+          "boundingPolygon": [
+            {
+              "x": 743,
+              "y": 30
+            },
+            {
+              "x": 973,
+              "y": 30
+            },
+            {
+              "x": 973,
+              "y": 56
+            },
+            {
+              "x": 743,
+              "y": 56
+            }
+          ],
+          "originalText": "THE EARLY PHONE HAD ITS\nDISADVANTAGES...",
+          "translatedText": "كان للهاتف البدائي عيوبه\nالخاصة...",
+          "alternatives": [
+            "لم يخلُ الهاتف البدائي من\nالمساوئ...",
+            "كان لهذا الهاتف البدائي\nسلبياته..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 7,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-8",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 844,
+            "y": 55,
+            "width": 122,
+            "height": 84
+          },
+          "boundingPolygon": [
+            {
+              "x": 844,
+              "y": 55
+            },
+            {
+              "x": 966,
+              "y": 55
+            },
+            {
+              "x": 966,
+              "y": 139
+            },
+            {
+              "x": 844,
+              "y": 139
+            }
+          ],
+          "originalText": "I'VE\nLOST\nMY\nVOICE!",
+          "translatedText": "لقد\nفقدتُ\nصوتي!",
+          "alternatives": [
+            "ضاع\nصوتي!",
+            "انقطع\nصوتي!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 8,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-9",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 743,
+            "y": 186,
+            "width": 230,
+            "height": 26
+          },
+          "boundingPolygon": [
+            {
+              "x": 743,
+              "y": 186
+            },
+            {
+              "x": 973,
+              "y": 186
+            },
+            {
+              "x": 973,
+              "y": 212
+            },
+            {
+              "x": 743,
+              "y": 212
+            }
+          ],
+          "originalText": "...CALLERS SOON GOT SORE\nTHROATS FROM ALL THAT YELLING.",
+          "translatedText": "...سرعان ما أُصيب المتصلون\nبالتهاب الحلق من كثرة الصراخ.",
+          "alternatives": [
+            "...سرعان ما بحّت حناجر\nالمتصلين من شدة الصراخ.",
+            "...وما لبث المتصلون أن\nأصيبوا ببحة من الصراخ."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.93,
+          "readingOrder": 9,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-10",
+          "pageId": "pg-d9c3a735",
+          "regionType": "sfx",
+          "boundingBox": {
+            "x": 36,
+            "y": 246,
+            "width": 130,
+            "height": 51
+          },
+          "boundingPolygon": [
+            {
+              "x": 36,
+              "y": 246
+            },
+            {
+              "x": 166,
+              "y": 246
+            },
+            {
+              "x": 166,
+              "y": 297
+            },
+            {
+              "x": 36,
+              "y": 297
+            }
+          ],
+          "originalText": "COUGH!\nSPLUTTER!\nCREW!",
+          "translatedText": "كحّة!\nحشرجة!\nقرقعة!",
+          "alternatives": [
+            "سعال!\nتلعثم!\nصرير!",
+            "كح!\nشرقة!\nأزيز!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.87,
+          "readingOrder": 10,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Lalezar",
+            "fontSize": 26,
+            "fontWeight": "800",
+            "color": "#DC2626",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 4,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "keep",
+          "sfxMode": "side",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-11",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 24,
+            "y": 216,
+            "width": 284,
+            "height": 25
+          },
+          "boundingPolygon": [
+            {
+              "x": 24,
+              "y": 216
+            },
+            {
+              "x": 308,
+              "y": 216
+            },
+            {
+              "x": 308,
+              "y": 241
+            },
+            {
+              "x": 24,
+              "y": 241
+            }
+          ],
+          "originalText": "THE DIDDY INJUNS HAD THEIR OWN\nTELEPHONE SERVICE...",
+          "translatedText": "كان لهنود ديدي الحمر خدمة\nهاتف خاصة بهم...",
+          "alternatives": [
+            "امتلك هنود ديدي شبكة\nاتصالاتهم الخاصة...",
+            "كان لدى هنود ديدي خدمة\nهاتفية خاصة..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 11,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-12",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 162,
+            "y": 241,
+            "width": 161,
+            "height": 47
+          },
+          "boundingPolygon": [
+            {
+              "x": 162,
+              "y": 241
+            },
+            {
+              "x": 323,
+              "y": 241
+            },
+            {
+              "x": 323,
+              "y": 288
+            },
+            {
+              "x": 162,
+              "y": 288
+            }
+          ],
+          "originalText": "TO UM WITCH\nDOCTOR... SEND\nUM COUGH MEDICINE!",
+          "translatedText": "إلى طبيب القبيلة...\nأرسل لنا\nدواءً للسعال!",
+          "alternatives": [
+            "نداء إلى طبيب السحر...\nأرسل دواءً\nللكحة!",
+            "إلى حكيم القبيلة...\nابعث بدواء\nللسعال!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.92,
+          "readingOrder": 12,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-13",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 337,
+            "y": 222,
+            "width": 235,
+            "height": 26
+          },
+          "boundingPolygon": [
+            {
+              "x": 337,
+              "y": 222
+            },
+            {
+              "x": 572,
+              "y": 222
+            },
+            {
+              "x": 572,
+              "y": 248
+            },
+            {
+              "x": 337,
+              "y": 248
+            }
+          ],
+          "originalText": "BY THE 1900'S REAL TELEPHONES\nWERE IN USE...",
+          "translatedText": "بحلول القرن العشرين، دخلت\nالهواتف الحقيقية حيز الاستخدام...",
+          "alternatives": [
+            "في مطلع القرن العشرين، شاع\nاستخدام الهواتف الحقيقية...",
+            "مع حلول عام 1900، بدأ\nاستخدام الهواتف الفعلية..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 13,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528343-14",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 433,
+            "y": 248,
+            "width": 139,
+            "height": 95
+          },
+          "boundingPolygon": [
+            {
+              "x": 433,
+              "y": 248
+            },
+            {
+              "x": 572,
+              "y": 248
+            },
+            {
+              "x": 572,
+              "y": 343
+            },
+            {
+              "x": 433,
+              "y": 343
+            }
+          ],
+          "originalText": "HALLO, MICHAEL...\nWHAT ABOUT\nPOPPING\nOVER TO MY\nJOLLY OLD\nPLACE?",
+          "translatedText": "أهلاً يا مايكل...\nما رأيك في\nالمرور على\nمنزلي\nالظريف؟",
+          "alternatives": [
+            "مرحباً مايكل...\nهل تودّ\nالقدوم إلى\nبيتي البهيج؟",
+            "تحياتي مايكل...\nماذا عن\nزيارة بيتي\nاللطيف؟"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 14,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-15",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 586,
+            "y": 219,
+            "width": 389,
+            "height": 26
+          },
+          "boundingPolygon": [
+            {
+              "x": 586,
+              "y": 219
+            },
+            {
+              "x": 975,
+              "y": 219
+            },
+            {
+              "x": 975,
+              "y": 245
+            },
+            {
+              "x": 586,
+              "y": 245
+            }
+          ],
+          "originalText": "AND NOW IN 1969 TELEPHONE NETWORKS STRETCH\nALL ACROSS DIDDYLAND...",
+          "translatedText": "والآن في عام 1969، تمتد شبكات\nالهاتف في أرجاء ديديلاند كافة...",
+          "alternatives": [
+            "والآن في 1969، تغطي خطوط\nالهاتف كل أنحاء ديديلاند...",
+            "وهنا في عام 1969، تنتشر\nشبكات الهاتف في ديديلاند بأسرها..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 15,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-16",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 119,
+            "y": 401,
+            "width": 108,
+            "height": 77
+          },
+          "boundingPolygon": [
+            {
+              "x": 119,
+              "y": 401
+            },
+            {
+              "x": 227,
+              "y": 401
+            },
+            {
+              "x": 227,
+              "y": 478
+            },
+            {
+              "x": 119,
+              "y": 478
+            }
+          ],
+          "originalText": "I'LL\nGIVE MICK\nA CALL!",
+          "translatedText": "سأتصل\nبميك!",
+          "alternatives": [
+            "سأهاتف\nميك!",
+            "سأطلب\nميك!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 16,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-17",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 248,
+            "y": 419,
+            "width": 120,
+            "height": 34
+          },
+          "boundingPolygon": [
+            {
+              "x": 248,
+              "y": 419
+            },
+            {
+              "x": 368,
+              "y": 419
+            },
+            {
+              "x": 368,
+              "y": 453
+            },
+            {
+              "x": 248,
+              "y": 453
+            }
+          ],
+          "originalText": "MARK V SPACE\nAGE PHONE",
+          "translatedText": "هاتف عصر\nالفضاء مارك 5",
+          "alternatives": [
+            "هاتف الفضاء\nطراز 5",
+            "هاتف عصر الفضاء\nالجيل الخامس"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 17,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-18",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 443,
+            "y": 409,
+            "width": 233,
+            "height": 68
+          },
+          "boundingPolygon": [
+            {
+              "x": 443,
+              "y": 409
+            },
+            {
+              "x": 676,
+              "y": 409
+            },
+            {
+              "x": 676,
+              "y": 477
+            },
+            {
+              "x": 443,
+              "y": 477
+            }
+          ],
+          "originalText": "CODE 4... 7... 4... 3... 8... 9... 6...\nSUB CODE 9... 2... 5...",
+          "translatedText": "الرمز 4... 7... 4... 3... 8... 9... 6...\nالرمز الفرعي 9... 2... 5...",
+          "alternatives": [
+            "كود 4... 7... 4... 3... 8... 9... 6...\nكود فرعي 9... 2... 5...",
+            "رمز 4... 7... 4... 3... 8... 9... 6...\nفرعي 9... 2... 5..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.91,
+          "readingOrder": 18,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-19",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 732,
+            "y": 408,
+            "width": 144,
+            "height": 63
+          },
+          "boundingPolygon": [
+            {
+              "x": 732,
+              "y": 408
+            },
+            {
+              "x": 876,
+              "y": 408
+            },
+            {
+              "x": 876,
+              "y": 471
+            },
+            {
+              "x": 732,
+              "y": 471
+            }
+          ],
+          "originalText": "... 4... 8...\n6... 3... 2... !",
+          "translatedText": "... 4... 8...\n6... 3... 2... !",
+          "alternatives": [
+            "... 4... 8...\n6... 3... 2... !",
+            "... ٤... ٨...\n٦... ٣... ٢... !"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.91,
+          "readingOrder": 19,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-20",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 24,
+            "y": 617,
+            "width": 143,
+            "height": 70
+          },
+          "boundingPolygon": [
+            {
+              "x": 24,
+              "y": 617
+            },
+            {
+              "x": 167,
+              "y": 617
+            },
+            {
+              "x": 167,
+              "y": 687
+            },
+            {
+              "x": 24,
+              "y": 687
+            }
+          ],
+          "originalText": "AH, GOOD\nSHOW... IT'S\nRINGING!",
+          "translatedText": "آه، ممتاز...\nإنه يرن!",
+          "alternatives": [
+            "أحسنت...\nإنه يدق!",
+            "عظيم...\nالهاتف يرن!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.93,
+          "readingOrder": 20,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-21",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 24,
+            "y": 602,
+            "width": 349,
+            "height": 20
+          },
+          "boundingPolygon": [
+            {
+              "x": 24,
+              "y": 602
+            },
+            {
+              "x": 373,
+              "y": 602
+            },
+            {
+              "x": 373,
+              "y": 622
+            },
+            {
+              "x": 24,
+              "y": 622
+            }
+          ],
+          "originalText": "DICKY FINISHES DIALING AT LAST...",
+          "translatedText": "وأخيراً ينتهي ديكي من طلب الرقم...",
+          "alternatives": [
+            "ينهي ديكي تدوير القرص أخيراً...",
+            "أخيراً يفرغ ديكي من الاتصال..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 21,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-22",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 225,
+            "y": 709,
+            "width": 47,
+            "height": 35
+          },
+          "boundingPolygon": [
+            {
+              "x": 225,
+              "y": 709
+            },
+            {
+              "x": 272,
+              "y": 709
+            },
+            {
+              "x": 272,
+              "y": 744
+            },
+            {
+              "x": 225,
+              "y": 744
+            }
+          ],
+          "originalText": "BRRING\nBRRING",
+          "translatedText": "تررن\nتررن",
+          "alternatives": [
+            "رنن\nرنن",
+            "رنين\nرنين"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.89,
+          "readingOrder": 22,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Lalezar",
+            "fontSize": 26,
+            "fontWeight": "800",
+            "color": "#DC2626",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 4,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "ignore",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-23",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 519,
+            "y": 599,
+            "width": 168,
+            "height": 78
+          },
+          "boundingPolygon": [
+            {
+              "x": 519,
+              "y": 599
+            },
+            {
+              "x": 687,
+              "y": 599
+            },
+            {
+              "x": 687,
+              "y": 677
+            },
+            {
+              "x": 519,
+              "y": 677
+            }
+          ],
+          "originalText": "HALLO...\nIS THAT,\nMICK?",
+          "translatedText": "ألو...\nهل هذا\nأنت يا ميك؟",
+          "alternatives": [
+            "مرحباً...\nأأنت ميك؟",
+            "ألو...\nميك معي؟"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 23,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-24",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 778,
+            "y": 597,
+            "width": 196,
+            "height": 75
+          },
+          "boundingPolygon": [
+            {
+              "x": 778,
+              "y": 597
+            },
+            {
+              "x": 974,
+              "y": 597
+            },
+            {
+              "x": 974,
+              "y": 672
+            },
+            {
+              "x": 778,
+              "y": 672
+            }
+          ],
+          "originalText": "NO...! THIS IS HI DRI'S\nCHINESE LAUNDRY...\nYOU GOT WRONG\nNUMBER! VELLY\nSOLLY!",
+          "translatedText": "لا...! هذه مغسلة\n«هاي دراي» الصينية...\nلقد أخطأت الرقم!\nآسف جداً!",
+          "alternatives": [
+            "كلا...! هنا مصبغة\n«هاي دراي» الصينية...\nالرقم خاطئ!\nنعتذر بشدة!",
+            "لا...! هذه مغسلة\n«هاي دراي» الصينية...\nطلبت رقماً خطأ!\nآسف للغاية!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.93,
+          "readingOrder": 24,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-25",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 215,
+            "y": 788,
+            "width": 188,
+            "height": 87
+          },
+          "boundingPolygon": [
+            {
+              "x": 215,
+              "y": 788
+            },
+            {
+              "x": 403,
+              "y": 788
+            },
+            {
+              "x": 403,
+              "y": 875
+            },
+            {
+              "x": 215,
+              "y": 875
+            }
+          ],
+          "originalText": "BAH!\nWRONG NUMBER...\nI CAN'T BE BOTHERED\nTO GO THROUGH WITH\nALL THAT DIALING\nAGAIN!",
+          "translatedText": "تبّاً!\nرقم خاطئ...\nلا طاقة لي\nلإعادة طلب كل\nتلك الأرقام\nمجدداً!",
+          "alternatives": [
+            "أفّ!\nرقم خاطئ...\nلن أتحمل عناء\nإعادة الاتصال\nكلها من جديد!",
+            "يا للخيبة!\nالرقم خطأ...\nلا أستطيع إعادة\nتدوير كل تلك\nالأرقام ثانية!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 25,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-26",
+          "pageId": "pg-d9c3a735",
+          "regionType": "sfx",
+          "boundingBox": {
+            "x": 238,
+            "y": 902,
+            "width": 122,
+            "height": 29
+          },
+          "boundingPolygon": [
+            {
+              "x": 238,
+              "y": 902
+            },
+            {
+              "x": 360,
+              "y": 902
+            },
+            {
+              "x": 360,
+              "y": 931
+            },
+            {
+              "x": 238,
+              "y": 931
+            }
+          ],
+          "originalText": "SLAM!",
+          "translatedText": "طراخ!",
+          "alternatives": [
+            "صفق!",
+            "دب!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.93,
+          "readingOrder": 26,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Lalezar",
+            "fontSize": 26,
+            "fontWeight": "800",
+            "color": "#DC2626",
+            "strokeColor": "#FFFFFF",
+            "strokeWidth": 4,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "keep",
+          "sfxMode": "side",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-27",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 392,
+            "y": 790,
+            "width": 73,
+            "height": 23
+          },
+          "boundingPolygon": [
+            {
+              "x": 392,
+              "y": 790
+            },
+            {
+              "x": 465,
+              "y": 790
+            },
+            {
+              "x": 465,
+              "y": 813
+            },
+            {
+              "x": 392,
+              "y": 813
+            }
+          ],
+          "originalText": "SO...",
+          "translatedText": "وهكذا...",
+          "alternatives": [
+            "لذا...",
+            "إذن..."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.93,
+          "readingOrder": 27,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-28",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 574,
+            "y": 793,
+            "width": 149,
+            "height": 58
+          },
+          "boundingPolygon": [
+            {
+              "x": 574,
+              "y": 793
+            },
+            {
+              "x": 723,
+              "y": 793
+            },
+            {
+              "x": 723,
+              "y": 851
+            },
+            {
+              "x": 574,
+              "y": 851
+            }
+          ],
+          "originalText": "ARE YOU COMING\nOVER TONIGHT,\nMICK?",
+          "translatedText": "هل ستأتي\nالليلة\nيا ميك؟",
+          "alternatives": [
+            "أتأتي\nالليلة\nيا ميك؟",
+            "هل ستمرّ\nالليلة\nيا ميك؟"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 28,
+          "speaker": "Dicky",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-29",
+          "pageId": "pg-d9c3a735",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 763,
+            "y": 792,
+            "width": 120,
+            "height": 46
+          },
+          "boundingPolygon": [
+            {
+              "x": 763,
+              "y": 792
+            },
+            {
+              "x": 883,
+              "y": 792
+            },
+            {
+              "x": 883,
+              "y": 838
+            },
+            {
+              "x": 763,
+              "y": 838
+            }
+          ],
+          "originalText": "IF YOU LIKE,\nDICKY!",
+          "translatedText": "كما تشاء\nيا ديكي!",
+          "alternatives": [
+            "إن شئت\nيا ديكي!",
+            "حاضر\nيا ديكي!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.93,
+          "readingOrder": 29,
+          "speaker": "Mick",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-d9c3a735-1794989528344-30",
+          "pageId": "pg-d9c3a735",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 731,
+            "y": 929,
+            "width": 249,
+            "height": 49
+          },
+          "boundingPolygon": [
+            {
+              "x": 731,
+              "y": 929
+            },
+            {
+              "x": 980,
+              "y": 929
+            },
+            {
+              "x": 980,
+              "y": 978
+            },
+            {
+              "x": 731,
+              "y": 978
+            }
+          ],
+          "originalText": "WE HAVEN'T PROGRESSED VERY\nMUCH IN A 1,000,000, YEARS\nHAVE WE..?",
+          "translatedText": "لم نتقدم كثيراً خلال\nمليون عام،\nأليس كذلك..؟",
+          "alternatives": [
+            "لم نحرز تقدماً يُذكر في\n1,000,000 عام،\nأليس كذلك..؟",
+            "يبدو أننا لم نتطور كثيراً\nمنذ مليون سنة،\nأليس كذلك..؟"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.94,
+          "readingOrder": 30,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        }
+      ],
+      "lastTranslationMeta": {
+        "providerUsed": "gemini",
+        "modelUsed": "gemini-4-hydrogen",
+        "visionProviderUsed": "gemini",
+        "visionModelUsed": "gemini-4-hydrogen",
+        "fallbackUsed": false,
+        "updatedAt": "2026-11-18T08:20:10.361Z"
+      }
+    },
+    {
+      "id": "pg-4a7b990c",
+      "chapterId": "ch-23767060",
+      "pageNumber": 1,
+      "originalImage": "/uploads/ch_ch-23767060_p1_1794991458667_bf5dde02.webp",
+      "status": "completed",
+      "width": 988,
+      "height": 1600,
+      "rotation": 0,
+      "manualStrokes": [],
+      "panels": [
+        {
+          "id": "panel-pg-4a7b990c-1",
+          "box": {
+            "x": 22,
+            "y": 40,
+            "width": 949,
+            "height": 413
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "panel-pg-4a7b990c-2",
+          "box": {
+            "x": 30,
+            "y": 468,
+            "width": 942,
+            "height": 198
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "panel-pg-4a7b990c-3",
+          "box": {
+            "x": 32,
+            "y": 684,
+            "width": 943,
+            "height": 199
+          },
+          "readingOrder": 3
+        }
+      ],
+      "regions": [
+        {
+          "id": "reg-pg-4a7b990c-1794991470965-1",
+          "pageId": "pg-4a7b990c",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 51,
+            "y": 380,
+            "width": 879,
+            "height": 57
+          },
+          "boundingPolygon": [
+            {
+              "x": 51,
+              "y": 380
+            },
+            {
+              "x": 930,
+              "y": 380
+            },
+            {
+              "x": 930,
+              "y": 437
+            },
+            {
+              "x": 51,
+              "y": 437
+            }
+          ],
+          "originalText": "AND THAT MIRACLE APPEARED IN LONDON TOWN... A MARVELOUS SWORD STUCK THROUGH AN ANVIL INTO A GREAT STONE! BELOW THE HILT IN LETTERS OF GOLD WERE WRITTEN THESE WORDS: \"WHOSO PULLETH OUT THIS SWORD OF THIS STONE AND ANVIL IS RIGHTWISE KING BORN OF ENGLAND.\"",
+          "translatedText": "وظهرت تلك المعجزة في مدينة لندن... سيفٌ عجيبٌ مغروسٌ عبر سندانٍ في صخرةٍ عظيمة! وتحت المقبض، كُتبت بأحرفٍ من ذهب هذه الكلمات: «من ينزع هذا السيف من هذه الصخرة والسندان، فهو الملك الشرعي المولود لإنجلترا».",
+          "alternatives": [
+            "وتجلّت تلك المعجزة في بلدة لندن... سيفٌ مذهلٌ عالقٌ عبر سندانٍ داخل صخرةٍ كبيرة! وأسفل المقبض، نُقشت بحروفٍ ذهبية هذه الكلمات: «من يستلّ هذا السيف من الصخرة والسندان، فهو ملك إنجلترا الشرعي بالمولد».",
+            "وهكذا ظهرت المعجزة في لندن... سيفٌ بديعٌ مغروزٌ في سندانٍ يعلو صخرةً ضخمة! وتحت مقبضه، خُطّت بماء الذهب هذه العبارة: «كل من يقتلع هذا السيف من الصخرة والسندان، هو الملك الحقّ لإنجلترا»."
+          ],
+          "sourceLanguage": "English",
+          "confidence": 0.96,
+          "readingOrder": 1,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-4a7b990c-1794991470965-2",
+          "pageId": "pg-4a7b990c",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 50,
+            "y": 482,
+            "width": 333,
+            "height": 68
+          },
+          "boundingPolygon": [
+            {
+              "x": 50,
+              "y": 482
+            },
+            {
+              "x": 383,
+              "y": 482
+            },
+            {
+              "x": 383,
+              "y": 550
+            },
+            {
+              "x": 50,
+              "y": 550
+            }
+          ],
+          "originalText": "THOUGH MANY TRIED WITH ALL THEIR STRENGTH, NONE COULD MOVE THE SWORD OR STIR IT.",
+          "translatedText": "ورغم أن كثيرين حاولوا بكل ما أوتوا من قوة، لم يتمكن أحدٌ من تحريك السيف أو زحزحته.",
+          "alternatives": [
+            "وعلى الرغم من محاولات الكثيرين بكل قوتهم، عجز الجميع عن تحريك السيف أو هزّه.",
+            "حاول كثيرون بكل عزمهم، لكن لم يفلح أحدٌ في تحريك السيف قيد أنملة."
+          ],
+          "sourceLanguage": "English",
+          "confidence": 0.98,
+          "readingOrder": 2,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-4a7b990c-1794991470965-3",
+          "pageId": "pg-4a7b990c",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 53,
+            "y": 700,
+            "width": 479,
+            "height": 63
+          },
+          "boundingPolygon": [
+            {
+              "x": 53,
+              "y": 700
+            },
+            {
+              "x": 532,
+              "y": 700
+            },
+            {
+              "x": 532,
+              "y": 763
+            },
+            {
+              "x": 53,
+              "y": 763
+            }
+          ],
+          "originalText": "SO THE MIRACLE HAD NOT WORKED AND ENGLAND WAS STILL WITHOUT A KING. IN TIME THE MARVELOUS SWORD WAS FORGOTTEN.",
+          "translatedText": "وهكذا لم تتحقق المعجزة، وبقيت إنجلترا بلا ملك. ومع مرور الوقت، طوى النسيان ذلك السيف العجيب.",
+          "alternatives": [
+            "فلم تُجدِ المعجزة نفعاً، وظلت إنجلترا دون ملك. وبمرور الزمن، نُسي السيف المذهل.",
+            "وهكذا خابت المعجزة، واستمرت إنجلترا بلا عاهل. ومع توالي الأيام، غاب السيف العجيب عن الأذهان."
+          ],
+          "sourceLanguage": "English",
+          "confidence": 0.98,
+          "readingOrder": 3,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        }
+      ],
+      "lastTranslationMeta": {
+        "providerUsed": "gemini",
+        "modelUsed": "gemini-4-hydrogen",
+        "visionProviderUsed": "gemini",
+        "visionModelUsed": "gemini-4-hydrogen",
+        "fallbackUsed": false,
+        "updatedAt": "2026-11-18T08:44:48.299Z"
+      }
+    },
+    {
+      "id": "pg-f57c93d2",
+      "chapterId": "ch-23767060",
+      "pageNumber": 2,
+      "originalImage": "/uploads/ch_ch-23767060_p2_1794991595892_44b5a3cf.webp",
+      "status": "completed",
+      "width": 1145,
+      "height": 1600,
+      "rotation": 0,
+      "contentHash": "740dc3f60f2cfa2a4eb2cc7d7f84c56b3ec371b17e9106257702fb0cc7e63189",
+      "manualStrokes": [],
+      "panels": [
+        {
+          "id": "panel-pg-f57c93d2-1",
+          "box": {
+            "x": 66,
+            "y": 69,
+            "width": 878,
+            "height": 181
+          },
+          "readingOrder": 1
+        },
+        {
+          "id": "panel-pg-f57c93d2-2",
+          "box": {
+            "x": 66,
+            "y": 260,
+            "width": 411,
+            "height": 357
+          },
+          "readingOrder": 2
+        },
+        {
+          "id": "panel-pg-f57c93d2-3",
+          "box": {
+            "x": 490,
+            "y": 260,
+            "width": 454,
+            "height": 148
+          },
+          "readingOrder": 3
+        },
+        {
+          "id": "panel-pg-f57c93d2-4",
+          "box": {
+            "x": 490,
+            "y": 417,
+            "width": 206,
+            "height": 199
+          },
+          "readingOrder": 4
+        },
+        {
+          "id": "panel-pg-f57c93d2-5",
+          "box": {
+            "x": 708,
+            "y": 417,
+            "width": 236,
+            "height": 199
+          },
+          "readingOrder": 5
+        },
+        {
+          "id": "panel-pg-f57c93d2-6",
+          "box": {
+            "x": 66,
+            "y": 628,
+            "width": 337,
+            "height": 286
+          },
+          "readingOrder": 6
+        },
+        {
+          "id": "panel-pg-f57c93d2-7",
+          "box": {
+            "x": 417,
+            "y": 628,
+            "width": 526,
+            "height": 138
+          },
+          "readingOrder": 7
+        },
+        {
+          "id": "panel-pg-f57c93d2-8",
+          "box": {
+            "x": 417,
+            "y": 775,
+            "width": 526,
+            "height": 138
+          },
+          "readingOrder": 8
+        }
+      ],
+      "regions": [
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-1",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 429,
+            "y": 76,
+            "width": 129,
+            "height": 64
+          },
+          "boundingPolygon": [
+            {
+              "x": 429,
+              "y": 76
+            },
+            {
+              "x": 558,
+              "y": 76
+            },
+            {
+              "x": 558,
+              "y": 140
+            },
+            {
+              "x": 429,
+              "y": 140
+            }
+          ],
+          "originalText": "O BURY ME NOT...",
+          "translatedText": "«لا تدفنوني...»",
+          "alternatives": [
+            "«ألا لا تدفنوني...»",
+            "«لا تضعوني في التراب...»"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.96,
+          "readingOrder": 1,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-2",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 500,
+            "y": 276,
+            "width": 98,
+            "height": 65
+          },
+          "boundingPolygon": [
+            {
+              "x": 500,
+              "y": 276
+            },
+            {
+              "x": 598,
+              "y": 276
+            },
+            {
+              "x": 598,
+              "y": 341
+            },
+            {
+              "x": 500,
+              "y": 341
+            }
+          ],
+          "originalText": "... WHERE THE WILD COYOTE...",
+          "translatedText": "«...حيث ذئب البراري...»",
+          "alternatives": [
+            "«...حيث القيوط البري...»",
+            "«...حيث الذئب المتوحش...»"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 2,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-3",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 320,
+            "y": 289,
+            "width": 103,
+            "height": 68
+          },
+          "boundingPolygon": [
+            {
+              "x": 320,
+              "y": 289
+            },
+            {
+              "x": 423,
+              "y": 289
+            },
+            {
+              "x": 423,
+              "y": 357
+            },
+            {
+              "x": 320,
+              "y": 357
+            }
+          ],
+          "originalText": "... ON THE LONE PRAIRIE...",
+          "translatedText": "«...في البراري الموحشة...»",
+          "alternatives": [
+            "«...في السهول المقفرة...»",
+            "«...في البرية المنعزلة...»"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.96,
+          "readingOrder": 3,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-4",
+          "pageId": "pg-f57c93d2",
+          "regionType": "narration",
+          "boundingBox": {
+            "x": 89,
+            "y": 526,
+            "width": 302,
+            "height": 80
+          },
+          "boundingPolygon": [
+            {
+              "x": 89,
+              "y": 526
+            },
+            {
+              "x": 391,
+              "y": 526
+            },
+            {
+              "x": 391,
+              "y": 606
+            },
+            {
+              "x": 89,
+              "y": 606
+            }
+          ],
+          "originalText": "THERE WERE TWO FAMILIES. ONE FROM ITALY, THE OTHER — INEVITABLY — FROM IRELAND. ONE GUIDE. AND TWO YOUNG MEN WHO HAD ASKED TO TRAVEL WITH THE LITTLE GROUP. A FEW HEAD OF CATTLE. A LOT OF HOPE. THEY WERE GOING TO TRY TO JOIN A BIG WAGON TRAIN HEADING FOR DAKOTA, OR WYOMING... PERHAPS EVEN FURTHER... OREGON?!?",
+          "translatedText": "كانتا عائلتين؛ إحداهما من إيطاليا، والأخرى — حتماً — من أيرلندا. ومعهما دليلٌ واحد، وشابان طلبا مرافقة هذه المجموعة الصغيرة. بضعة رؤوسٍ من الماشية، والكثير من الأمل. كانوا يحاولون اللحاق بقافلة عرباتٍ كبيرة متجهةٍ إلى داكوتا، أو وايومنغ... وربما أبعد من ذلك... أوريغون؟!",
+          "alternatives": [
+            "كانت هناك عائلتان؛ واحدة من إيطاليا، والأخرى — بطبيعة الحال — من أيرلندا. دليلٌ واحد، وشابان طلبا السفر مع المجموعة الصغيرة. بضعة رؤوس ماشية، وأملٌ كبير. كانوا يسعون للانضمام إلى قافلة عربات كبيرة متجهة إلى داكوتا أو وايومنغ... وربما أبعد... إلى أوريغون؟!",
+            "عائلتان: إيطالية، وأخرى — كالعادة — أيرلندية. دليلٌ واحد، وشابان طلبا مرافقة الركب الصغير. قليلٌ من الماشية، وكثيرٌ من الأمل. كان هدفهم اللحاق بقافلة عربات ضخمة متجهة إلى داكوتا أو وايومنغ... وربما أبعد... أوريغون؟!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.98,
+          "readingOrder": 4,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "IBM Plex Sans Arabic",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-5",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 602,
+            "y": 417,
+            "width": 93,
+            "height": 46
+          },
+          "boundingPolygon": [
+            {
+              "x": 602,
+              "y": 417
+            },
+            {
+              "x": 695,
+              "y": 417
+            },
+            {
+              "x": 695,
+              "y": 463
+            },
+            {
+              "x": 602,
+              "y": 463
+            }
+          ],
+          "originalText": "... WILL HOWL...",
+          "translatedText": "«...يعوي...»",
+          "alternatives": [
+            "«...سيعوي...»",
+            "«...يواصل العواء...»"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 5,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-6",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 717,
+            "y": 417,
+            "width": 93,
+            "height": 41
+          },
+          "boundingPolygon": [
+            {
+              "x": 717,
+              "y": 417
+            },
+            {
+              "x": 810,
+              "y": 417
+            },
+            {
+              "x": 810,
+              "y": 458
+            },
+            {
+              "x": 717,
+              "y": 458
+            }
+          ],
+          "originalText": "... O'ER ME!",
+          "translatedText": "«...فوق قبري!»",
+          "alternatives": [
+            "«...فوقي!»",
+            "«...على ثراي!»"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.95,
+          "readingOrder": 6,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-7",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 499,
+            "y": 628,
+            "width": 158,
+            "height": 84
+          },
+          "boundingPolygon": [
+            {
+              "x": 499,
+              "y": 628
+            },
+            {
+              "x": 657,
+              "y": 628
+            },
+            {
+              "x": 657,
+              "y": 712
+            },
+            {
+              "x": 499,
+              "y": 712
+            }
+          ],
+          "originalText": "MA IS E EVER-A GOING TO SHUT UP? NO? ... PERCHE E IS GOING TO DRIVE ME MAD! ... MAMMA MIA! I AM NAPOLITANO, RIGHT? RIGHT?",
+          "translatedText": "ألن يصمت هذا أبداً؟ لن يفعل؟ ...لأنه سيجنّنني! ...يا إلهي! أنا نابوليّ، أليس كذلك؟ أليس كذلك؟",
+          "alternatives": [
+            "أما لهذا أن يصمت أبداً؟ ألن يسكت؟ ...لأنه سيصيبني بالجنون! ...ماما ميا! أنا من نابولي، أليس كذلك؟ صحيح؟",
+            "هل سيصمت هذا يوماً؟ ألن يتوقف؟ ...سيطير عقلي بسببه! ...يا إلهي! أنا نابوليّ، أليس كذلك؟"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.96,
+          "readingOrder": 7,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-8",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 667,
+            "y": 639,
+            "width": 60,
+            "height": 34
+          },
+          "boundingPolygon": [
+            {
+              "x": 667,
+              "y": 639
+            },
+            {
+              "x": 727,
+              "y": 639
+            },
+            {
+              "x": 727,
+              "y": 673
+            },
+            {
+              "x": 667,
+              "y": 673
+            }
+          ],
+          "originalText": "SI, PAPA!",
+          "translatedText": "نعم يا أبي!",
+          "alternatives": [
+            "بلى يا أبي!",
+            "أجل يا بابا!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.96,
+          "readingOrder": 8,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-9",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 174,
+            "y": 628,
+            "width": 140,
+            "height": 96
+          },
+          "boundingPolygon": [
+            {
+              "x": 174,
+              "y": 628
+            },
+            {
+              "x": 314,
+              "y": 628
+            },
+            {
+              "x": 314,
+              "y": 724
+            },
+            {
+              "x": 174,
+              "y": 724
+            }
+          ],
+          "originalText": "HEY, KID! WE CAN'T BE FAR FROM THE YEHOONAH RIVER NOW. WHY DON'T YOU SCOUT AHEAD ?",
+          "translatedText": "مهلاً يا فتى! لا بد أننا قريبون من نهر ييهونا الآن. لمَ لا تستطلع الطريق أمامنا؟",
+          "alternatives": [
+            "يا فتى! لا يمكن أن نكون بعيدين عن نهر ييهونا الآن. ما رأيك أن تستكشف الطريق؟",
+            "اسمع يا فتى! اقتربنا من نهر ييهونا بلا شك. هلا تقدمت لاستطلاع الطريق؟"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.97,
+          "readingOrder": 9,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-10",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 524,
+            "y": 775,
+            "width": 161,
+            "height": 61
+          },
+          "boundingPolygon": [
+            {
+              "x": 524,
+              "y": 775
+            },
+            {
+              "x": 685,
+              "y": 775
+            },
+            {
+              "x": 685,
+              "y": 836
+            },
+            {
+              "x": 524,
+              "y": 836
+            }
+          ],
+          "originalText": "STRANGE! IT'S THE SAME MUSIC BUT DIFFERENT WORDS... YOUR DA USED TO SING THAT!",
+          "translatedText": "غريب! إنه اللحن نفسه لكن بكلماتٍ مختلفة... كان والدك يغنيها!",
+          "alternatives": [
+            "عجيب! اللحن ذاته ولكن بكلمات أخرى... اعتاد أبوك أن يغنيها!",
+            "غريب! نفس الموسيقى لكن الكلمات مختلفة... كان والدك يرددها!"
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.97,
+          "readingOrder": 10,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        },
+        {
+          "id": "reg-pg-f57c93d2-1794991647648-11",
+          "pageId": "pg-f57c93d2",
+          "regionType": "dialogue",
+          "boundingBox": {
+            "x": 727,
+            "y": 775,
+            "width": 106,
+            "height": 69
+          },
+          "boundingPolygon": [
+            {
+              "x": 727,
+              "y": 775
+            },
+            {
+              "x": 833,
+              "y": 775
+            },
+            {
+              "x": 833,
+              "y": 844
+            },
+            {
+              "x": 727,
+              "y": 844
+            }
+          ],
+          "originalText": "BETTER! BUT YES, IT'S AN OLD LIMERICK SONG.",
+          "translatedText": "أفضل! لكن نعم، إنها أغنيةٌ قديمة من ليمريك.",
+          "alternatives": [
+            "أجمل! ولكن أجل، إنها أغنية ليمريك قديمة.",
+            "أحسن حالاً! لكن نعم، هي أغنية قديمة من ليمريك."
+          ],
+          "sourceLanguage": "en",
+          "confidence": 0.97,
+          "readingOrder": 11,
+          "speaker": "Unknown",
+          "fontSettings": {
+            "fontFamily": "Cairo",
+            "fontSize": 18,
+            "fontWeight": "700",
+            "color": "#0F172A",
+            "strokeWidth": 0,
+            "align": "center",
+            "lineHeight": 1.38,
+            "padding": 11,
+            "rotation": 0,
+            "direction": "rtl",
+            "autoFit": true,
+            "offsetX": 0,
+            "offsetY": 0,
+            "letterCase": "normal"
+          },
+          "cleanMode": "auto",
+          "sfxMode": "keep",
+          "approvalStatus": "pending",
+          "translationStatus": "translated"
+        }
+      ],
+      "lastTranslationMeta": {
+        "providerUsed": "gemini",
+        "modelUsed": "gemini-4-hydrogen",
+        "visionProviderUsed": "gemini",
+        "visionModelUsed": "gemini-4-hydrogen",
+        "fallbackUsed": false,
+        "updatedAt": "2026-11-18T08:47:44.097Z"
+      }
+    }
+  ],
+  "glossary": [
+    {
+      "id": "gloss-10461936",
+      "projectId": "proj-445c6862",
+      "scope": "project",
+      "originalTerm": "Metropolis",
+      "translatedTerm": "متروبوليس العظمى",
+      "category": "character",
+      "notes": ""
+    },
+    {
+      "id": "gloss-av-1",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "Sentinel",
+      "translatedTerm": "سينتينيل",
+      "category": "character",
+      "notes": "البطلة الرئيسية في سلسلة Apex Vanguard"
+    },
+    {
+      "id": "gloss-av-2",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "Commander Vance",
+      "translatedTerm": "القائد فانس",
+      "category": "title",
+      "notes": "قائد وحدة التدخل السريع في نيو مترو"
+    },
+    {
+      "id": "gloss-av-3",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "Apex Vanguard",
+      "translatedTerm": "طليعة القمة",
+      "category": "team",
+      "notes": "الفريق الرئيسي للأبطال الخارقين"
+    },
+    {
+      "id": "gloss-av-4",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "Kinetic Barrier",
+      "translatedTerm": "الحاجز الحركي",
+      "category": "power",
+      "notes": "القوة الدفاعية الأساسية لسينتينيل"
+    },
+    {
+      "id": "gloss-av-5",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "New Metro",
+      "translatedTerm": "نيو مترو",
+      "category": "place",
+      "notes": "المدينة الرئيسية للأحداث"
+    },
+    {
+      "id": "gloss-av-6",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "Skyline Protocol",
+      "translatedTerm": "بروتوكول الأفق",
+      "category": "military",
+      "notes": "خطة الطوارئ الدفاعية العليا"
+    },
+    {
+      "id": "gloss-av-7",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "Quantum Reactor",
+      "translatedTerm": "المفاعل الكمومي",
+      "category": "scientific",
+      "notes": "مصدر الطاقة المغذي لشبكة المدينة"
+    },
+    {
+      "id": "gloss-av-8",
+      "projectId": "proj-apex-vanguard",
+      "originalTerm": "KRAAK!",
+      "translatedTerm": "كرااااك!",
+      "category": "sfx",
+      "notes": "مؤثر صوتي للانفجار والاصطدام الطاقي"
+    },
+    {
+      "id": "gloss-1",
+      "projectId": "proj-silent-dawn",
+      "originalTerm": "Kenji",
+      "translatedTerm": "كينجي",
+      "category": "character",
+      "notes": "البطل الرئيسي في رحلة المعبد"
+    },
+    {
+      "id": "gloss-2",
+      "projectId": "proj-silent-dawn",
+      "originalTerm": "Wismerhill",
+      "translatedTerm": "ويسميرهيل",
+      "category": "character",
+      "notes": "مصطلح مرجعي معتمد لا يتغير عبر الفصول"
+    },
+    {
+      "id": "gloss-3",
+      "projectId": "proj-silent-dawn",
+      "originalTerm": "修行の道",
+      "translatedTerm": "طريق الصقل والتدريب",
+      "category": "term",
+      "notes": "المسار الروحي والقتالي للساموراي"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "job-a1420f4c",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-c9097f12",
+      "chapterTitle": "العدد #01",
+      "status": "cancelled",
+      "totalPages": 1,
+      "completedPages": 0,
+      "failedPages": 1,
+      "progress": 100,
+      "pageStates": {
+        "pg-60abacda": "failed"
+      },
+      "createdAt": "2026-11-17T13:11:54.870Z",
+      "currentPageNumber": 1,
+      "completedAt": "2026-11-17T13:12:03.234Z",
+      "errorMessage": "{\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}"
+    }
+  ],
+  "logs": [
+    {
+      "id": "log-1795174524482-srvl",
+      "timestamp": "2026-11-20T11:35:24.482Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Chapter\" (total=1)",
+      "projectId": "proj-9e4d7ec2",
+      "chapterId": "ch-684ee4b5"
+    },
+    {
+      "id": "log-1795174524448-5wl1",
+      "timestamp": "2026-11-20T11:35:24.448Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_CLEAN_TEST__\"",
+      "projectId": "proj-9e4d7ec2"
+    },
+    {
+      "id": "log-1795174394429-ofan",
+      "timestamp": "2026-11-20T11:33:14.429Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_CLEAN_TEST__\""
+    },
+    {
+      "id": "log-1795174390640-9mhu",
+      "timestamp": "2026-11-20T11:33:10.640Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Chapter\" (total=1)",
+      "projectId": "proj-971dd9ff",
+      "chapterId": "ch-90aae1df"
+    },
+    {
+      "id": "log-1795174390613-psgs",
+      "timestamp": "2026-11-20T11:33:10.613Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_CLEAN_TEST__\"",
+      "projectId": "proj-971dd9ff"
+    },
+    {
+      "id": "log-1795174185119-wu4a",
+      "timestamp": "2026-11-20T11:29:45.119Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_CLEAN_TEST__\""
+    },
+    {
+      "id": "log-1795174174706-by16",
+      "timestamp": "2026-11-20T11:29:34.706Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Chapter\" (total=1)",
+      "projectId": "proj-229e2c78",
+      "chapterId": "ch-f9335783"
+    },
+    {
+      "id": "log-1795174174676-h8a7",
+      "timestamp": "2026-11-20T11:29:34.676Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_CLEAN_TEST__\"",
+      "projectId": "proj-229e2c78"
+    },
+    {
+      "id": "log-1795173921991-iai9",
+      "timestamp": "2026-11-20T11:25:21.991Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-5c1f4d6a"
+    },
+    {
+      "id": "log-1795173915369-qht9",
+      "timestamp": "2026-11-20T11:25:15.369Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-dfea3f66"
+    },
+    {
+      "id": "log-1795173911822-xb66",
+      "timestamp": "2026-11-20T11:25:11.822Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795173910460-6f6u",
+      "timestamp": "2026-11-20T11:25:10.460Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-8325bb0f"
+    },
+    {
+      "id": "log-1795173899534-ylwc",
+      "timestamp": "2026-11-20T11:24:59.534Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-4853f4dc"
+    },
+    {
+      "id": "log-1795173892993-hm2f",
+      "timestamp": "2026-11-20T11:24:52.993Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-0c4772a5"
+    },
+    {
+      "id": "log-1795173889440-sdd7",
+      "timestamp": "2026-11-20T11:24:49.440Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795173887965-8qh6",
+      "timestamp": "2026-11-20T11:24:47.965Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-c86ba7f6"
+    },
+    {
+      "id": "log-1795171914987-nyy9",
+      "timestamp": "2026-11-20T10:51:54.987Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171911181-569i",
+      "timestamp": "2026-11-20T10:51:51.181Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Test R2\" (total=1)",
+      "projectId": "proj-c4cb686e",
+      "chapterId": "ch-99057283"
+    },
+    {
+      "id": "log-1795171911158-5dho",
+      "timestamp": "2026-11-20T10:51:51.158Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-c4cb686e"
+    },
+    {
+      "id": "log-1795171874596-kyve",
+      "timestamp": "2026-11-20T10:51:14.596Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-6bc74f38"
+    },
+    {
+      "id": "log-1795171868044-1pp5",
+      "timestamp": "2026-11-20T10:51:08.044Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-4ee563ba"
+    },
+    {
+      "id": "log-1795171864804-6vdw",
+      "timestamp": "2026-11-20T10:51:04.804Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795171863479-2aft",
+      "timestamp": "2026-11-20T10:51:03.479Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-9faedc37"
+    },
+    {
+      "id": "log-1795171761138-obrv",
+      "timestamp": "2026-11-20T10:49:21.138Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171584326-kbxh",
+      "timestamp": "2026-11-20T10:46:24.326Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"Stress Test\" (total=1)",
+      "projectId": "proj-32136d71",
+      "chapterId": "ch-773a3aa1"
+    },
+    {
+      "id": "log-1795171584302-zm7e",
+      "timestamp": "2026-11-20T10:46:24.302Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-32136d71"
+    },
+    {
+      "id": "log-1795171582954-6bp0",
+      "timestamp": "2026-11-20T10:46:22.954Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171549135-kgoq",
+      "timestamp": "2026-11-20T10:45:49.135Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-b5edc095"
+    },
+    {
+      "id": "log-1795171548668-f10l",
+      "timestamp": "2026-11-20T10:45:48.668Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"__TEMP_STRESS_TEST__\""
+    },
+    {
+      "id": "log-1795171524727-t11d",
+      "timestamp": "2026-11-20T10:45:24.727Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"__TEMP_STRESS_TEST__\"",
+      "projectId": "proj-a7ddb279"
+    },
+    {
+      "id": "log-1795171423961-p2uc",
+      "timestamp": "2026-11-20T10:43:43.961Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-45948793"
+    },
+    {
+      "id": "log-1795171417392-1pcs",
+      "timestamp": "2026-11-20T10:43:37.392Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-6cfa53b7"
+    },
+    {
+      "id": "log-1795171412911-sdlc",
+      "timestamp": "2026-11-20T10:43:32.911Z",
+      "level": "info",
+      "action": "JOB_RECOVERED",
+      "message": "Recovered 0 interrupted batch job(s) and reset 1 in-flight page(s) while keeping completed pages intact."
+    },
+    {
+      "id": "log-1795171411470-ouzi",
+      "timestamp": "2026-11-20T10:43:31.470Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-e4373c25"
+    },
+    {
+      "id": "log-1795079159293-eqp9",
+      "timestamp": "2026-11-19T09:05:59.293Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline R2 Comic\""
+    },
+    {
+      "id": "log-1795079151040-iqzi",
+      "timestamp": "2026-11-19T09:05:51.040Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 20 pages to \"Ch 1 Offline Test\"",
+      "projectId": "proj-1d066d59",
+      "chapterId": "ch-3ace8da6"
+    },
+    {
+      "id": "log-1795079150881-0v75",
+      "timestamp": "2026-11-19T09:05:50.881Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline R2 Comic\"",
+      "projectId": "proj-1d066d59"
+    },
+    {
+      "id": "log-1795079145207-f5sm",
+      "timestamp": "2026-11-19T09:05:45.207Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline R2 Comic\""
+    },
+    {
+      "id": "log-1795079089872-si1y",
+      "timestamp": "2026-11-19T09:04:49.872Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 20 pages to \"Ch 1 Offline Test\"",
+      "projectId": "proj-33d84025",
+      "chapterId": "ch-29ff9cc8"
+    },
+    {
+      "id": "log-1795079088966-4qdd",
+      "timestamp": "2026-11-19T09:04:48.966Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline R2 Comic\"",
+      "projectId": "proj-33d84025"
+    },
+    {
+      "id": "log-1795079011786-h45x",
+      "timestamp": "2026-11-19T09:03:31.786Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline 20-Page Comic\""
+    },
+    {
+      "id": "log-1795078967585-7tpn",
+      "timestamp": "2026-11-19T09:02:47.585Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-81829cf3",
+      "chapterId": "ch-763211f8"
+    },
+    {
+      "id": "log-1795078960982-i1d5",
+      "timestamp": "2026-11-19T09:02:40.983Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-81829cf3",
+      "chapterId": "ch-3aefe927"
+    },
+    {
+      "id": "log-1795078956520-zkd8",
+      "timestamp": "2026-11-19T09:02:36.520Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-81829cf3",
+      "chapterId": "ch-c82a323a"
+    },
+    {
+      "id": "log-1795078803824-y66p",
+      "timestamp": "2026-11-19T09:00:03.824Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"E2E Offline 20-Page Comic\""
+    },
+    {
+      "id": "log-1795078793793-u63g",
+      "timestamp": "2026-11-19T08:59:53.793Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 20 pages to \"Issue #20 Offline Test\"",
+      "projectId": "proj-26f29f4b",
+      "chapterId": "ch-11175a21"
+    },
+    {
+      "id": "log-1795078792253-9enp",
+      "timestamp": "2026-11-19T08:59:52.253Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline 20-Page Comic\"",
+      "projectId": "proj-26f29f4b"
+    },
+    {
+      "id": "log-1795078750540-6lc1",
+      "timestamp": "2026-11-19T08:59:10.540Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"E2E Offline 20-Page Comic\"",
+      "projectId": "proj-81829cf3"
+    },
+    {
+      "id": "log-1795078642589-woge",
+      "timestamp": "2026-11-19T08:57:22.589Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-ffb7bb13"
+    },
+    {
+      "id": "log-1795078635937-rk5h",
+      "timestamp": "2026-11-19T08:57:15.937Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-33dfeab2"
+    },
+    {
+      "id": "log-1795078630193-5s65",
+      "timestamp": "2026-11-19T08:57:10.193Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-3ff9056b"
+    },
+    {
+      "id": "log-1795078603492-tf8o",
+      "timestamp": "2026-11-19T08:56:43.492Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-376b15b8"
+    },
+    {
+      "id": "log-1795078596831-dor5",
+      "timestamp": "2026-11-19T08:56:36.831Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-19593d63"
+    },
+    {
+      "id": "log-1795078590904-1de3",
+      "timestamp": "2026-11-19T08:56:30.904Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-a439a1e3"
+    },
+    {
+      "id": "log-1795078553312-6f0c",
+      "timestamp": "2026-11-19T08:55:53.312Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-8d67b4e8"
+    },
+    {
+      "id": "log-1795078546578-yyqb",
+      "timestamp": "2026-11-19T08:55:46.578Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-156826b3"
+    },
+    {
+      "id": "log-1795078540302-oksm",
+      "timestamp": "2026-11-19T08:55:40.302Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-f51b8485"
+    },
+    {
+      "id": "log-1794994257170-fvqd",
+      "timestamp": "2026-11-18T09:30:57.170Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"BatCave Verification 55P\""
+    },
+    {
+      "id": "log-1794994001921-cvmb",
+      "timestamp": "2026-11-18T09:26:41.921Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 6 pages to \"Issue 2 (Continuation)\" (total=6)",
+      "projectId": "proj-57cfa5df",
+      "chapterId": "ch-ef86adab"
+    },
+    {
+      "id": "log-1794994001896-zcvv",
+      "timestamp": "2026-11-18T09:26:41.896Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 5 pages to \"Issue 1 (55 Pages)\" (total=55)",
+      "projectId": "proj-57cfa5df",
+      "chapterId": "ch-b852261a"
+    },
+    {
+      "id": "log-1794994001889-a1pd",
+      "timestamp": "2026-11-18T09:26:41.889Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 10 pages to \"Issue 1 (55 Pages)\" (total=50)",
+      "projectId": "proj-57cfa5df",
+      "chapterId": "ch-b852261a"
+    },
+    {
+      "id": "log-1794994001880-1w0y",
+      "timestamp": "2026-11-18T09:26:41.880Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 10 pages to \"Issue 1 (55 Pages)\" (total=40)",
+      "projectId": "proj-57cfa5df",
+      "chapterId": "ch-b852261a"
+    },
+    {
+      "id": "log-1794994001872-tf16",
+      "timestamp": "2026-11-18T09:26:41.872Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 10 pages to \"Issue 1 (55 Pages)\" (total=30)",
+      "projectId": "proj-57cfa5df",
+      "chapterId": "ch-b852261a"
+    },
+    {
+      "id": "log-1794994001865-y5bs",
+      "timestamp": "2026-11-18T09:26:41.865Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 10 pages to \"Issue 1 (55 Pages)\" (total=20)",
+      "projectId": "proj-57cfa5df",
+      "chapterId": "ch-b852261a"
+    },
+    {
+      "id": "log-1794994001856-h4j2",
+      "timestamp": "2026-11-18T09:26:41.856Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 10 pages to \"Issue 1 (55 Pages)\" (total=10)",
+      "projectId": "proj-57cfa5df",
+      "chapterId": "ch-b852261a"
+    },
+    {
+      "id": "log-1794994001801-ufdw",
+      "timestamp": "2026-11-18T09:26:41.801Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"BatCave Verification 55P\"",
+      "projectId": "proj-57cfa5df"
+    },
+    {
+      "id": "log-1794992121289-0505",
+      "timestamp": "2026-11-18T08:55:21.289Z",
+      "level": "info",
+      "action": "PROJECT_DELETED",
+      "message": "Deleted project \"اختبار منتقي الصور المؤقت\""
+    },
+    {
+      "id": "log-1794992117016-20o6",
+      "timestamp": "2026-11-18T08:55:17.016Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"العدد #01\" (total=4)",
+      "projectId": "proj-fd978b24",
+      "chapterId": "ch-7b7ae844"
+    },
+    {
+      "id": "log-1794992113136-80ju",
+      "timestamp": "2026-11-18T08:55:13.136Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 3 pages to \"العدد #01\"",
+      "projectId": "proj-fd978b24",
+      "chapterId": "ch-7b7ae844"
+    },
+    {
+      "id": "log-1794992113124-r5id",
+      "timestamp": "2026-11-18T08:55:13.124Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"اختبار منتقي الصور المؤقت\"",
+      "projectId": "proj-fd978b24"
+    },
+    {
+      "id": "log-1794991664099-l6wo",
+      "timestamp": "2026-11-18T08:47:44.099Z",
+      "level": "info",
+      "action": "PAGE_TRANSLATED",
+      "message": "Translated 11 regions on page 2 via gemini:gemini-4-hydrogen",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-23767060",
+      "pageId": "pg-f57c93d2"
+    },
+    {
+      "id": "log-1794991595895-5unx",
+      "timestamp": "2026-11-18T08:46:35.895Z",
+      "level": "info",
+      "action": "CHAPTER_PAGES_APPENDED",
+      "message": "Appended 1 pages to \"العدد #01\" (total=2)",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-23767060"
+    },
+    {
+      "id": "log-1794991488303-orgh",
+      "timestamp": "2026-11-18T08:44:48.303Z",
+      "level": "info",
+      "action": "PAGE_TRANSLATED",
+      "message": "Translated 3 regions on page 1 via gemini:gemini-4-hydrogen",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-23767060",
+      "pageId": "pg-4a7b990c"
+    },
+    {
+      "id": "log-1794991458669-ojhi",
+      "timestamp": "2026-11-18T08:44:18.669Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 1 pages to \"العدد #01\"",
+      "projectId": "proj-445c6862",
+      "chapterId": "ch-23767060"
+    },
+    {
+      "id": "log-1794991432186-a54x",
+      "timestamp": "2026-11-18T08:43:52.186Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"G\"",
+      "projectId": "proj-445c6862"
+    },
+    {
+      "id": "log-1794990010362-aovj",
+      "timestamp": "2026-11-18T08:20:10.362Z",
+      "level": "info",
+      "action": "PAGE_TRANSLATED",
+      "message": "Translated 30 regions on page 1 via gemini:gemini-4-hydrogen",
+      "projectId": "proj-e48fa55e",
+      "chapterId": "ch-e560d169",
+      "pageId": "pg-d9c3a735"
+    },
+    {
+      "id": "log-1794989566865-7myn",
+      "timestamp": "2026-11-18T08:12:46.865Z",
+      "level": "info",
+      "action": "PAGE_TRANSLATED",
+      "message": "Translated 30 regions on page 1 via gemini:gemini-4-hydrogen",
+      "projectId": "proj-e48fa55e",
+      "chapterId": "ch-e560d169",
+      "pageId": "pg-d9c3a735"
+    },
+    {
+      "id": "log-1794989460834-x4ip",
+      "timestamp": "2026-11-18T08:11:00.834Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 1 pages to \"العدد #01\"",
+      "projectId": "proj-e48fa55e",
+      "chapterId": "ch-e560d169"
+    },
+    {
+      "id": "log-1794989460183-yzse",
+      "timestamp": "2026-11-18T08:11:00.183Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"G\"",
+      "projectId": "proj-e48fa55e"
+    },
+    {
+      "id": "log-1794929474318-4cx2",
+      "timestamp": "2026-11-17T15:31:14.318Z",
+      "level": "error",
+      "action": "AI_CONNECTION_TEST_FAILED",
+      "message": "رفض Groq API مفتاح API (401). تحقق من صحة المفتاح أو الصلاحيات."
+    },
+    {
+      "id": "log-1794929460556-h5va",
+      "timestamp": "2026-11-17T15:31:00.556Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-063147e8",
+      "chapterId": "ch-946c8b52"
+    },
+    {
+      "id": "log-1794929453126-1bh3",
+      "timestamp": "2026-11-17T15:30:53.126Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-063147e8",
+      "chapterId": "ch-f3afb9f8"
+    },
+    {
+      "id": "log-1794929448445-kqc2",
+      "timestamp": "2026-11-17T15:30:48.445Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-063147e8",
+      "chapterId": "ch-5ef2ee3c"
+    },
+    {
+      "id": "log-1794929375509-mbgj",
+      "timestamp": "2026-11-17T15:29:35.509Z",
+      "level": "info",
+      "action": "CHAPTER_UPLOADED",
+      "message": "Uploaded 1 pages to \"العدد #01\"",
+      "projectId": "proj-063147e8",
+      "chapterId": "ch-50240bd9"
+    },
+    {
+      "id": "log-1794929374333-t1v8",
+      "timestamp": "2026-11-17T15:29:34.333Z",
+      "level": "info",
+      "action": "PROJECT_CREATED",
+      "message": "Created project \"H\"",
+      "projectId": "proj-063147e8"
+    },
+    {
+      "id": "log-1794929366136-a001",
+      "timestamp": "2026-11-17T15:29:26.136Z",
+      "level": "info",
+      "action": "PROVIDER_KEY_DELETED",
+      "message": "Removed stored API key for groq"
+    },
+    {
+      "id": "log-1794929366122-d14f",
+      "timestamp": "2026-11-17T15:29:26.123Z",
+      "level": "info",
+      "action": "PROVIDER_KEY_SAVED",
+      "message": "Saved encrypted API credentials for groq"
+    },
+    {
+      "id": "log-1794929329776-p3m0",
+      "timestamp": "2026-11-17T15:28:49.776Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-caa401da"
+    },
+    {
+      "id": "log-1794929322881-eebq",
+      "timestamp": "2026-11-17T15:28:42.881Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-2353592e"
+    },
+    {
+      "id": "log-1794929318441-igf6",
+      "timestamp": "2026-11-17T15:28:38.441Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-0e82a2c7"
+    },
+    {
+      "id": "log-1794929298234-m52g",
+      "timestamp": "2026-11-17T15:28:18.234Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-f1e0f875"
+    },
+    {
+      "id": "log-1794929291435-lapb",
+      "timestamp": "2026-11-17T15:28:11.435Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-de7cc7ee"
+    },
+    {
+      "id": "log-1794929285215-nmsi",
+      "timestamp": "2026-11-17T15:28:05.215Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-5009e9f2"
+    },
+    {
+      "id": "log-1794927962068-twx9",
+      "timestamp": "2026-11-17T15:06:02.068Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-67832fa3"
+    },
+    {
+      "id": "log-1794927955152-n81h",
+      "timestamp": "2026-11-17T15:05:55.152Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-e9aa7873"
+    },
+    {
+      "id": "log-1794927950411-ll7k",
+      "timestamp": "2026-11-17T15:05:50.412Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-6232edce"
+    },
+    {
+      "id": "log-1794927911808-26rx",
+      "timestamp": "2026-11-17T15:05:11.808Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-5a981fc5"
+    },
+    {
+      "id": "log-1794927904912-zlmt",
+      "timestamp": "2026-11-17T15:05:04.912Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-4435bc88"
+    },
+    {
+      "id": "log-1794927900111-bs0t",
+      "timestamp": "2026-11-17T15:05:00.111Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-4c55c388"
+    },
+    {
+      "id": "log-1794927844597-urc7",
+      "timestamp": "2026-11-17T15:04:04.597Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-c9977af5"
+    },
+    {
+      "id": "log-1794927837706-d5in",
+      "timestamp": "2026-11-17T15:03:57.706Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-18782eb4"
+    },
+    {
+      "id": "log-1794927833023-okx8",
+      "timestamp": "2026-11-17T15:03:53.023Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-1a24796d"
+    },
+    {
+      "id": "log-1794926680057-q5a7",
+      "timestamp": "2026-11-17T14:44:40.058Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=gemini, vision=gemini)"
+    },
+    {
+      "id": "log-1794926679731-wio3",
+      "timestamp": "2026-11-17T14:44:39.731Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=qwen_studio, vision=gemini)"
+    },
+    {
+      "id": "log-1794926679134-jlcs",
+      "timestamp": "2026-11-17T14:44:39.134Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=gemini, vision=gemini)"
+    },
+    {
+      "id": "log-1794926677683-gk0n",
+      "timestamp": "2026-11-17T14:44:37.683Z",
+      "level": "error",
+      "action": "AI_CONNECTION_TEST_FAILED",
+      "message": "مفتاح DeepSeek غير مُعدّ على الخادم. أضف DEEPSEEK_API_KEY في Settings > Secrets لتفعيل هذا المحرك."
+    },
+    {
+      "id": "log-1794926673195-x96o",
+      "timestamp": "2026-11-17T14:44:33.195Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=deepseek, vision=qwen_studio)"
+    },
+    {
+      "id": "log-1794926655280-6dav",
+      "timestamp": "2026-11-17T14:44:15.280Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-65b692e9"
+    },
+    {
+      "id": "log-1794926648367-j97e",
+      "timestamp": "2026-11-17T14:44:08.367Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-168cef14"
+    },
+    {
+      "id": "log-1794926643863-raj5",
+      "timestamp": "2026-11-17T14:44:03.863Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-d0368f16"
+    },
+    {
+      "id": "log-1794926578527-a0sv",
+      "timestamp": "2026-11-17T14:42:58.528Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=gemini, vision=gemini)"
+    },
+    {
+      "id": "log-1794926578116-0mx0",
+      "timestamp": "2026-11-17T14:42:58.116Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=qwen_studio, vision=gemini)"
+    },
+    {
+      "id": "log-1794926577736-pb2f",
+      "timestamp": "2026-11-17T14:42:57.736Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=gemini, vision=gemini)"
+    },
+    {
+      "id": "log-1794926576086-5c6p",
+      "timestamp": "2026-11-17T14:42:56.086Z",
+      "level": "error",
+      "action": "AI_CONNECTION_TEST_FAILED",
+      "message": "مفتاح DeepSeek غير مُعدّ على الخادم. أضف DEEPSEEK_API_KEY في Settings > Secrets لتفعيل هذا المحرك."
+    },
+    {
+      "id": "log-1794926572417-y7if",
+      "timestamp": "2026-11-17T14:42:52.417Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=deepseek, vision=qwen_studio)"
+    },
+    {
+      "id": "log-1794926496769-jnee",
+      "timestamp": "2026-11-17T14:41:36.769Z",
+      "level": "info",
+      "action": "SETTINGS_UPDATED",
+      "message": "Updated Multi-API settings (translation=deepseek, vision=qwen_studio)"
+    },
+    {
+      "id": "log-1794926429225-iw1q",
+      "timestamp": "2026-11-17T14:40:29.226Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-d63982ff"
+    },
+    {
+      "id": "log-1794926422255-fvjc",
+      "timestamp": "2026-11-17T14:40:22.255Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-eb654a26"
+    },
+    {
+      "id": "log-1794926417562-3gxm",
+      "timestamp": "2026-11-17T14:40:17.562Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-2ab1c80e"
+    },
+    {
+      "id": "log-1794926393999-tdg5",
+      "timestamp": "2026-11-17T14:39:53.999Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-1aa4c34d"
+    },
+    {
+      "id": "log-1794926387106-2xr9",
+      "timestamp": "2026-11-17T14:39:47.106Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-7540534d"
+    },
+    {
+      "id": "log-1794926382274-hcjy",
+      "timestamp": "2026-11-17T14:39:42.274Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-ee24f726"
+    },
+    {
+      "id": "log-1794925049915-aw5s",
+      "timestamp": "2026-11-17T14:17:29.915Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-260fedbf"
+    },
+    {
+      "id": "log-1794925042896-alb3",
+      "timestamp": "2026-11-17T14:17:22.896Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-b576e092"
+    },
+    {
+      "id": "log-1794925038132-9qhj",
+      "timestamp": "2026-11-17T14:17:18.132Z",
+      "level": "info",
+      "action": "CHAPTER_BROWSER_IMPORTED",
+      "message": "Imported 2 page(s) via Browser Companion into \"Browser Captured Test Chapter\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-a80ea2a4"
+    },
+    {
+      "id": "log-1794921174536-k7hj",
+      "timestamp": "2026-11-17T13:12:54.536Z",
+      "level": "info",
+      "action": "AI_CONNECTION_TEST",
+      "message": "Connected to gemini-3.1-flash-lite (11502ms)"
+    },
+    {
+      "id": "log-1794921149537-40a2",
+      "timestamp": "2026-11-17T13:12:29.537Z",
+      "level": "info",
+      "action": "CHAPTER_MOBILE_SHARE_IMPORTED",
+      "message": "Imported 2 page(s) via android_share_intent into \"Shared Issue #10\"",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-e65589ab"
+    },
+    {
+      "id": "log-1794921142669-kj6m",
+      "timestamp": "2026-11-17T13:12:22.669Z",
+      "level": "info",
+      "action": "CHAPTER_INTERNAL_BROWSER_IMPORTED",
+      "message": "Imported 1 page(s) directly from internal Browser into \"Internal Browser Draft Test\" (no source_fetch)",
+      "projectId": "proj-cd7f2b1d",
+      "chapterId": "ch-b566165e"
+    }
+  ],
+  "glossarySuggestions": []
+}

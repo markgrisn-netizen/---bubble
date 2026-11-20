@@ -1,11 +1,14 @@
-import type { Chapter, Page, Project } from '../types/domain';
+import type { Chapter, Page, Project, TranslationJob } from '../types/domain';
 import { isQuotaExceededError } from './offlineUtils';
+import { selectMatchingLocalAsset } from './persistenceUtils';
 
 const DB_NAME = 'FaqqaOfflineDB';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const STORE_CHAPTERS = 'offline_chapters';
 const STORE_PROJECTS = 'offline_projects';
 const STORE_DRAFTS = 'staged_picker_drafts';
+const STORE_PAGE_ASSETS = 'page_assets';
+const STORE_JOB_SNAPSHOTS = 'job_snapshots';
 
 export class OfflineQuotaError extends Error {
   constructor(message = 'Device storage quota exceeded while saving offline data.') {
@@ -29,6 +32,32 @@ export interface StagedPickerDraft {
   key: string;
   pages: StagedPickerDraftItem[];
   updatedAt: string;
+}
+
+export interface StoredPageAsset {
+  pageId: string;
+  chapterId: string;
+  projectId?: string;
+  contentHash?: string;
+  filename?: string;
+  order: number;
+  width: number;
+  height: number;
+  originalDataUrl: string;
+  processedDataUrl?: string;
+  serverUrl?: string;
+  updatedAt: string;
+}
+
+export interface StoredChapterRecoverySnapshot {
+  chapterId: string;
+  projectId: string;
+  project: Project;
+  chapter: Chapter;
+  pages: Page[];
+  activeJob?: TranslationJob | null;
+  activePageId?: string;
+  lastUpdatedAt: string;
 }
 
 export interface OfflineChapterBundle {
@@ -80,6 +109,14 @@ function openDb(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(STORE_DRAFTS)) {
         db.createObjectStore(STORE_DRAFTS, { keyPath: 'key' });
       }
+      if (!db.objectStoreNames.contains(STORE_PAGE_ASSETS)) {
+        const assetStore = db.createObjectStore(STORE_PAGE_ASSETS, { keyPath: 'pageId' });
+        assetStore.createIndex('chapterId', 'chapterId', { unique: false });
+        assetStore.createIndex('contentHash', 'contentHash', { unique: false });
+      }
+      if (!db.objectStoreNames.contains(STORE_JOB_SNAPSHOTS)) {
+        db.createObjectStore(STORE_JOB_SNAPSHOTS, { keyPath: 'chapterId' });
+      }
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -90,6 +127,9 @@ export async function imageSrcToInlineDataUrl(src: string): Promise<string> {
   if (!src) return '';
   if (src.startsWith('data:')) return src;
   const resp = await fetch(src);
+  if (!resp.ok) {
+    throw new Error(`Failed to fetch image asset (${resp.status})`);
+  }
   const blob = await resp.blob();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -98,6 +138,224 @@ export async function imageSrcToInlineDataUrl(src: string): Promise<string> {
     reader.readAsDataURL(blob);
   });
 }
+
+// =========================================================================
+// Permanent Local Page Asset Store (survives reloads, backgrounding & /uploads resets)
+// =========================================================================
+
+export async function savePageAssetsBatch(assets: StoredPageAsset[]): Promise<void> {
+  if (!assets.length || typeof indexedDB === 'undefined') return;
+  try {
+    const db = await openDb();
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE_PAGE_ASSETS, 'readwrite');
+      const store = tx.objectStore(STORE_PAGE_ASSETS);
+      for (const item of assets) {
+        if (!item.pageId || !item.originalDataUrl) continue;
+        store.put(item);
+      }
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error || new OfflineQuotaError());
+    });
+  } catch {
+    // Best-effort persistence: never crash primary UI if storage is restricted
+  }
+}
+
+export async function getAllPageAssets(): Promise<StoredPageAsset[]> {
+  if (typeof indexedDB === 'undefined') return [];
+  try {
+    const db = await openDb();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_PAGE_ASSETS, 'readonly');
+      const req = tx.objectStore(STORE_PAGE_ASSETS).getAll();
+      req.onsuccess = () => resolve((req.result as StoredPageAsset[]) || []);
+      req.onerror = () => reject(req.error);
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function getChapterPageAssets(chapterId: string): Promise<StoredPageAsset[]> {
+  if (!chapterId || typeof indexedDB === 'undefined') return [];
+  try {
+    const db = await openDb();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_PAGE_ASSETS, 'readonly');
+      const store = tx.objectStore(STORE_PAGE_ASSETS);
+      if (store.indexNames.contains('chapterId')) {
+        const req = store.index('chapterId').getAll(chapterId);
+        req.onsuccess = () => resolve((req.result as StoredPageAsset[]) || []);
+        req.onerror = () => reject(req.error);
+      } else {
+        const req = store.getAll();
+        req.onsuccess = () =>
+          resolve(
+            ((req.result as StoredPageAsset[]) || []).filter((a) => a.chapterId === chapterId)
+          );
+        req.onerror = () => reject(req.error);
+      }
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function findLocalAssetForPage(
+  page: Pick<Page, 'id' | 'chapterId' | 'contentHash' | 'originalImage'>
+): Promise<StoredPageAsset | null> {
+  if (typeof indexedDB === 'undefined') return null;
+  try {
+    const chapterAssets = await getChapterPageAssets(page.chapterId);
+    const direct = selectMatchingLocalAsset(page, chapterAssets);
+    if (direct) return direct;
+
+    const allAssets = await getAllPageAssets();
+    const globalMatch = selectMatchingLocalAsset(page, allAssets);
+    if (globalMatch) return globalMatch;
+
+    // Last fallback: check if chapter is saved in offline_chapters bundle
+    const offline = await getOfflineChapter(page.chapterId).catch(() => null);
+    if (offline) {
+      const offMatch = offline.pages.find(
+        (op) =>
+          (op.id === page.id || (page.contentHash && op.contentHash === page.contentHash)) &&
+          Boolean(op.originalImage && op.originalImage.startsWith('data:'))
+      );
+      if (offMatch) {
+        return {
+          pageId: page.id,
+          chapterId: page.chapterId,
+          projectId: offline.projectId,
+          contentHash: offMatch.contentHash || page.contentHash,
+          order: offMatch.pageNumber,
+          width: offMatch.width,
+          height: offMatch.height,
+          originalDataUrl: offMatch.originalImage,
+          processedDataUrl: offMatch.processedImage,
+          serverUrl: page.originalImage,
+          updatedAt: offline.savedAt,
+        };
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function findLocalAssetByServerUrl(serverUrl: string): Promise<StoredPageAsset | null> {
+  if (!serverUrl || typeof indexedDB === 'undefined') return null;
+  try {
+    const allAssets = await getAllPageAssets();
+    const matched = allAssets.find(
+      (a) => a.serverUrl === serverUrl && Boolean(a.originalDataUrl)
+    );
+    if (matched) return matched;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function updatePageAssetProcessed(
+  page: Pick<Page, 'id' | 'chapterId' | 'pageNumber' | 'width' | 'height' | 'contentHash' | 'originalImage'>,
+  processedDataUrl: string
+): Promise<void> {
+  if (!processedDataUrl || typeof indexedDB === 'undefined') return;
+  try {
+    const existing = await findLocalAssetForPage(page);
+    if (!existing) return;
+    await savePageAssetsBatch([
+      {
+        ...existing,
+        processedDataUrl,
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
+  } catch {
+    // Ignore non-critical processed preview update errors
+  }
+}
+
+export async function deleteChapterPageAssets(chapterId: string): Promise<void> {
+  if (!chapterId || typeof indexedDB === 'undefined') return;
+  try {
+    const items = await getChapterPageAssets(chapterId);
+    const db = await openDb();
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction([STORE_PAGE_ASSETS, STORE_JOB_SNAPSHOTS], 'readwrite');
+      const assetStore = tx.objectStore(STORE_PAGE_ASSETS);
+      for (const item of items) {
+        assetStore.delete(item.pageId);
+      }
+      tx.objectStore(STORE_JOB_SNAPSHOTS).delete(chapterId);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch {
+    // Ignore cleanup errors
+  }
+}
+
+// =========================================================================
+// Chapter & Translation Job Auto-Save Snapshots
+// =========================================================================
+
+export async function saveChapterRecoverySnapshot(
+  snapshot: StoredChapterRecoverySnapshot
+): Promise<void> {
+  if (!snapshot.chapterId || typeof indexedDB === 'undefined') return;
+  try {
+    const db = await openDb();
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE_JOB_SNAPSHOTS, 'readwrite');
+      tx.objectStore(STORE_JOB_SNAPSHOTS).put(snapshot);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch {
+    // Best-effort snapshot persistence
+  }
+}
+
+export async function getChapterRecoverySnapshot(
+  chapterId: string
+): Promise<StoredChapterRecoverySnapshot | null> {
+  if (!chapterId || typeof indexedDB === 'undefined') return null;
+  try {
+    const db = await openDb();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_JOB_SNAPSHOTS, 'readonly');
+      const req = tx.objectStore(STORE_JOB_SNAPSHOTS).get(chapterId);
+      req.onsuccess = () => resolve((req.result as StoredChapterRecoverySnapshot) || null);
+      req.onerror = () => reject(req.error);
+    });
+  } catch {
+    return null;
+  }
+}
+
+export async function listChapterRecoverySnapshots(): Promise<StoredChapterRecoverySnapshot[]> {
+  if (typeof indexedDB === 'undefined') return [];
+  try {
+    const db = await openDb();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_JOB_SNAPSHOTS, 'readonly');
+      const req = tx.objectStore(STORE_JOB_SNAPSHOTS).getAll();
+      req.onsuccess = () => resolve((req.result as StoredChapterRecoverySnapshot[]) || []);
+      req.onerror = () => reject(req.error);
+    });
+  } catch {
+    return [];
+  }
+}
+
+// =========================================================================
+// Existing Offline Reading Bundle Store
+// =========================================================================
 
 export async function saveOfflineChapterBundle(params: {
   project: Project;
@@ -174,7 +432,10 @@ export async function saveChapterOffline(
       try {
         originalImage = await imageSrcToInlineDataUrl(p.originalImage);
       } catch {
-        // Keep existing src if inline conversion fails
+        const localAsset = await findLocalAssetForPage(p);
+        if (localAsset?.originalDataUrl) {
+          originalImage = localAsset.originalDataUrl;
+        }
       }
     }
     inlinedPages.push({ ...p, originalImage });

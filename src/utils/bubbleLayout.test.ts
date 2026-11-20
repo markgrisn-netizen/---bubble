@@ -68,3 +68,31 @@ test('glossary CSV round-trip and term matching work accurately', () => {
   assert.ok(reExported.includes('ويسميرهيل'));
   assert.ok(reExported.includes('القمر الأسود'));
 });
+
+test('fitTextInRegion fits dense Arabic text into tiny/narrow contours without exceeding any per-line limit', () => {
+  const approxMeasure = (str: string, size: number) => str.length * size * 0.56;
+  const bandLimit = (idx: number, total: number) => (idx === 0 || idx === total - 1 ? 26 : 36);
+
+  const narrowResult = fitTextInRegion(
+    'هل تسمعني الآن يا صديقي علينا التحرك فوراً',
+    40,
+    130,
+    { fontSize: 18, lineHeight: 1.35, padding: 10, autoFit: true, align: 'center', contourPaddingApplied: true },
+    approxMeasure,
+    bandLimit
+  );
+
+  assert.equal(narrowResult.overflowed, false, 'Expected narrow manga bubble to auto-fit without overflow');
+  assert.ok(narrowResult.fontSize >= 7 && narrowResult.fontSize <= 14);
+  for (let i = 0; i < narrowResult.lines.length; i++) {
+    const w = approxMeasure(narrowResult.lines[i], narrowResult.fontSize);
+    const lim = bandLimit(i, narrowResult.lines.length);
+    assert.ok(w <= lim + 0.01, `Line ${i} ("${narrowResult.lines[i]}") width ${w} exceeded band limit ${lim}`);
+  }
+  assert.equal(
+    narrowResult.lines.join(' ').replace(/\s+/g, ' '),
+    'هل تسمعني الآن يا صديقي علينا التحرك فوراً',
+    'Expected Arabic words to stay whole without mid-word splitting'
+  );
+});
+

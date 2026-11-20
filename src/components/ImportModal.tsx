@@ -119,6 +119,11 @@ export const ImportModal: React.FC<ImportModalProps> = ({
   const [previewZoom, setPreviewZoom] = useState(1);
   const [extractProgress, setExtractProgress] = useState<string>('');
   const [uploadProgress, setUploadProgress] = useState<{ pct: number; uploaded: number; total: number } | null>(null);
+  const [partialUpload, setPartialUpload] = useState<{
+    chapterId: string;
+    projectId: string;
+    uploadedCount: number;
+  } | null>(null);
   const [pickerNotice, setPickerNotice] = useState<{ kind: 'info' | 'warning'; message: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -383,6 +388,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
   const handleCloseWithCleanup = () => {
     setExtractedPages([]);
     setPickerNotice(null);
+    setPartialUpload(null);
     void clearStagedPickerDraft(draftStorageKey);
     onClose();
   };
@@ -501,19 +507,39 @@ export const ImportModal: React.FC<ImportModalProps> = ({
         );
         return;
       }
+      const startIdx =
+        partialUpload && partialUpload.chapterId === appendChapterId
+          ? partialUpload.uploadedCount
+          : 0;
+      const pagesToSend = extractedPages.slice(startIdx);
       setBusy(true);
-      setUploadProgress({ pct: 0, uploaded: 0, total: extractedPages.length });
+      setUploadProgress({ pct: Math.round((startIdx / Math.max(1, extractedPages.length)) * 100), uploaded: startIdx, total: extractedPages.length });
       try {
+        let highestUploaded = startIdx;
         await api.appendChapterPages(
           appendChapterId,
-          extractedPages.map((p) => ({
+          pagesToSend.map((p) => ({
             dataUrl: p.dataUrl,
             width: p.width,
             height: p.height,
             contentHash: p.contentHash,
           })),
-          (pct, uploaded, total) => setUploadProgress({ pct, uploaded, total })
+          (pct, uploaded) =>
+            setUploadProgress({
+              pct: Math.round(((startIdx + uploaded) / Math.max(1, extractedPages.length)) * 100),
+              uploaded: startIdx + uploaded,
+              total: extractedPages.length,
+            }),
+          (chunkTotal) => {
+            highestUploaded = startIdx + chunkTotal;
+            setPartialUpload({
+              chapterId: appendChapterId,
+              projectId: initialProjectId || '',
+              uploadedCount: highestUploaded,
+            });
+          }
         );
+        setPartialUpload(null);
         void clearStagedPickerDraft(draftStorageKey);
         setExtractedPages([]);
         await onImportedChapter(appendChapterId);
@@ -532,7 +558,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
       return;
     }
 
-    if (targetMode === 'new' && !projectTitle.trim()) {
+    if (targetMode === 'new' && !partialUpload?.projectId && !projectTitle.trim()) {
       setErrorMsg(lang === 'ar' ? 'يرجى إدخال اسم العمل.' : 'Please enter a series title.');
       return;
     }
@@ -558,8 +584,8 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
     setBusy(true);
     try {
-      let projectId = selectedProjectId;
-      if (targetMode === 'new' || !projectId) {
+      let projectId = partialUpload?.projectId || selectedProjectId;
+      if ((targetMode === 'new' || !projectId) && !partialUpload?.projectId) {
         const created = await api.createProject({
           title: projectTitle.trim(),
           comicFormat,
@@ -578,20 +604,49 @@ export const ImportModal: React.FC<ImportModalProps> = ({
       }
 
       if (tab === 'files') {
-        setUploadProgress({ pct: 0, uploaded: 0, total: extractedPages.length });
+        const startIdx = partialUpload ? partialUpload.uploadedCount : 0;
+        const remainingPages = extractedPages.slice(startIdx);
+        let trackedChapterId = partialUpload?.chapterId || '';
+        setUploadProgress({
+          pct: Math.round((startIdx / Math.max(1, extractedPages.length)) * 100),
+          uploaded: startIdx,
+          total: extractedPages.length,
+        });
         const res = await api.uploadChapter(
           {
             projectId,
             title: chapterTitle.trim() || 'Chapter 01',
-            pages: extractedPages.map((p) => ({
+            existingChapterId: partialUpload?.chapterId,
+            pages: remainingPages.map((p) => ({
               dataUrl: p.dataUrl,
               width: p.width,
               height: p.height,
               contentHash: p.contentHash,
             })),
           },
-          (pct, uploaded, total) => setUploadProgress({ pct, uploaded, total })
+          (_pct, uploaded) =>
+            setUploadProgress({
+              pct: Math.round(((startIdx + uploaded) / Math.max(1, extractedPages.length)) * 100),
+              uploaded: startIdx + uploaded,
+              total: extractedPages.length,
+            }),
+          (createdId) => {
+            trackedChapterId = createdId;
+            setPartialUpload({
+              chapterId: createdId,
+              projectId,
+              uploadedCount: startIdx,
+            });
+          },
+          (chunkTotal) => {
+            setPartialUpload((prev) => ({
+              chapterId: prev?.chapterId || trackedChapterId,
+              projectId,
+              uploadedCount: startIdx + chunkTotal,
+            }));
+          }
         );
+        setPartialUpload(null);
         await onImportedChapter(res.chapter.id);
       } else {
         const selectedUrls = urlImages.filter((u) => u.selected).map((u) => u.url);
@@ -1717,6 +1772,37 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                   </div>
                 )}
                 <div>{errorMsg}</div>
+                {partialUpload && partialUpload.chapterId && (
+                  <div className="pt-2 mt-2 border-t border-[#EA3829]/25 space-y-2 text-[#111111] dark:text-slate-100">
+                    <div className="font-semibold">
+                      {t.importModal.partialUploadSaved} ({partialUpload.uploadedCount}/{extractedPages.length})
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="submit"
+                        disabled={busy}
+                        className="faqqa-btn-yellow inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black cursor-pointer"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>{t.importModal.retryRemainingPages}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const cid = partialUpload.chapterId;
+                          setPartialUpload(null);
+                          setExtractedPages([]);
+                          void clearStagedPickerDraft(draftStorageKey);
+                          void onImportedChapter(cid);
+                          onClose();
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#111111]/30 dark:border-white/30 bg-white dark:bg-[#14151A] text-xs font-bold cursor-pointer"
+                      >
+                        <span>{t.importModal.openPartialChapter}</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )
           )}

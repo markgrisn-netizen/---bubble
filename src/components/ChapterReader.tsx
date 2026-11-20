@@ -40,8 +40,11 @@ import {
   getOfflineChapter,
   listOfflineChapters,
   removeOfflineChapter,
+  saveChapterRecoverySnapshot,
   updateOfflineChapterLastReadPage,
 } from '../utils/offlineDb';
+import { verifyAndRecoverPageAsset } from '../utils/assetRecovery';
+import { useAppLifecycle } from '../utils/appLifecycle';
 import {
   getOfflineDownloadTasks,
   startChapterOfflineDownload,
@@ -158,12 +161,44 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
     });
     const [status, setStatus] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle');
     const [retryNonce, setRetryNonce] = useState(0);
+    const [recoveredDataUrl, setRecoveredDataUrl] = useState<string | null>(null);
+    const recoveryTriedRef = useRef(false);
     const [thumbUrl, setThumbUrl] = useState<string | null>(null);
     const thumbCapturedRef = useRef(false);
 
+    useEffect(() => {
+      recoveryTriedRef.current = false;
+      setRecoveredDataUrl(null);
+    }, [page.id, page.originalImage]);
+
+    const effectivePage = useMemo(
+      () =>
+        recoveredDataUrl
+          ? { ...page, originalImage: recoveredDataUrl, assetMissing: false }
+          : page,
+      [page, recoveredDataUrl]
+    );
+
+    const attemptLocalAssetRecovery = useCallback(async (): Promise<boolean> => {
+      if (recoveryTriedRef.current) return false;
+      recoveryTriedRef.current = true;
+      try {
+        const res = await verifyAndRecoverPageAsset(page, { forceProbe: true });
+        if (res.recovered && (res.dataUrl || res.page.originalImage)) {
+          setRecoveredDataUrl(res.dataUrl || res.page.originalImage);
+          setStatus('loading');
+          setRetryNonce((n) => n + 1);
+          return true;
+        }
+      } catch {
+        // Fall through to per-page isolated error UI
+      }
+      return false;
+    }, [page]);
+
     const hasBakedComposite =
       !showOriginal && Boolean(page.processedImage && page.processedImage.startsWith('data:'));
-    const missingOriginalOffline = showOriginal && !page.originalImage;
+    const missingOriginalOffline = showOriginal && !effectivePage.originalImage;
     const needsCompositeCanvas =
       !showOriginal &&
       !hasBakedComposite &&
@@ -190,7 +225,7 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
       let cancelled = false;
       setStatus('loading');
 
-      void renderCompositePageToCanvas(canvas, page, {
+      void renderCompositePageToCanvas(canvas, effectivePage, {
         showOriginalOnly: showOriginal,
         showText: !showOriginal,
         inpaintingEngine,
@@ -223,8 +258,9 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
           }
           setStatus('loaded');
         })
-        .catch(() => {
-          if (!cancelled) {
+        .catch(async () => {
+          const recovered = await attemptLocalAssetRecovery();
+          if (!recovered && !cancelled) {
             setStatus('error');
           }
         });
@@ -232,7 +268,15 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
       return () => {
         cancelled = true;
       };
-    }, [inRenderWindow, needsCompositeCanvas, page, showOriginal, inpaintingEngine, retryNonce]);
+    }, [
+      inRenderWindow,
+      needsCompositeCanvas,
+      effectivePage,
+      showOriginal,
+      inpaintingEngine,
+      retryNonce,
+      attemptLocalAssetRecovery,
+    ]);
 
     // Original/unmodified or pre-rendered offline composite image check on remount
     useLayoutEffect(() => {
@@ -262,7 +306,7 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
       missingOriginalOffline,
       hasBakedComposite,
       page.processedImage,
-      page.originalImage,
+      effectivePage.originalImage,
       retryNonce,
     ]);
 
@@ -399,8 +443,8 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
             ) : (
               <img
                 ref={imgRef}
-                key={`${page.id}-${retryNonce}-${showOriginal ? 'orig' : hasBakedComposite ? 'baked' : 'tr'}`}
-                src={hasBakedComposite ? page.processedImage! : page.originalImage}
+                key={`${page.id}-${retryNonce}-${recoveredDataUrl ? 'rec' : 'raw'}-${showOriginal ? 'orig' : hasBakedComposite ? 'baked' : 'tr'}`}
+                src={hasBakedComposite ? page.processedImage! : effectivePage.originalImage}
                 alt={`Page ${page.pageNumber}`}
                 decoding="async"
                 onLoad={(e) => {
@@ -410,7 +454,12 @@ const ReaderPageSlot: React.FC<ReaderPageSlotProps> = React.memo(
                   }
                   setStatus('loaded');
                 }}
-                onError={() => setStatus('error')}
+                onError={async () => {
+                  const recovered = await attemptLocalAssetRecovery();
+                  if (!recovered) {
+                    setStatus('error');
+                  }
+                }}
                 className={`w-full h-full block object-contain ${
                   status === 'loaded' ? 'visible' : 'invisible'
                 }`}
@@ -666,6 +715,40 @@ export const ChapterReader: React.FC<ChapterReaderProps> = ({
       cancelled = true;
     };
   }, [activeChapterId]);
+
+  useAppLifecycle({
+    onHide: () => {
+      if (!chapter) return;
+      persistChapterPosition(chapter.id, currentPageIdx);
+      void updateOfflineChapterLastReadPage(chapter.id, currentPageIdx + 1);
+      if (project) {
+        void saveChapterRecoverySnapshot({
+          chapterId: chapter.id,
+          projectId: project.id,
+          project,
+          chapter,
+          pages,
+          activeJob: null,
+          lastUpdatedAt: new Date().toISOString(),
+        });
+      }
+      if (typeof navigator === 'undefined' || navigator.onLine !== false) {
+        void api.updateChapter(chapter.id, { lastReadPage: currentPageIdx + 1 }).catch(() => {});
+      }
+    },
+    onResume: async () => {
+      if (!activeChapterId) return;
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+      try {
+        const res = await api.getChapter(activeChapterId);
+        setProject(res.project);
+        setChapter(res.chapter);
+        setPages(res.pages);
+      } catch {
+        // Keep current/offline pages seamlessly if network unavailable
+      }
+    },
+  });
 
   // Build stream items according to active reading mode
   const allLoadedStreamItems: StreamItem[] = useMemo(() => {

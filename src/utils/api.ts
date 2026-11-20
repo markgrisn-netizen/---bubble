@@ -235,7 +235,8 @@ export const api = {
   appendChapterPages: async (
     chapterId: string,
     pages: Array<{ dataUrl: string; width: number; height: number; contentHash?: string }>,
-    onProgress?: (pct: number, uploaded: number, total: number) => void
+    onProgress?: (pct: number, uploaded: number, total: number) => void,
+    onChunkUploaded?: (uploadedCount: number) => void
   ): Promise<{ chapter: Chapter; pages: Page[] }> => {
     const chunks = chunkPagesForUpload(pages, 5, 10 * 1024 * 1024);
     let latestChapter: Chapter | null = null;
@@ -253,6 +254,7 @@ export const api = {
       latestChapter = res.chapter;
       allAppended.push(...res.appendedPages);
       uploaded += chunk.length;
+      onChunkUploaded?.(uploaded);
       onProgress?.(Math.round((uploaded / Math.max(1, pages.length)) * 100), uploaded, pages.length);
     }
 
@@ -265,26 +267,36 @@ export const api = {
     payload: {
       projectId: string;
       title: string;
+      existingChapterId?: string;
       pages: Array<{ dataUrl: string; width: number; height: number; contentHash?: string }>;
     },
-    onProgress?: (pct: number, uploaded: number, total: number) => void
+    onProgress?: (pct: number, uploaded: number, total: number) => void,
+    onChapterCreated?: (chapterId: string) => void,
+    onChunkUploaded?: (uploadedCount: number) => void
   ): Promise<{ chapter: Chapter; pages: Page[] }> => {
-    if (payload.pages.length <= 5) {
+    if (!payload.existingChapterId && payload.pages.length <= 5) {
       const totalChars = payload.pages.reduce((s, p) => s + p.dataUrl.length, 0);
       if (totalChars <= 10 * 1024 * 1024) {
         const res = await requestJson<{ chapter: Chapter; pages: Page[] }>('/api/chapters/upload', {
           method: 'POST',
           body: JSON.stringify(payload),
         });
+        onChapterCreated?.(res.chapter.id);
+        onChunkUploaded?.(payload.pages.length);
         onProgress?.(100, payload.pages.length, payload.pages.length);
         return res;
       }
     }
-    const shell = await requestJson<{ chapter: Chapter }>('/api/chapters', {
-      method: 'POST',
-      body: JSON.stringify({ projectId: payload.projectId, title: payload.title }),
-    });
-    return api.appendChapterPages(shell.chapter.id, payload.pages, onProgress);
+    const chapterId =
+      payload.existingChapterId ||
+      (
+        await requestJson<{ chapter: Chapter }>('/api/chapters', {
+          method: 'POST',
+          body: JSON.stringify({ projectId: payload.projectId, title: payload.title }),
+        })
+      ).chapter.id;
+    onChapterCreated?.(chapterId);
+    return api.appendChapterPages(chapterId, payload.pages, onProgress, onChunkUploaded);
   },
   getChapter: (id: string) =>
     requestJson<{ chapter: Chapter; project: Project; pages: Page[] }>(`/api/chapters/${id}`),
@@ -343,6 +355,11 @@ export const api = {
     requestJson<{ page: Page }>('/api/pages/clean', {
       method: 'POST',
       body: JSON.stringify({ pageId, manualStrokes }),
+    }),
+  renderPage: (pageId: string, processedDataUrl: string) =>
+    requestJson<{ page: Page; verified?: boolean }>('/api/pages/render', {
+      method: 'POST',
+      body: JSON.stringify({ pageId, processedDataUrl }),
     }),
 
   // Bubbles
